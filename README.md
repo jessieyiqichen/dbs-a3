@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nudge
 
-## Getting Started
+A small tool that pushes you to do the things that matter but you'd rather not: 500 LinkedIn connections this recruiting season, three applications a day, a daily practice problem. It splits a big goal into today's number, asks you to start with just one, and nudges you again (kindly) until you do.
 
-First, run the development server:
+Design, Build, Ship · Assignment 3 (Patterns & Flows).
+
+- **Live:** _coming soon_
+- **Flows:** [flows.md](flows.md)
+- **Onboarding research:** [research.md](research.md)
+- **Plan:** [plan.md](plan.md) · **Decision log (Chinese):** [log.md](log.md)
+
+## The main task
+
+> I pick a goal → it tells me today's number and I do the first one now → if I haven't started, it nudges me again (and again) → I come back and see how close I am.
+
+_Flow diagrams, onboarding, retention, accessibility and the first-run check are added as they are built._
+
+## Run it
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Data is saved only in this browser (localStorage). No accounts, database or APIs.
