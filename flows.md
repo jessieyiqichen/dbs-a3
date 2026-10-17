@@ -11,7 +11,7 @@ flowchart TD
     A([Open the app, nothing saved]) --> B["/ : What have you been putting off?"]
     B -->|Tap an example| C[Goal created with sensible defaults]
     B -->|Write my own| F["/goals/new form"]
-    C --> D["Today's number: 12 connections"]
+    C --> D["Today's number: 11 connections"]
     D -->|Open LinkedIn| L[LinkedIn opens in a new tab]
     L --> E
     D -->|Tap +1| E[Day started. Progress moves]
