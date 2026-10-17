@@ -33,29 +33,34 @@ describe("parseTime", () => {
 describe("validateGoal", () => {
   const today = "2026-10-17";
   const draft = {
-    title: "Send LinkedIn connection requests",
+    verb: "Send",
+    unit: "connection requests",
     type: "by-date" as const,
     target: "500",
-    unit: "connections",
     deadline: "2026-12-01",
     link: "https://www.linkedin.com/mynetwork/",
   };
 
-  it("accepts a complete goal and cleans it up", async () => {
+  it("accepts a complete goal and builds its title", async () => {
     const { validateGoal } = await import("./validate");
-    const result = validateGoal({ ...draft, title: "  Send requests  ", unit: " " }, today);
+    const result = validateGoal({ ...draft, verb: "  send ", unit: " Connection Requests " }, today);
     expect(result.errors).toEqual({});
     expect(result.value).toEqual({
-      title: "Send requests", type: "by-date", target: 500, unit: "times", deadline: "2026-12-01",
-      link: "https://www.linkedin.com/mynetwork/",
+      verb: "Send", unit: "connection requests", title: "Send connection requests", type: "by-date", target: 500,
+      deadline: "2026-12-01", link: "https://www.linkedin.com/mynetwork/",
     });
+  });
+
+  it("counts times when nothing is named", async () => {
+    const { validateGoal } = await import("./validate");
+    expect(validateGoal({ ...draft, verb: "Go running", unit: "" }, today).value?.unit).toBe("times");
   });
 
   it("says what to do next for each field", async () => {
     const { validateGoal } = await import("./validate");
-    const result = validateGoal({ ...draft, title: " ", target: "lots", deadline: "2026-10-17", link: "linkedin.com" }, today);
+    const result = validateGoal({ ...draft, verb: " ", target: "lots", deadline: "2026-10-17", link: "linkedin.com" }, today);
     expect(result.errors).toEqual({
-      title: 'Enter what you want to do, like "Send connection requests".',
+      verb: 'Enter what you\'ll do, like "Send" or "Practice".',
       target: "Enter a whole number, like 500.",
       deadline: "Pick a date after today.",
       link: "Paste a full link that starts with https://",
@@ -76,10 +81,11 @@ describe("validateGoal", () => {
     expect(validateGoal({ ...draft, link: "" }, today).value?.link).toBeNull();
   });
 
-  it("caps long titles and huge targets", async () => {
+  it("caps long words and huge targets", async () => {
     const { validateGoal } = await import("./validate");
-    const result = validateGoal({ ...draft, title: "x".repeat(81), target: "100001" }, today);
-    expect(result.errors.title).toBe("Keep it under 80 characters.");
+    const result = validateGoal({ ...draft, verb: "x".repeat(41), unit: "y".repeat(41), target: "100001" }, today);
+    expect(result.errors.verb).toBe("Keep it under 40 characters.");
+    expect(result.errors.unit).toBe("Keep it under 40 characters.");
     expect(result.errors.target).toBe("Enter a number up to 100,000.");
   });
 });

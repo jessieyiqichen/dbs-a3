@@ -3,7 +3,7 @@ import { cumulativeSeries, history, withPause, withoutPause } from "./progress";
 import type { Entry, Goal } from "./types";
 
 const goal: Goal = {
-  id: "g1", title: "Send LinkedIn connection requests", unit: "connections", type: "by-date",
+  id: "g1", verb: "", title: "Send LinkedIn connection requests", unit: "connections", type: "by-date",
   target: 100, deadline: "2026-10-19", link: null, startDate: "2026-10-10", pauses: [], createdAt: "",
 };
 const on = (date: string, amount: number): Entry => ({ id: `${date}-${amount}`, goalId: "g1", date, amount, at: "" });

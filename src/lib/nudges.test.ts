@@ -4,7 +4,7 @@ import { planToday } from "./quota";
 import type { Entry, Goal } from "./types";
 
 const goal: Goal = {
-  id: "g1", title: "Send LinkedIn connection requests", unit: "connections", type: "by-date",
+  id: "g1", verb: "", title: "Send LinkedIn connection requests", unit: "connections", type: "by-date",
   target: 500, deadline: "2026-12-01", link: null, startDate: "2026-10-17", pauses: [],
   createdAt: "2026-10-17T09:00:00.000Z",
 };
@@ -38,9 +38,11 @@ describe("nudgeLine", () => {
     expect(nudgeLine(goal, plan, today, 9)).not.toBe(nudgeLine(goal, plan, today, 21));
   });
 
-  it("fills in counts once started", () => {
+  it("encourages once started, without repeating the numbers the headline shows", () => {
     const plan = planToday(goal, [entry(today, 4)], today);
-    expect(nudgeLine(goal, plan, today, 21)).toMatch(/7/);
+    const line = nudgeLine(goal, plan, today, 21);
+    expect(line).not.toMatch(/\d/);
+    expect(line).not.toMatch(/zero|late/i);
   });
 
   it("celebrates a finished day", () => {

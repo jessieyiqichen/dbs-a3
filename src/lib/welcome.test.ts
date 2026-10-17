@@ -3,7 +3,7 @@ import { welcomeMessage } from "./welcome";
 import type { Entry, Goal } from "./types";
 
 const goal: Goal = {
-  id: "g1", title: "Send LinkedIn connection requests", unit: "connections", type: "by-date",
+  id: "g1", verb: "", title: "Send LinkedIn connection requests", unit: "connections", type: "by-date",
   target: 500, deadline: "2026-12-01", link: null, startDate: "2026-10-10", pauses: [], createdAt: "",
 };
 const on = (...dates: string[]): Entry[] => dates.map((date) => ({ id: date, goalId: "g1", date, amount: 11, at: "" }));

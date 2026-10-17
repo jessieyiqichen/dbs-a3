@@ -3,7 +3,7 @@ import { streak } from "./streak";
 import type { Entry, Goal } from "./types";
 
 const goal: Goal = {
-  id: "g1", title: "Apply to jobs", unit: "applications", type: "daily", target: 10, deadline: null,
+  id: "g1", verb: "", title: "Apply to jobs", unit: "applications", type: "daily", target: 10, deadline: null,
   link: null, startDate: "2026-10-01", pauses: [], createdAt: "",
 };
 const on = (...dates: string[]): Entry[] => dates.map((date) => ({ id: date, goalId: "g1", date, amount: 1, at: "" }));

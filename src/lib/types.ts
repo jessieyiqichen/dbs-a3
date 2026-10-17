@@ -8,6 +8,9 @@ export interface Pause {
 
 export interface Goal {
   id: string;
+  /** Capitalized action, e.g. "Send"; empty for goals saved before verbs existed. */
+  verb: string;
+  /** Verb + unit, e.g. "Send connection requests". */
   title: string;
   /** Plural noun for what is counted, e.g. "connections". */
   unit: string;
@@ -39,12 +42,19 @@ export interface Settings {
   nudgePromptDismissed: boolean;
 }
 
+/** Set when someone taps Start, until they say how many they did. */
+export interface Session {
+  goalId: string;
+  startedAt: string;
+}
+
 export interface AppData {
   version: 1;
   goals: Goal[];
   entries: Entry[];
   settings: Settings;
   lastVisit: string | null;
+  session: Session | null;
 }
 
 export type DayStatus =

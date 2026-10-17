@@ -43,5 +43,11 @@ describe("storage: older saved data", () => {
     const old = { ...emptyData(), settings: { reminderTimes: ["10:00"], notificationsOn: false } };
     const parsed = parseData(JSON.stringify(old));
     expect(parsed?.settings).toEqual({ reminderTimes: ["10:00"], notificationsOn: false, nudgesSetUp: false, nudgePromptDismissed: false });
+    expect(parsed?.session).toBeNull();
+  });
+
+  it("gives older goals an empty verb", () => {
+    const goal = { id: "g", title: "Apply to jobs", unit: "applications", type: "daily", target: 10, deadline: null, link: null, startDate: "2026-10-17", pauses: [], createdAt: "" };
+    expect(parseData(JSON.stringify({ ...emptyData(), goals: [goal] }))?.goals[0].verb).toBe("");
   });
 });

@@ -7,6 +7,7 @@ const TODAY = "2026-10-17";
 function goal(overrides: Partial<Goal> = {}): Goal {
   return {
     id: "g1",
+    verb: "Send",
     title: "Send LinkedIn connection requests",
     unit: "connections",
     type: "by-date",

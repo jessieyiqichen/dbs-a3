@@ -26,10 +26,11 @@ const NOT_STARTED: Record<NudgeLevel, string[]> = {
   ],
 };
 
+// The headline already says how many are done and left, so these only encourage.
 const STARTED = [
-  "{done} done, {left} to go. You're already moving.",
-  "You started, which was the hard part. {left} more.",
-  "Nice work so far. {left} to finish today.",
+  "You're already moving. Keep the momentum.",
+  "You started, which was the hard part.",
+  "Nice work so far. The next one is easier.",
 ];
 
 const DONE = [

@@ -20,6 +20,7 @@ export function emptyData(): AppData {
     entries: [],
     settings: { reminderTimes: DEFAULT_REMINDER_TIMES, notificationsOn: false, nudgesSetUp: false, nudgePromptDismissed: false },
     lastVisit: null,
+    session: null,
   };
 }
 
@@ -27,10 +28,11 @@ const isString = (v: unknown): v is string => typeof v === "string";
 const isNullableString = (v: unknown) => v === null || isString(v);
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null;
 
-function isGoal(v: unknown): v is Goal {
+function isGoal(v: unknown): v is Omit<Goal, "verb"> & { verb?: unknown } {
   return (
     isRecord(v) &&
     isString(v.id) && isString(v.title) && isString(v.unit) &&
+    (v.verb === undefined || isString(v.verb)) &&
     (v.type === "by-date" || v.type === "daily") &&
     typeof v.target === "number" && v.target > 0 &&
     isNullableString(v.deadline) && isNullableString(v.link) &&
@@ -62,9 +64,13 @@ export function parseData(text: string): AppData | null {
   if (!isRecord(settings) || !Array.isArray(settings.reminderTimes)) return null;
   if (!settings.reminderTimes.every(isString) || typeof settings.notificationsOn !== "boolean") return null;
   if (!isNullableString(lastVisit)) return null;
+  const session = isRecord(value.session) && isString(value.session.goalId) && isString(value.session.startedAt)
+    ? { goalId: value.session.goalId, startedAt: value.session.startedAt }
+    : null;
   return {
     version: 1,
-    goals,
+    // Goals saved before verbs existed get an empty verb.
+    goals: goals.map((g) => ({ ...g, verb: isString(g.verb) ? g.verb : "" })),
     entries,
     // Settings added after the first release default to false.
     settings: {
@@ -74,6 +80,7 @@ export function parseData(text: string): AppData | null {
       nudgePromptDismissed: settings.nudgePromptDismissed === true,
     },
     lastVisit,
+    session,
   };
 }
 

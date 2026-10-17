@@ -23,13 +23,13 @@ export function parseTime(text: string): Parsed<string> {
     : { ok: false, error: "Enter a time, like 20:00." };
 }
 
-export const MAX_TITLE = 80;
+export const MAX_WORDS = 40;
 export const MAX_TARGET = 100_000;
 export const HIGH_PACE = 50;
 export const DEFAULT_UNIT = "times";
 
 export interface GoalDraft {
-  title: string;
+  verb: string;
   type: GoalType;
   target: string;
   unit: string;
@@ -40,6 +40,7 @@ export interface GoalDraft {
 export type GoalField = keyof GoalDraft;
 
 export interface GoalValues {
+  verb: string;
   title: string;
   type: GoalType;
   target: number;
@@ -53,10 +54,16 @@ export interface GoalValidation {
   value: GoalValues | null;
 }
 
-function checkTitle(text: string): string | undefined {
-  if (text.length === 0) return 'Enter what you want to do, like "Send connection requests".';
-  if (text.length > MAX_TITLE) return "Keep it under 80 characters.";
+function checkVerb(text: string): string | undefined {
+  if (text.length === 0) return 'Enter what you\'ll do, like "Send" or "Practice".';
+  if (text.length > MAX_WORDS) return "Keep it under 40 characters.";
 }
+
+function checkUnit(text: string): string | undefined {
+  if (text.length > MAX_WORDS) return "Keep it under 40 characters.";
+}
+
+const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 
 function checkTarget(text: string): string | undefined {
   if (!/^\d+$/.test(text) || Number(text) < 1) return "Enter a whole number, like 500.";
@@ -82,12 +89,14 @@ function checkLink(text: string): string | undefined {
 
 /** Checks the goal form. Errors say what to do next; the draft is never changed. */
 export function validateGoal(draft: GoalDraft, today: string): GoalValidation {
-  const title = draft.title.trim();
+  const verb = capitalize(draft.verb.trim().toLowerCase());
+  const unit = draft.unit.trim().toLowerCase() || DEFAULT_UNIT;
   const target = draft.target.trim();
   const link = draft.link.trim();
   const errors: GoalValidation["errors"] = {};
   const found: [GoalField, string | undefined][] = [
-    ["title", checkTitle(title)],
+    ["verb", checkVerb(verb)],
+    ["unit", checkUnit(unit)],
     ["target", checkTarget(target)],
     ["deadline", checkDeadline(draft.type, draft.deadline, today)],
     ["link", checkLink(link)],
@@ -98,10 +107,11 @@ export function validateGoal(draft: GoalDraft, today: string): GoalValidation {
   return {
     errors,
     value: {
-      title,
+      verb,
+      unit,
+      title: `${verb} ${unit}`,
       type: draft.type,
       target: Number(target),
-      unit: draft.unit.trim().toLowerCase() || DEFAULT_UNIT,
       deadline: draft.type === "by-date" ? draft.deadline : null,
       link: link || null,
     },

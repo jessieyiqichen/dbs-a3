@@ -1,82 +1,63 @@
 "use client";
 
-import Link from "next/link";
 import { Button, ButtonLink } from "@/components/ui/Button";
+import { ProgressBar } from "@/components/ui/ProgressBar";
+import { ScreenHeading } from "@/components/ui/ScreenHeading";
 import { formatShortDate } from "@/lib/dates";
 import { formatCount } from "@/lib/format";
 import { nudgeLine } from "@/lib/nudges";
+import { headline } from "@/lib/phrases";
 import type { TodayPlan } from "@/lib/quota";
+import { hostOf } from "@/lib/start";
 import type { Goal } from "@/lib/types";
-import { LogSeveral } from "./LogSeveral";
 
-interface TodayCardProps {
+interface Props {
   goal: Goal;
   plan: TodayPlan;
   today: string;
   hour: number;
-  onLog: (amount: number) => void;
+  onStart: () => void;
 }
 
 function summary(goal: Goal, plan: TodayPlan): string {
   if (goal.type === "daily") return `${formatCount(goal.target, goal.unit)} every day`;
-  const deadline = goal.deadline ? ` by ${formatShortDate(goal.deadline)}` : "";
-  return `${plan.doneTotal} of ${goal.target}${deadline} · ${plan.daysLeft} days left`;
+  const behind = plan.behindBy > 0 ? ` · ${plan.behindBy} behind plan, spread over the days left` : "";
+  return `${plan.doneTotal} of ${goal.target}${goal.deadline ? ` by ${formatShortDate(goal.deadline)}` : ""} · ${plan.daysLeft} days left${behind}`;
 }
 
-function headline(goal: Goal, plan: TodayPlan): string {
-  if (plan.status === "done" || plan.status === "complete") return "Done for today";
+function title(goal: Goal, plan: TodayPlan): string {
+  if (plan.status === "started") return `${plan.doneToday} done. ${plan.leftToday} to go.`;
   if (plan.status === "paused") return "Paused";
-  if (plan.status === "started") return `${formatCount(plan.leftToday, goal.unit)} to go`;
-  return formatCount(plan.quota, goal.unit);
+  if (plan.status === "complete") return "Goal reached";
+  if (plan.status === "deadline-passed") return "The deadline has passed";
+  return headline(goal.verb, plan.quota, goal.unit);
 }
 
-const ACTIVE = new Set(["not-started", "started", "done"]);
-
-export function TodayCard({ goal, plan, today, hour, onLog }: TodayCardProps) {
-  const host = goal.link ? new URL(goal.link).hostname.replace(/^www\./, "") : null;
+/** Today's one thing: a sentence, progress, a nudge, and one button. */
+export function TodayCard({ goal, plan, today, hour, onStart }: Props) {
+  const host = hostOf(goal.link);
+  const active = plan.status === "not-started" || plan.status === "started";
   return (
-    <section aria-labelledby={`goal-${goal.id}`} className="flex flex-col gap-6 pt-6">
+    <section aria-labelledby={`goal-${goal.id}`} className="flex flex-col gap-5 pt-6">
       <div className="flex flex-col gap-2">
-        <p className="text-sm font-semibold uppercase tracking-wide text-muted">Today · {goal.title}</p>
-        <h1 id={`goal-${goal.id}`} className="text-5xl font-bold tracking-tight text-ink">
-          {headline(goal, plan)}
-        </h1>
-        <p className="text-muted">
-          {summary(goal, plan)} ·{" "}
-          <Link href={`/goals/${goal.id}`} className="font-semibold text-ink underline underline-offset-4 focus-visible:outline-3 focus-visible:outline-focus">
-            Progress
-          </Link>{" "}
-          ·{" "}
-          <Link href={`/goals/${goal.id}/edit`} className="font-semibold text-ink underline underline-offset-4 focus-visible:outline-3 focus-visible:outline-focus">
-            Edit
-          </Link>
-        </p>
+        <p className="text-sm font-semibold uppercase tracking-wide text-muted">Today</p>
+        <ScreenHeading id={`goal-${goal.id}`} className="text-4xl font-bold leading-tight tracking-tight text-ink">{title(goal, plan)}</ScreenHeading>
+        <p className="text-muted">{summary(goal, plan)}</p>
+        {goal.type === "by-date" && <ProgressBar value={plan.doneTotal} max={goal.target} label={`${goal.title}: ${plan.doneTotal} of ${goal.target}`} />}
       </div>
-
       <p className="text-xl text-ink">{nudgeLine(goal, plan, today, hour)}</p>
 
-      {plan.behindBy > 0 && plan.status === "not-started" && (
-        <p className="rounded-lg bg-wash p-3 text-sm text-ink">
-          You&apos;re {formatCount(plan.behindBy, goal.unit)} behind your plan, so it&apos;s spread over the{" "}
-          {plan.daysLeft} days left. No need to catch up in one day.
-        </p>
-      )}
-
-      {ACTIVE.has(plan.status) && (
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-3 sm:flex-row">
-            {goal.link && host && (
-              <ButtonLink href={goal.link} external variant="secondary" size="lg">
-                Open {host}
-              </ButtonLink>
-            )}
-            <Button size="lg" onClick={() => onLog(1)}>
-              +1 Done one
-            </Button>
-          </div>
-          <LogSeveral unit={goal.unit} onAdd={onLog} />
+      {active && (
+        <div className="flex flex-col gap-2">
+          <Button size="lg" onClick={onStart} className="w-full sm:w-auto sm:self-start">
+            {plan.status === "started" ? "Keep going →" : "Start →"}
+          </Button>
+          <p className="text-sm text-muted">{host ? `Opens ${host} in a new tab.` : "Go do it, then come back and tell me how many."}</p>
         </div>
       )}
+      {plan.status === "complete" && <ButtonLink href="/goals/new" size="lg" className="self-start">Set the next goal</ButtonLink>}
+      {plan.status === "deadline-passed" && <ButtonLink href={`/goals/${goal.id}/edit`} size="lg" className="self-start">Pick a new date</ButtonLink>}
+      {plan.status === "paused" && <ButtonLink href="/goals" variant="secondary" className="self-start">Manage goals</ButtonLink>}
     </section>
   );
 }

@@ -7,7 +7,12 @@ import type { GoalValues } from "./validate";
 
 export function addEntry(goalId: string, amount: number, date: string): Entry {
   const entry: Entry = { id: crypto.randomUUID(), goalId, date, amount, at: new Date().toISOString() };
-  updateData((data) => ({ ...data, entries: [...data.entries, entry] }));
+  // Logging answers "how many did you do?", so it ends that goal's session.
+  updateData((data) => ({
+    ...data,
+    entries: [...data.entries, entry],
+    session: data.session?.goalId === goalId ? null : data.session,
+  }));
   return entry;
 }
 
@@ -56,4 +61,13 @@ export function deleteGoal(id: string): void {
 /** Replaces everything on this device with a validated backup. */
 export function restoreData(backup: AppData): void {
   updateData(() => backup);
+}
+
+/** Tapping Start: remember which goal, so coming back asks how many. */
+export function startSession(goalId: string): void {
+  updateData((data) => ({ ...data, session: { goalId, startedAt: new Date().toISOString() } }));
+}
+
+export function endSession(): void {
+  updateData((data) => ({ ...data, session: null }));
 }

@@ -9,31 +9,32 @@ function statusText({ goal, plan }: PlannedGoal): string {
   switch (plan.status) {
     case "done":
     case "complete":
-      return "Done for today";
+      return "Done for today ✓";
     case "paused":
       return "Paused";
     case "deadline-passed":
       return "Deadline passed";
     case "started":
-      return `${formatCount(plan.leftToday, goal.unit)} to go`;
+      return `${plan.leftToday} to go`;
     default:
       return `${formatCount(plan.quota, goal.unit)} today`;
   }
 }
 
-export function GoalRow({ item, onLog }: { item: PlannedGoal; onLog: () => void }) {
-  const canLog = ["not-started", "started", "done"].includes(item.plan.status);
+/** Another goal: quiet, with its own secondary Start. */
+export function GoalRow({ item, onStart }: { item: PlannedGoal; onStart: () => void }) {
+  const canStart = item.plan.status === "not-started" || item.plan.status === "started";
   return (
-    <li className="flex items-center justify-between gap-3 rounded-lg border-2 border-line bg-surface p-3">
+    <li className="flex items-center justify-between gap-3 border-b border-wash-strong py-3">
       <div className="min-w-0">
         <Link href={`/goals/${item.goal.id}`} className="block truncate font-semibold text-ink underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus">
           {item.goal.title}
         </Link>
         <p className="text-sm text-muted">{statusText(item)}</p>
       </div>
-      {canLog && (
-        <Button variant="secondary" onClick={onLog} aria-label={`Add one to ${item.goal.title}`}>
-          +1
+      {canStart && (
+        <Button variant="secondary" onClick={onStart}>
+          Start<span className="sr-only">: {item.goal.title}</span>
         </Button>
       )}
     </li>
