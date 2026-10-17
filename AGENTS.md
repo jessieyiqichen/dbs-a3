@@ -11,12 +11,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # Nudge (working title) · DBS Assignment 3 (Patterns & Flows)
 
 ## What and for whom
-- A goal pusher for things that matter but you don't enjoy, so you keep putting them off: 500 LinkedIn connections this job season, applications every day, practice problems.
-- The user is a student in recruiting season. The tool is proactive: it tells you today's number, pushes you to start, and nudges you again (encouraging, never shaming) until you do. No chat.
+- A goal pusher for students in recruiting season: the job-search tasks that matter but you don't enjoy, so you keep putting them off (LinkedIn connections, applications, coffee chats, interview practice).
+- The user is a student in recruiting season (user decision 2026-10-17: a specific audience, not everyone). Examples, copy and nudges speak to job hunting. The tool is proactive: it tells you today's number, pushes you to start, and nudges you again (encouraging, never shaming) until you do. No chat.
 - Main flow: I set a goal (e.g. 500 connections by a date) → every day it tells me today's number and pushes me to start → if I haven't, it nudges me again → I come back and see how close I am.
 
 ## Decisions so far (user-approved)
-- Generic cumulative goals, not LinkedIn-only. LinkedIn 500 is the first-visit example.
+- Any job-search goal can be tracked (Something else is free text), but first-visit choices are recruiting tasks.
 - A big goal is split into a daily quota (remaining / days left); falling behind raises tomorrow's quota, and the app says why.
 - "Forcing a start": the home screen shows only today's number and one big "do one now" action.
 - Tone and look: warm and motivating (user, 2026-10-17). Nudges get more direct through the day when nothing is done, but never shame. The visual style should feel warm too.
