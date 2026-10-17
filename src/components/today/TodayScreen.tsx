@@ -7,8 +7,8 @@ import { Toast } from "@/components/ui/Toast";
 import { addEntry, markVisited, removeEntry } from "@/lib/actions";
 import { toISODate } from "@/lib/dates";
 import { formatCount } from "@/lib/format";
-import { sortByUrgency } from "@/lib/quota";
-import { getVisitStart, useStore } from "@/lib/store";
+import { sortByUrgency, type PlannedGoal } from "@/lib/quota";
+import { getFocusGoal, getVisitStart, useStore } from "@/lib/store";
 import { welcomeMessage } from "@/lib/welcome";
 import type { Goal } from "@/lib/types";
 import { FirstVisit } from "./FirstVisit";
@@ -16,6 +16,12 @@ import { GoalRow } from "./GoalRow";
 import { NudgePrompt } from "./NudgePrompt";
 import { TodayCard } from "./TodayCard";
 import { WelcomeBanner } from "./WelcomeBanner";
+
+/** A goal just created or edited goes first, unless it's already done for today. */
+function pinFocused(items: PlannedGoal[], id: string | null): PlannedGoal[] {
+  const index = items.findIndex((item) => item.goal.id === id && ["not-started", "started"].includes(item.plan.status));
+  return index <= 0 ? items : [items[index], ...items.slice(0, index), ...items.slice(index + 1)];
+}
 
 interface Undoable {
   entryId: string;
@@ -50,7 +56,7 @@ export function TodayScreen() {
   };
 
   const { data } = state;
-  const [first, ...rest] = sortByUrgency(data.goals, data.entries, today);
+  const [first, ...rest] = pinFocused(sortByUrgency(data.goals, data.entries, today), getFocusGoal());
   const visit = getVisitStart();
   const welcome = first ? welcomeMessage({ ...visit, today, goal: first.goal, entries: data.entries }) : null;
   const loggedToday = data.entries.some((e) => e.date === today);

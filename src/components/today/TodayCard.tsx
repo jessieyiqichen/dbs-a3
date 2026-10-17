@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { formatShortDate } from "@/lib/dates";
 import { formatCount } from "@/lib/format";
@@ -40,7 +41,12 @@ export function TodayCard({ goal, plan, today, hour, onLog }: TodayCardProps) {
         <h1 id={`goal-${goal.id}`} className="text-5xl font-bold tracking-tight text-ink">
           {headline(goal, plan)}
         </h1>
-        <p className="text-muted">{summary(goal, plan)}</p>
+        <p className="text-muted">
+          {summary(goal, plan)} ·{" "}
+          <Link href={`/goals/${goal.id}/edit`} className="font-semibold text-ink underline underline-offset-4 focus-visible:outline-3 focus-visible:outline-focus">
+            Edit goal
+          </Link>
+        </p>
       </div>
 
       <p className="text-xl text-ink">{nudgeLine(goal, plan, today, hour)}</p>

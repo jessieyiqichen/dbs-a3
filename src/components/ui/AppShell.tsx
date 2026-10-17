@@ -1,6 +1,6 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
-import { Nav } from "./Nav";
+import { Suspense, type ReactNode } from "react";
+import { Nav, NavLinks } from "./Nav";
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
@@ -12,7 +12,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         <Link href="/" className="text-lg font-bold tracking-tight text-ink focus-visible:outline-3 focus-visible:outline-focus">
           Nudge
         </Link>
-        <Nav />
+        <Suspense fallback={<NavLinks pathname={null} />}>
+          <Nav />
+        </Suspense>
       </header>
       <main id="main" className="flex flex-1 flex-col">
         {children}

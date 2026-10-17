@@ -8,13 +8,18 @@ const LINKS = [
   { href: "/reminders", label: "Reminders" },
 ];
 
-export function Nav() {
-  const pathname = usePathname();
+function isCurrent(href: string, pathname: string | null): boolean {
+  if (pathname === null) return false;
+  return href === "/" ? pathname === "/" : pathname.startsWith(href);
+}
+
+/** The links themselves; `pathname` is null while it isn't known yet (prerender fallback). */
+export function NavLinks({ pathname }: { pathname: string | null }) {
   return (
     <nav aria-label="Main">
       <ul className="flex gap-1">
         {LINKS.map(({ href, label }) => {
-          const current = href === "/" ? pathname === "/" : pathname.startsWith(href);
+          const current = isCurrent(href, pathname);
           return (
             <li key={href}>
               <Link
@@ -33,4 +38,8 @@ export function Nav() {
       </ul>
     </nav>
   );
+}
+
+export function Nav() {
+  return <NavLinks pathname={usePathname()} />;
 }

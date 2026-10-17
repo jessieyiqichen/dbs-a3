@@ -73,6 +73,17 @@ export function updateData(change: (data: AppData) => AppData): boolean {
   return saved;
 }
 
+let focusGoalId: string | null = null;
+
+/** Shows this goal first on Today (e.g. one just created), until it's done. */
+export function setFocusGoal(id: string | null): void {
+  focusGoalId = id;
+}
+
+export function getFocusGoal(): string | null {
+  return focusGoalId;
+}
+
 /** The latest data, for timers that fire outside React. */
 export function currentData(): AppData | null {
   const state = read();

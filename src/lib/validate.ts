@@ -1,3 +1,8 @@
+import { daysBetween } from "./dates";
+import { formatCount } from "./format";
+import type { GoalType } from "./types";
+
+
 export type Parsed<T> = { ok: true; value: T } | { ok: false; error: string };
 
 export const MAX_LOG = 1000;
@@ -16,4 +21,101 @@ export function parseTime(text: string): Parsed<string> {
   return /^([01]\d|2[0-3]):[0-5]\d$/.test(text.trim())
     ? { ok: true, value: text.trim() }
     : { ok: false, error: "Enter a time, like 20:00." };
+}
+
+export const MAX_TITLE = 80;
+export const MAX_TARGET = 100_000;
+export const HIGH_PACE = 50;
+export const DEFAULT_UNIT = "times";
+
+export interface GoalDraft {
+  title: string;
+  type: GoalType;
+  target: string;
+  unit: string;
+  deadline: string;
+  link: string;
+}
+
+export type GoalField = keyof GoalDraft;
+
+export interface GoalValues {
+  title: string;
+  type: GoalType;
+  target: number;
+  unit: string;
+  deadline: string | null;
+  link: string | null;
+}
+
+export interface GoalValidation {
+  errors: Partial<Record<GoalField, string>>;
+  value: GoalValues | null;
+}
+
+function checkTitle(text: string): string | undefined {
+  if (text.length === 0) return 'Enter what you want to do, like "Send connection requests".';
+  if (text.length > MAX_TITLE) return "Keep it under 80 characters.";
+}
+
+function checkTarget(text: string): string | undefined {
+  if (!/^\d+$/.test(text) || Number(text) < 1) return "Enter a whole number, like 500.";
+  if (Number(text) > MAX_TARGET) return "Enter a number up to 100,000.";
+}
+
+function checkDeadline(type: GoalType, text: string, today: string): string | undefined {
+  if (type !== "by-date") return;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) return "Pick the date you want to finish by.";
+  if (text <= today) return "Pick a date after today.";
+}
+
+function checkLink(text: string): string | undefined {
+  if (text.length === 0) return;
+  try {
+    const url = new URL(text);
+    if (url.protocol === "https:" || url.protocol === "http:") return;
+  } catch {
+    // fall through to the error below
+  }
+  return "Paste a full link that starts with https://";
+}
+
+/** Checks the goal form. Errors say what to do next; the draft is never changed. */
+export function validateGoal(draft: GoalDraft, today: string): GoalValidation {
+  const title = draft.title.trim();
+  const target = draft.target.trim();
+  const link = draft.link.trim();
+  const errors: GoalValidation["errors"] = {};
+  const found: [GoalField, string | undefined][] = [
+    ["title", checkTitle(title)],
+    ["target", checkTarget(target)],
+    ["deadline", checkDeadline(draft.type, draft.deadline, today)],
+    ["link", checkLink(link)],
+  ];
+  for (const [field, error] of found) if (error) errors[field] = error;
+  if (Object.keys(errors).length > 0) return { errors, value: null };
+
+  return {
+    errors,
+    value: {
+      title,
+      type: draft.type,
+      target: Number(target),
+      unit: draft.unit.trim().toLowerCase() || DEFAULT_UNIT,
+      deadline: draft.type === "by-date" ? draft.deadline : null,
+      link: link || null,
+    },
+  };
+}
+
+/** The live "That's about 11 a day" line under a by-date goal's numbers. */
+export function dailyPreview(target: string, deadline: string, unit: string, today: string) {
+  if (checkTarget(target.trim()) || checkDeadline("by-date", deadline, today)) return null;
+  const perDay = Math.ceil(Number(target) / (daysBetween(today, deadline) + 1));
+  const what = unit.trim().toLowerCase() || DEFAULT_UNIT;
+  const message =
+    perDay > HIGH_PACE
+      ? `That's ${perDay} ${what} a day. That's a lot. Pick a later date or a smaller number?`
+      : `That's about ${formatCount(perDay, what)} a day.`;
+  return { perDay, message };
 }
