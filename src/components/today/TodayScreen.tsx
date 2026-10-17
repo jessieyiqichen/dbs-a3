@@ -81,7 +81,6 @@ export function TodayScreen() {
   const loggedToday = data.entries.some((e) => e.date === today);
   const { nudgesSetUp, nudgePromptDismissed, reminderTimes } = data.settings;
   const showPrompt = !nudgePromptDismissed && (promptPinned || (!nudgesSetUp && (loggedToday || visit.prevVisit !== null)));
-  const firstDay = first.goal.startDate === today && loggedToday;
   const next = rest.find((item) => ACTIVE.has(item.plan.status))?.goal ?? null;
 
   return (
@@ -103,7 +102,7 @@ export function TodayScreen() {
         <TodayCard goal={first.goal} plan={first.plan} today={today} hour={now.getHours()} onStart={() => startGoal(first.goal)} />
       )}
 
-      {showPrompt && !asking && <NudgePrompt firstDay={firstDay} times={reminderTimes} onActed={() => setPromptPinned(true)} />}
+      {showPrompt && !asking && <NudgePrompt times={reminderTimes} onActed={() => setPromptPinned(true)} />}
 
       <section aria-labelledby="also-today" className="mt-10 flex flex-col gap-1">
         <h2 id="also-today" className="text-sm font-semibold uppercase tracking-wide text-muted">

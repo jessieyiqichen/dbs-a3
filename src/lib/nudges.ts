@@ -5,39 +5,31 @@ import type { Goal } from "./types";
 
 export type NudgeLevel = "gentle" | "firmer" | "last-call";
 
-/** Warm and motivating, never shaming. Lines rotate by day. */
+/** Warm and motivating, never shaming, eight words at most. Lines rotate by day. */
 const NOT_STARTED: Record<NudgeLevel, string[]> = {
   gentle: [
-    "Just one to start. The rest gets easier.",
-    "Small steps still move you forward. Take the first one now.",
-    "Start with one. Momentum will do the rest.",
-    "One now, and today already counts.",
+    "One is enough to start.",
+    "Small steps still count.",
+    "Start with one. Momentum follows.",
+    "One now, and today counts.",
   ],
   firmer: [
-    "Still at zero today, and that's okay. One is enough to keep the day.",
-    "Every one you do is a door that might open. Open one now.",
-    "The hardest part is starting. You're closer than you think.",
-    "Future you, in the interview, will thank you for this one.",
+    "Still at zero? One keeps the day.",
+    "Every one opens a door.",
+    "Starting is the hardest part.",
+    "Future you will thank you.",
   ],
   "last-call": [
-    "There's still time. One keeps today from being a zero.",
-    "It's late, and one still counts. You've got this.",
-    "Before you rest, just one. Tomorrow you will be glad.",
+    "There's still time for one.",
+    "It's late. One still counts.",
+    "Just one before you rest.",
   ],
 };
 
 // The headline already says how many are done and left, so these only encourage.
-const STARTED = [
-  "You're already moving. Keep the momentum.",
-  "You started, which was the hard part.",
-  "Nice work so far. The next one is easier.",
-];
+const STARTED = ["You're already moving.", "The hard part is done.", "Keep the momentum."];
 
-const DONE = [
-  "Done for today. This is how big goals happen.",
-  "Today's {quota} are in. Be proud of that.",
-  "You showed up today. See you tomorrow.",
-];
+const DONE = ["This is how big goals happen.", "Be proud of today.", "You showed up today."];
 
 export function levelFor(hour: number): NudgeLevel {
   if (hour >= 19) return "last-call";
@@ -50,27 +42,20 @@ function pick(lines: string[], goal: Goal, today: string): string {
   return lines[(daysBetween("2026-01-01", today) + seed) % lines.length];
 }
 
-function fill(line: string, goal: Goal, plan: TodayPlan): string {
-  return line
-    .replace("{done}", formatCount(plan.doneToday, goal.unit))
-    .replace("{left}", String(plan.leftToday))
-    .replace("{quota}", formatCount(plan.quota, goal.unit));
-}
-
 export function nudgeLine(goal: Goal, plan: TodayPlan, today: string, hour: number): string {
   switch (plan.status) {
     case "complete":
-      return `You did it: ${formatCount(goal.target, goal.unit)}. Ready to set the next one?`;
+      return `You did it: ${formatCount(goal.target, goal.unit)}.`;
     case "deadline-passed":
-      return `The deadline passed with ${plan.doneTotal} of ${goal.target}. That's ${plan.doneTotal} more than zero. Pick a new date?`;
+      return `${plan.doneTotal} of ${goal.target} is still real progress.`;
     case "paused": {
       const pause = goal.pauses.find((p) => p.from <= today && today <= p.to);
-      return pause ? `Paused until ${formatShortDate(pause.to)}. Rest is part of the plan.` : "Paused. Rest is part of the plan.";
+      return pause ? `Paused until ${formatShortDate(pause.to)}. Rest counts too.` : "Paused. Rest counts too.";
     }
     case "done":
-      return fill(pick(DONE, goal, today), goal, plan);
+      return pick(DONE, goal, today);
     case "started":
-      return fill(pick(STARTED, goal, today), goal, plan);
+      return pick(STARTED, goal, today);
     default:
       return pick(NOT_STARTED[levelFor(hour)], goal, today);
   }

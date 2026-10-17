@@ -1,6 +1,4 @@
 import { addDays, daysBetween } from "./dates";
-import { formatCount } from "./format";
-import { planToday } from "./quota";
 import { streak } from "./streak";
 import type { Entry, Goal } from "./types";
 
@@ -23,24 +21,15 @@ export function welcomeMessage({ prevVisit, today, fromNudge, goal, entries }: W
   if (fromNudge) return "You came back. That's the hardest part.";
   if (prevVisit === null || prevVisit >= today) return null;
 
-  const plan = planToday(goal, entries, today);
-  const todayLine = `Today: ${formatCount(plan.quota, goal.unit)}.`;
   const sinceActive = daysBetween(lastActiveDay(goal, entries, today), today);
   const run = streak(goal, entries, today);
 
-  if (sinceActive <= 1) {
-    return run.days > 1
-      ? `Welcome back. ${run.days} days in a row. ${todayLine}`
-      : `Welcome back. You showed up yesterday. ${todayLine}`;
-  }
+  // Short: the headline below already says what to do today.
+  if (sinceActive <= 1) return run.days > 1 ? `Welcome back · ${run.days} days in a row` : "Welcome back · yesterday counted";
   if (sinceActive === 2) {
     return run.restDays.includes(addDays(today, -1)) && run.days > 0
-      ? "Welcome back. Yesterday was your rest day this week, so your streak is safe."
-      : `Welcome back. Yesterday slipped, and that's okay. Today's a fresh start. ${todayLine}`;
+      ? "Welcome back · yesterday was a rest day"
+      : "Welcome back. Fresh start today.";
   }
-  const spread =
-    goal.type === "by-date" && plan.daysLeft
-      ? `No catching up in one day: it's spread over the ${plan.daysLeft} days left.`
-      : `Today's a fresh start: just ${formatCount(plan.quota, goal.unit)}.`;
-  return `Welcome back. It's been ${sinceActive} days, and that's okay. ${spread}`;
+  return `Welcome back. It's been ${sinceActive} days, and that's okay.`;
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { levelFor, nudgeLine } from "./nudges";
+import { calendarLine, levelFor, nudgeLine } from "./nudges";
 import { planToday } from "./quota";
 import type { Entry, Goal } from "./types";
 
@@ -55,5 +55,22 @@ describe("nudgeLine", () => {
       ["2026-10-17", "2026-10-18", "2026-10-19", "2026-10-20"].map((d) => nudgeLine(goal, planToday(goal, [], d), d, h)),
     );
     lines.forEach((line) => expect(line).not.toMatch(/lazy|fail|should have|shame|again\?/i));
+  });
+});
+
+describe("length", () => {
+  const words = (s: string) => s.split(/\s+/).filter(Boolean).length;
+
+  it("keeps every nudge to eight words or fewer", () => {
+    const days = ["2026-10-17", "2026-10-18", "2026-10-19", "2026-10-20"];
+    const plans = [
+      planToday(goal, [], "2026-10-17"),
+      planToday(goal, [entry("2026-10-17", 4)], "2026-10-17"),
+      planToday(goal, [entry("2026-10-17", 11)], "2026-10-17"),
+    ];
+    for (const d of days) for (const h of [9, 15, 21]) for (const p of plans) {
+      expect(words(nudgeLine(goal, p, d, h))).toBeLessThanOrEqual(8);
+      expect(words(calendarLine(d, h))).toBeLessThanOrEqual(8);
+    }
   });
 });
