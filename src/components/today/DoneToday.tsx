@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { ScreenHeading } from "@/components/ui/ScreenHeading";
 import { formatCount } from "@/lib/format";
@@ -5,6 +6,8 @@ import type { HistoryRow } from "@/lib/progress";
 import type { Goal } from "@/lib/types";
 
 interface Props {
+  /** Shown under the celebration: the moment something useful is done is when to ask. */
+  prompt?: ReactNode;
   goal: Goal;
   doneToday: number;
   streakDays: number;
@@ -14,7 +17,7 @@ interface Props {
 }
 
 /** Make it satisfying: a visible reward the moment today's number is reached. */
-export function DoneToday({ goal, doneToday, streakDays, week, next, onStartNext }: Props) {
+export function DoneToday({ prompt, goal, doneToday, streakDays, week, next, onStartNext }: Props) {
   const days = [...week].reverse();
   return (
     <section aria-labelledby="done-title" className="flex flex-col items-center gap-4 pt-8 text-center">
@@ -40,6 +43,7 @@ export function DoneToday({ goal, doneToday, streakDays, week, next, onStartNext
       ) : (
         <ButtonLink href={`/goals/${goal.id}`} variant="secondary" className="mt-2">See your progress</ButtonLink>
       )}
+      {prompt && <div className="w-full text-left">{prompt}</div>}
     </section>
   );
 }

@@ -25,16 +25,16 @@ function statusText({ goal, plan }: PlannedGoal): string {
 export function GoalRow({ item, onStart }: { item: PlannedGoal; onStart: () => void }) {
   const canStart = item.plan.status === "not-started" || item.plan.status === "started";
   return (
-    <li className="flex items-center justify-between gap-3 border-b border-wash-strong py-3">
+    <li className="flex items-center justify-between gap-3 py-2">
       <div className="min-w-0">
-        <Link href={`/goals/${item.goal.id}`} className="block truncate font-semibold text-ink underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus">
+        <Link href={`/goals/${item.goal.id}`} className="block truncate text-ink underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus">
           {item.goal.title}
         </Link>
         <p className="text-sm text-muted">{statusText(item)}</p>
       </div>
       {canStart && (
-        <Button variant="secondary" onClick={onStart}>
-          Start<span className="sr-only">: {item.goal.title}</span>
+        <Button variant="ghost" onClick={onStart}>
+          Start<span className="sr-only">: {item.goal.title}</span> <span aria-hidden="true">→</span>
         </Button>
       )}
     </li>

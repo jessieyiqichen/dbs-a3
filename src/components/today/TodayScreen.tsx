@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { ButtonLink } from "@/components/ui/Button";
 import { StorageNotice } from "@/components/ui/StorageNotice";
 import { Toast } from "@/components/ui/Toast";
 import { addEntry, endSession, markVisited, removeEntry } from "@/lib/actions";
@@ -78,9 +77,8 @@ export function TodayScreen() {
   const asking = data.session?.goalId === first.goal.id;
   const visit = getVisitStart();
   const welcome = welcomeMessage({ ...visit, today, goal: first.goal, entries: data.entries });
-  const loggedToday = data.entries.some((e) => e.date === today);
   const { nudgesSetUp, nudgePromptDismissed, reminderTimes } = data.settings;
-  const showPrompt = !nudgePromptDismissed && (promptPinned || (!nudgesSetUp && (loggedToday || visit.prevVisit !== null)));
+  const showPrompt = !nudgePromptDismissed && (promptPinned || !nudgesSetUp);
   const next = rest.find((item) => ACTIVE.has(item.plan.status))?.goal ?? null;
 
   return (
@@ -91,6 +89,7 @@ export function TodayScreen() {
         <AskHowMany goal={first.goal} left={first.plan.leftToday} onLog={(n) => log(first.goal, n)} onNone={endSession} />
       ) : first.plan.status === "done" ? (
         <DoneToday
+          prompt={showPrompt ? <NudgePrompt times={reminderTimes} onActed={() => setPromptPinned(true)} /> : null}
           goal={first.goal}
           doneToday={first.plan.doneToday}
           streakDays={streak(first.goal, data.entries, today).days}
@@ -102,21 +101,16 @@ export function TodayScreen() {
         <TodayCard goal={first.goal} plan={first.plan} today={today} hour={now.getHours()} onStart={() => startGoal(first.goal)} />
       )}
 
-      {showPrompt && !asking && <NudgePrompt times={reminderTimes} onActed={() => setPromptPinned(true)} />}
-
-      <section aria-labelledby="also-today" className="mt-10 flex flex-col gap-1">
-        <h2 id="also-today" className="text-sm font-semibold uppercase tracking-wide text-muted">
-          {rest.length > 0 ? "Also today" : "Anything else you're putting off?"}
-        </h2>
-        {rest.length > 0 && (
+      {rest.length > 0 && !asking && (
+        <section aria-labelledby="also-today" className="mt-12 flex flex-col">
+          <h2 id="also-today" className="text-sm font-semibold text-muted">Also today</h2>
           <ul className="flex flex-col">
             {rest.map((item) => (
               <GoalRow key={item.goal.id} item={item} onStart={() => startGoal(item.goal)} />
             ))}
           </ul>
-        )}
-        <ButtonLink href="/goals/new" variant="ghost" className="mt-2 self-start">+ Add a goal</ButtonLink>
-      </section>
+        </section>
+      )}
       <Toast message={undoable?.message ?? null} onUndo={undo} onClose={closeToast} />
     </>
   );
