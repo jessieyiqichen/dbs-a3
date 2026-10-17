@@ -1,7 +1,8 @@
 "use client";
 
 import { updateData } from "./store";
-import type { Entry, Goal, Settings } from "./types";
+import { withPause, withoutPause } from "./progress";
+import type { AppData, Entry, Goal, Settings } from "./types";
 import type { GoalValues } from "./validate";
 
 export function addEntry(goalId: string, amount: number, date: string): Entry {
@@ -30,4 +31,29 @@ export function addGoal(values: GoalValues, today: string): Goal {
 
 export function updateGoal(id: string, values: GoalValues): void {
   updateData((data) => ({ ...data, goals: data.goals.map((g) => (g.id === id ? { ...g, ...values } : g)) }));
+}
+
+function changeGoal(id: string, change: (goal: Goal) => Goal): void {
+  updateData((data) => ({ ...data, goals: data.goals.map((g) => (g.id === id ? change(g) : g)) }));
+}
+
+export function pauseGoal(id: string, days: number, today: string): void {
+  changeGoal(id, (g) => withPause(g, days, today));
+}
+
+export function resumeGoal(id: string, today: string): void {
+  changeGoal(id, (g) => withoutPause(g, today));
+}
+
+export function deleteGoal(id: string): void {
+  updateData((data) => ({
+    ...data,
+    goals: data.goals.filter((g) => g.id !== id),
+    entries: data.entries.filter((e) => e.goalId !== id),
+  }));
+}
+
+/** Replaces everything on this device with a validated backup. */
+export function restoreData(backup: AppData): void {
+  updateData(() => backup);
 }

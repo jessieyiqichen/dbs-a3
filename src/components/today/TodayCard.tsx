@@ -43,8 +43,12 @@ export function TodayCard({ goal, plan, today, hour, onLog }: TodayCardProps) {
         </h1>
         <p className="text-muted">
           {summary(goal, plan)} ·{" "}
+          <Link href={`/goals/${goal.id}`} className="font-semibold text-ink underline underline-offset-4 focus-visible:outline-3 focus-visible:outline-focus">
+            Progress
+          </Link>{" "}
+          ·{" "}
           <Link href={`/goals/${goal.id}/edit`} className="font-semibold text-ink underline underline-offset-4 focus-visible:outline-3 focus-visible:outline-focus">
-            Edit goal
+            Edit
           </Link>
         </p>
       </div>

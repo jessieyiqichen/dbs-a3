@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { formatCount } from "@/lib/format";
 import type { PlannedGoal } from "@/lib/quota";
@@ -25,7 +26,9 @@ export function GoalRow({ item, onLog }: { item: PlannedGoal; onLog: () => void 
   return (
     <li className="flex items-center justify-between gap-3 rounded-lg border-2 border-line bg-surface p-3">
       <div className="min-w-0">
-        <p className="truncate font-semibold text-ink">{item.goal.title}</p>
+        <Link href={`/goals/${item.goal.id}`} className="block truncate font-semibold text-ink underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus">
+          {item.goal.title}
+        </Link>
         <p className="text-sm text-muted">{statusText(item)}</p>
       </div>
       {canLog && (
