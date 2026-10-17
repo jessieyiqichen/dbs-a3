@@ -10,3 +10,10 @@ export function parseCount(text: string): Parsed<number> {
   if (value > MAX_LOG) return { ok: false, error: "That's a lot! Enter a number up to 1,000." };
   return { ok: true, value };
 }
+
+/** "HH:MM" from a time field. */
+export function parseTime(text: string): Parsed<string> {
+  return /^([01]\d|2[0-3]):[0-5]\d$/.test(text.trim())
+    ? { ok: true, value: text.trim() }
+    : { ok: false, error: "Enter a time, like 20:00." };
+}

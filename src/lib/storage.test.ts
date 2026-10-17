@@ -37,3 +37,11 @@ describe("storage", () => {
     expect(parseData(JSON.stringify({ ...emptyData(), goals: [{ id: 1 }] }))).toBeNull();
   });
 });
+
+describe("storage: older saved data", () => {
+  it("fills in settings added later", () => {
+    const old = { ...emptyData(), settings: { reminderTimes: ["10:00"], notificationsOn: false } };
+    const parsed = parseData(JSON.stringify(old));
+    expect(parsed?.settings).toEqual({ reminderTimes: ["10:00"], notificationsOn: false, nudgesSetUp: false, nudgePromptDismissed: false });
+  });
+});

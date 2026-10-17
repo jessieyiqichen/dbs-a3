@@ -18,7 +18,7 @@ export function emptyData(): AppData {
     version: 1,
     goals: [],
     entries: [],
-    settings: { reminderTimes: DEFAULT_REMINDER_TIMES, notificationsOn: false },
+    settings: { reminderTimes: DEFAULT_REMINDER_TIMES, notificationsOn: false, nudgesSetUp: false, nudgePromptDismissed: false },
     lastVisit: null,
   };
 }
@@ -62,7 +62,19 @@ export function parseData(text: string): AppData | null {
   if (!isRecord(settings) || !Array.isArray(settings.reminderTimes)) return null;
   if (!settings.reminderTimes.every(isString) || typeof settings.notificationsOn !== "boolean") return null;
   if (!isNullableString(lastVisit)) return null;
-  return value as unknown as AppData;
+  return {
+    version: 1,
+    goals,
+    entries,
+    // Settings added after the first release default to false.
+    settings: {
+      reminderTimes: settings.reminderTimes,
+      notificationsOn: settings.notificationsOn,
+      nudgesSetUp: settings.nudgesSetUp === true,
+      nudgePromptDismissed: settings.nudgePromptDismissed === true,
+    },
+    lastVisit,
+  };
 }
 
 export function loadData(store: KeyValueStore | null): LoadResult {

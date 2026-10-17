@@ -74,3 +74,9 @@ export function nudgeLine(goal: Goal, plan: TodayPlan, today: string, hour: numb
       return pick(NOT_STARTED[levelFor(hour)], goal, today);
   }
 }
+
+/** A not-started line for a calendar reminder, which can't know what has been done. */
+export function calendarLine(date: string, hour: number): string {
+  const lines = NOT_STARTED[levelFor(hour)];
+  return lines[(daysBetween("2026-01-01", date) + hour) % lines.length];
+}

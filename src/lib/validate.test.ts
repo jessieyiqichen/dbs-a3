@@ -16,3 +16,16 @@ describe("parseCount", () => {
     expect(parseCount("5000")).toEqual({ ok: false, error: "That's a lot! Enter a number up to 1,000." });
   });
 });
+
+describe("parseTime", () => {
+  it("accepts HH:MM", async () => {
+    const { parseTime } = await import("./validate");
+    expect(parseTime("09:30")).toEqual({ ok: true, value: "09:30" });
+  });
+
+  it("asks for a time when empty or malformed", async () => {
+    const { parseTime } = await import("./validate");
+    expect(parseTime("")).toEqual({ ok: false, error: "Enter a time, like 20:00." });
+    expect(parseTime("25:00")).toEqual({ ok: false, error: "Enter a time, like 20:00." });
+  });
+});

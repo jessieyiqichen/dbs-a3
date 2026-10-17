@@ -33,6 +33,10 @@ export interface Entry {
 export interface Settings {
   reminderTimes: string[];
   notificationsOn: boolean;
+  /** True once a calendar file was downloaded or notifications were turned on. */
+  nudgesSetUp: boolean;
+  /** True after "Not now" on the set-up-nudges prompt. */
+  nudgePromptDismissed: boolean;
 }
 
 export interface AppData {
