@@ -84,3 +84,17 @@ describe("planToday: every day", () => {
     expect(plan.daysLeft).toBeNull();
   });
 });
+
+describe("sortByUrgency", () => {
+  it("keeps a started goal on top, then not started, then done", async () => {
+    const { sortByUrgency } = await import("./quota");
+    const a = goal({ id: "a" });
+    const b = goal({ id: "b" });
+    const c = goal({ id: "c" });
+    const entries = [
+      { ...entry(TODAY, 11), goalId: "a" }, // done
+      { ...entry(TODAY, 2), goalId: "b" }, // started
+    ];
+    expect(sortByUrgency([a, b, c], entries, TODAY).map((g) => g.goal.id)).toEqual(["b", "c", "a"]);
+  });
+});

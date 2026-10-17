@@ -19,6 +19,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Generic cumulative goals, not LinkedIn-only. LinkedIn 500 is the first-visit example.
 - A big goal is split into a daily quota (remaining / days left); falling behind raises tomorrow's quota, and the app says why.
 - "Forcing a start": the home screen shows only today's number and one big "do one now" action.
+- Tone and look: warm and motivating (user, 2026-10-17). Nudges get more direct through the day when nothing is done, but never shame. The visual style should feel warm too.
+- A goal you have started stays on top until it is done, so it never jumps away mid-task.
 
 ## Rules
 - Next.js + Tailwind. Data lives in localStorage only: no database, accounts, backend or external APIs. Push back on packages we don't need.

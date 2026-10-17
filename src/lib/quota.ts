@@ -66,3 +66,25 @@ export function planToday(goal: Goal, entries: Entry[], today: string): TodayPla
   };
   return { ...base, status: statusFor(goal, base, today) };
 }
+
+// A goal you've started stays on top until it's done, so it never jumps away mid-task.
+const URGENCY: Record<DayStatus, number> = {
+  started: 0,
+  "not-started": 1,
+  done: 2,
+  paused: 3,
+  "deadline-passed": 4,
+  complete: 5,
+};
+
+export interface PlannedGoal {
+  goal: Goal;
+  plan: TodayPlan;
+}
+
+/** Started first, then not started (furthest behind first), then done, paused and finished. */
+export function sortByUrgency(goals: Goal[], entries: Entry[], today: string): PlannedGoal[] {
+  return goals
+    .map((goal) => ({ goal, plan: planToday(goal, entries, today) }))
+    .sort((a, b) => URGENCY[a.plan.status] - URGENCY[b.plan.status] || b.plan.behindBy - a.plan.behindBy);
+}
