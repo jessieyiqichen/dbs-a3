@@ -30,3 +30,10 @@ Three subagents studied, in parallel, how each tool welcomes someone new (2026-1
 **Duolingo**: blog.duolingo.com/improving-the-streak; blog.duolingo.com/how-duolingo-streak-builds-habit; research.duolingo.com/papers/yancey.kdd20.pdf; lennysnewsletter.com/p/how-duolingo-reignited-user-growth; duolingo.deconstructoroffun.com/mechanics/notifications; goodux.appcues.com/blog/duolingo-user-onboarding.
 
 **Finch**: finchcare.com; apps.apple.com/us/app/finch-self-care-pet/id1528595748; lazyweb.com/canvas/flows/finch/onboarding; screensdesign.com/articles/finch-app-onboarding-design; ixd.prattsi.org/2026/02/design-critique-finch-self-care-pet-ios-app.
+
+## What we chose (user decision, 2026-10-17)
+
+1. **Number first.** The first screen turns a goal into today's number with one tap; other settings come later.
+2. **One action keeps the day.** Starting today (even one) counts; the quota is shown as progress, not pass/fail.
+3. **Escalate when behind.** On track: one reminder. Not started: more frequent toward evening, rotated and encouraging.
+4. **Missing a day is not failure.** One automatic rest day a week; a warm welcome back; the shortfall is spread over the days left.
