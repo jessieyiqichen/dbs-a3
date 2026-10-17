@@ -1,16 +1,10 @@
 "use client";
 
+import { downloadText } from "@/lib/download";
 import { resetData, type StoreState } from "@/lib/store";
 import { Button } from "./Button";
 
-function downloadRaw(raw: string) {
-  const url = URL.createObjectURL(new Blob([raw], { type: "application/json" }));
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "nudge-unreadable-data.json";
-  link.click();
-  URL.revokeObjectURL(url);
-}
+const downloadRaw = (raw: string) => downloadText(raw, "nudge-unreadable-data.json", "application/json");
 
 export function StorageNotice({ state }: { state: StoreState }) {
   if (state.kind === "corrupt") {

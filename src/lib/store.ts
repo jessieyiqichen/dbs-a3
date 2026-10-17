@@ -11,9 +11,27 @@ export type StoreState =
 let cache: StoreState | null = null;
 const listeners = new Set<() => void>();
 
+/** How this visit started, captured once per page load before lastVisit is updated. */
+export interface VisitStart {
+  prevVisit: string | null;
+  fromNudge: boolean;
+}
+let visitStart: VisitStart | null = null;
+
+export function getVisitStart(): VisitStart {
+  read();
+  return visitStart ?? { prevVisit: null, fromNudge: false };
+}
+
 function read(): StoreState {
   if (cache) return cache;
   const result = loadData(browserStore());
+  if (visitStart === null) {
+    visitStart = {
+      prevVisit: result.ok ? result.data.lastVisit : null,
+      fromNudge: new URLSearchParams(window.location.search).get("from") === "nudge",
+    };
+  }
   if (result.ok) cache = { kind: "ready", data: result.data, persistent: true };
   else if (result.reason === "corrupt") cache = { kind: "corrupt", raw: result.raw };
   else cache = { kind: "ready", data: emptyData(), persistent: false };
@@ -53,6 +71,12 @@ export function updateData(change: (data: AppData) => AppData): boolean {
   cache = { kind: "ready", data: next, persistent: saved };
   emit();
   return saved;
+}
+
+/** The latest data, for timers that fire outside React. */
+export function currentData(): AppData | null {
+  const state = read();
+  return state.kind === "ready" ? state.data : null;
 }
 
 export function resetData(): void {

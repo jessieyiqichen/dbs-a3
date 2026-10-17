@@ -15,9 +15,9 @@ flowchart TD
     D -->|Open LinkedIn| L[LinkedIn opens in a new tab]
     L --> E
     D -->|Tap +1| E[Day started. Progress moves]
-    E --> R{Set up nudges?}
-    R -->|Yes| N["/reminders"]
-    R -->|Later| T([Back to Today])
+    E --> R{"Nice, that's day one. Want me to nudge you tomorrow?"}
+    R -->|Set up nudges| N["/reminders: times, calendar file, notifications"]
+    R -->|Not now| T([Stays on Today, prompt hidden])
     S[(localStorage unavailable)] -.-> W[Banner: this browser won't save]
 ```
 
@@ -50,7 +50,7 @@ flowchart TD
     C -->|+1| D[Count goes up, toast with Undo]
     C -->|Log several| M[Enter a number] --> D
     D -->|Undo| B
-    D --> S{Today's state}
+    D --> S{"Today's state (a started goal stays on top until it's done)"}
     S -->|Started, not done| B2[Still counts as a day. Keep going]
     S -->|Quota done| G[Done for today. Next goal moves up]
     S -->|Target reached| Z[Goal complete]
@@ -61,14 +61,14 @@ flowchart TD
 ```mermaid
 flowchart TD
     N1[Calendar alarm: 10:00, 15:00, 20:00] --> O([Open the app])
-    N2[Browser notification while a tab is open, only if not started] --> O
-    O --> W[Welcome back + what changed since last visit]
-    W --> Q{How did the last days go?}
-    Q -->|On track| A[Today's number, same as planned]
-    Q -->|Missed a day| R[First miss this week is a rest day. Streak kept]
-    Q -->|Behind| B["Shortfall spread over the days left: 'Yesterday was 6 short, so today is 21'"]
+    N2["Browser notification while a tab is open: only if not started, plus a 22:30 last call"] --> O
+    N1 -->|Tapped the reminder| F["You came back. That's the hardest part."]
+    O --> Q{Since the last day you did something}
+    Q -->|Yesterday| A["Welcome back. 3 days in a row. Today: 11 connections."]
+    Q -->|One day missed, first this week| R["Yesterday was your rest day this week, so your streak is safe."]
+    Q -->|Several days| B["It's been 4 days, and that's okay. It's spread over the days left."]
     Q -->|Paused| P[No nudges, not counted as behind]
-    A & R & B --> T[Do one now]
+    F & A & R & B --> T[Do one now]
     O --> H["/goals/:id : progress line vs plan, streak, history"]
 ```
 

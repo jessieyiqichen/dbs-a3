@@ -1,0 +1,18 @@
+import type { Metadata } from "next";
+import { RemindersScreen } from "@/components/reminders/RemindersScreen";
+import { AppShell } from "@/components/ui/AppShell";
+import { PageHeader } from "@/components/ui/PageHeader";
+
+export const metadata: Metadata = { title: "Reminders · Nudge" };
+
+export default function RemindersPage() {
+  return (
+    <AppShell>
+      <PageHeader
+        title="Reminders"
+        intro="Two ways for me to come find you. Use both: the calendar works when Nudge is closed, notifications know whether you've started."
+      />
+      <RemindersScreen />
+    </AppShell>
+  );
+}
