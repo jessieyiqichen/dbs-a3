@@ -22,6 +22,33 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Tone and look: warm and motivating (user, 2026-10-17). Nudges get more direct through the day when nothing is done, but never shame. The visual style should feel warm too.
 - A goal you have started stays on top until it is done, so it never jumps away mid-task.
 
+## Design rules (from Week 3 class, agreed with the user 2026-10-17)
+
+Hierarchy (emphasize by de-emphasizing)
+- One primary action per screen, the only accent-colored thing on it. Everything else is secondary or quieter.
+- The most important number reads as a full sentence: what to do, how many, today.
+- Never stack more than one notice (welcome, warning, prompt) above the main action.
+
+Flow and steps (reducing friction)
+- Before adding a step, field or page, say what breaks without it. If nothing, don't add it.
+- Prefer doing it in place over sending people to another page.
+- Fill in sensible defaults, but the person decides their own goal: defaults are editable before they start.
+
+First visit and coming back
+- First visit: one question, one obvious first action, and one line saying what happens when you tap.
+- Coming back is faster than the first visit: what they do most comes first, before any message.
+- Reward right away: finishing today's number gets a visible celebration, not just a line of text.
+- Ask for permissions (notifications, calendar) only after the person has done something useful.
+
+Consistent components
+- The same action looks the same on every page (Edit, Add a goal, Back). Build it once as a shared component.
+- Removing one item uses Undo; replacing or deleting everything uses Confirm.
+
+Checking and working together
+- Don't say it's done until it's checked in the browser at 390px and 1440px, keyboard only, with the console clear.
+- Check text contrast meets WCAG AA (4.5:1 text, 3:1 controls) for every color pair you add.
+- Work one flow stage at a time with the user. Show the current steps, ask, then change only what was agreed. Never redesign several stages at once.
+
 ## Rules
 - Next.js + Tailwind. Data lives in localStorage only: no database, accounts, backend or external APIs. Push back on packages we don't need.
 - The app cannot push when the page is closed. Calendar files (.ics, generated in the browser) are the only off-page reminder; they cannot know whether today is done. Say so honestly in the UI and README.
