@@ -42,11 +42,11 @@ export function Coins({ total, done, label, onPick, showCount = true }: Props) {
   }
 
   // Clay tiles only where a fish can be tapped: an earned one sits on a honey lip, one still to go on a plain lip.
-  // Where the fish only show a number (the plan step), they lie flat, so nothing looks pressable that isn't
-  // (user, 2026-10-18).
+  // Where the fish only show a number (the plan step), they stand bare, so nothing looks pressable that isn't.
   const cell = "flex h-12 w-12 items-center justify-center rounded-xl px-1";
   const tile = (earned: boolean) => `clay ${cell} ${earned ? "bg-reward-soft [--lip:var(--color-reward)]" : "bg-surface"}`;
-  const flat = (earned: boolean) => `${cell} ${earned ? "bg-reward-soft" : "bg-wash"}`;
+  // Display-only fish have no box at all (user, 2026-10-18): a box reads as a tile you could press
+  const flat = (earned: boolean) => `${cell} ${earned ? "" : "opacity-80"}`;
   const fish = Array.from({ length: total }, (_, i) => i + 1);
   const grid = { gridTemplateColumns: `repeat(${perRow(total)}, 3rem)` };
 
