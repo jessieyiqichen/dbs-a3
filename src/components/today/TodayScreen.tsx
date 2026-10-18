@@ -9,6 +9,7 @@ import { formatCount } from "@/lib/format";
 import { sortByUrgency, type PlannedGoal } from "@/lib/quota";
 import { startGoal } from "@/lib/start";
 import { getFocusGoal, getVisitStart, useStore } from "@/lib/store";
+import { calendarNotice, catchUpLine, sessionIsToday } from "@/lib/returning";
 import { weekBowls } from "@/lib/scene";
 import { overallStreak } from "@/lib/streak";
 import type { AppData, Goal } from "@/lib/types";
@@ -80,7 +81,7 @@ export function TodayScreen() {
   }
 
   const [first, ...rest] = pickFirst(sortByUrgency(data.goals, data.entries, today), data);
-  const asking = data.session?.goalId === first.goal.id && ACTIVE.has(first.plan.status);
+  const asking = data.session?.goalId === first.goal.id && sessionIsToday(data.session, today) && ACTIVE.has(first.plan.status);
   const visit = getVisitStart();
   const welcome = welcomeMessage({ ...visit, today, goals: data.goals, entries: data.entries });
   const { nudgesSetUp, nudgePromptDismissed, reminderTimes } = data.settings;
@@ -120,6 +121,8 @@ export function TodayScreen() {
           hour={now.getHours()}
           bowls={weekBowls(data.goals, data.entries, today)}
           welcome={welcome}
+          catchUp={catchUpLine(first.plan)}
+          notice={calendarNotice(data.settings.calendarUntil, today)}
           next={next}
           corner={run > 0 ? <StreakChip days={run} /> : undefined}
           onStart={() => startGoal(first.goal)}

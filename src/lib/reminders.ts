@@ -9,9 +9,10 @@ import { buildIcs, CALENDAR_DAYS } from "./ics";
 export function addToCalendar(times: string[]): string {
   const start = toISODate(new Date());
   const ics = buildIcs({ times, startDate: start, days: CALENDAR_DAYS, appUrl: window.location.origin, stamp: new Date() });
+  const until = addDays(start, CALENDAR_DAYS - 1);
+  updateSettings({ nudgesSetUp: true, calendarUntil: until });
   downloadText(ics, "nudge-reminders.ics", "text/calendar");
-  updateSettings({ nudgesSetUp: true });
-  return addDays(start, CALENDAR_DAYS - 1);
+  return until;
 }
 
 export type Permission = NotificationPermission | "unsupported";

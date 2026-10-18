@@ -40,6 +40,8 @@ export interface Settings {
   nudgesSetUp: boolean;
   /** True after "Not now" on the set-up-nudges prompt. */
   nudgePromptDismissed: boolean;
+  /** The last day the downloaded calendar file covers, so Today can say when to grab a new one. */
+  calendarUntil: string | null;
 }
 
 /** Set when someone taps Start, until they say how many they did. */

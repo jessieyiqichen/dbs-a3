@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { ScreenHeading } from "@/components/ui/ScreenHeading";
 import { nudgeLine } from "@/lib/nudges";
@@ -19,6 +20,10 @@ interface Props {
   bowls: BowlDay[];
   /** The welcome-back line, shown in Titi's bubble instead of the nudge. */
   welcome: string | null;
+  /** Why today's number grew after missed days. */
+  catchUp: string | null;
+  /** The calendar file is running out. */
+  notice: string | null;
   next: Goal | null;
   corner?: React.ReactNode;
   onStart: () => void;
@@ -49,24 +54,30 @@ function catFor(status: Status, cheer: boolean): { mood: CatMood; effect?: CatEf
   return { mood: "idle", effect: cheer ? "hop" : undefined };
 }
 
+/** The whole goal in one quiet line; it opens the goal's progress page. */
 function Road({ goal, plan }: { goal: Goal; plan: TodayPlan }) {
+  const card = "clay clay-press flex items-center gap-3 rounded-2xl bg-surface px-4 py-3 hover:bg-wash focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-focus";
   if (goal.type !== "by-date") {
-    return <p className="clay rounded-2xl bg-surface px-4 py-3 text-center font-bold text-muted">{countOf(plan.doneTotal, goal.unit)} all time</p>;
+    return (
+      <Link href={`/goals/${goal.id}`} className={`${card} justify-center font-bold text-muted`}>
+        {countOf(plan.doneTotal, goal.unit)} all time <span aria-hidden="true">→</span><span className="sr-only">, see progress</span>
+      </Link>
+    );
   }
   const pct = Math.min(100, Math.round((plan.doneTotal / Math.max(goal.target, 1)) * 100));
   return (
-    <div className="clay flex items-center gap-3 rounded-2xl bg-surface px-4 py-3">
+    <Link href={`/goals/${goal.id}`} className={card} aria-label={`Road to ${goal.target}: ${plan.doneTotal} done, see progress`}>
       <span className="font-display font-semibold text-ink">Road to {goal.target}</span>
-      <div role="progressbar" aria-label={`Road to ${goal.target}`} aria-valuemin={0} aria-valuemax={goal.target} aria-valuenow={plan.doneTotal} className="h-3 flex-1 overflow-hidden rounded-full bg-wash-strong">
+      <div aria-hidden="true" className="h-3 flex-1 overflow-hidden rounded-full bg-wash-strong">
         <div className="h-full rounded-full bg-reward shadow-[inset_0_2px_0_rgba(255,255,255,.5)]" style={{ width: `${pct}%` }} />
       </div>
       <span className="text-sm font-extrabold tabular-nums text-muted">{plan.doneTotal} done</span>
-    </div>
+    </Link>
   );
 }
 
 /** Today: Titi's room with this week's bowls on the sill, one sentence in Titi's bubble, and one button. */
-export function TodayHome({ goal, plan, today, hour, bowls, welcome, next, corner, onStart, onStartNext, cheer = false }: Props) {
+export function TodayHome({ goal, plan, today, hour, bowls, welcome, catchUp, notice, next, corner, onStart, onStartNext, cheer = false }: Props) {
   const site = siteName(goal.link);
   const active = plan.status === "not-started" || plan.status === "started";
   const line = plan.status === "done" ? "Titi is so full! See you tomorrow~" : (welcome ?? nudgeLine(goal, plan, today, hour));
@@ -77,6 +88,7 @@ export function TodayHome({ goal, plan, today, hour, bowls, welcome, next, corne
       <div className="clay relative mx-auto mt-5 w-full max-w-[430px] rounded-3xl bg-surface px-5 py-4">
         <ScreenHeading id={`goal-${goal.id}`} className="font-display text-2xl font-bold leading-tight text-ink [text-wrap:balance]">{title(goal, plan)}</ScreenHeading>
         <p className="mt-1 font-bold text-muted">{line}</p>
+        {catchUp && plan.status === "not-started" && <p className="mt-1 text-sm font-bold text-muted">{catchUp}</p>}
       </div>
       <div className="mx-auto mt-4 flex w-full max-w-[430px] flex-col gap-3">
         {active && (
@@ -89,6 +101,11 @@ export function TodayHome({ goal, plan, today, hour, bowls, welcome, next, corne
         {plan.status === "deadline-passed" && <ButtonLink href={`/goals/${goal.id}/edit`} size="lg" className="w-full">Pick a new date</ButtonLink>}
         {plan.status === "paused" && <ButtonLink href="/goals" variant="secondary" className="self-start">Manage goals</ButtonLink>}
         <Road goal={goal} plan={plan} />
+        {notice && (
+          <Link href="/reminders" className="self-center text-sm font-bold text-muted underline decoration-2 underline-offset-4 hover:text-ink focus-visible:outline-3 focus-visible:outline-focus">
+            {notice}
+          </Link>
+        )}
       </div>
     </section>
   );

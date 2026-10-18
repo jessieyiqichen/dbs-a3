@@ -13,8 +13,8 @@ export function PageHeader({ title, intro, back = "/", backLabel = "← Back to 
       <Link href={back} className="self-start text-sm font-semibold text-muted underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus">
         {backLabel}
       </Link>
-      <h1 className="text-3xl font-bold tracking-tight text-ink">{title}</h1>
-      {intro && <p className="text-lg text-muted">{intro}</p>}
+      <h1 className="font-display text-3xl font-bold text-ink">{title}</h1>
+      {intro && <p className="font-bold text-muted">{intro}</p>}
     </div>
   );
 }
