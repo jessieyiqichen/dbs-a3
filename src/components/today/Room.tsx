@@ -56,7 +56,7 @@ export function ShelfBowl({ bowl, label = "letter" }: { bowl: BowlDay; label?: "
 function Shelf({ bowls }: { bowls: BowlDay[] }) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-reward-soft bg-page/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-sm sm:static sm:border-0 sm:bg-transparent sm:pb-0 sm:backdrop-blur-none">
-      <div className="flat mx-auto max-w-xl rounded-t-2xl bg-reward-soft px-3 pb-1 pt-1.5 sm:rounded-2xl sm:pb-2 sm:pt-2">
+      <div className="mx-auto max-w-xl px-3 pb-1 pt-1.5 sm:pb-2 sm:pt-2">
         <p className="mb-1 text-center text-xs font-extrabold text-muted max-sm:sr-only">Titi&apos;s week, every goal counts!</p>
         <ol aria-label="Titi's week, every goal counts" className="flex items-end gap-1">
           {bowls.map((b) => <ShelfBowl key={b.date} bowl={b} />)}

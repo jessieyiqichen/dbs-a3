@@ -113,8 +113,8 @@ export function Road({ goal, story }: { goal: Goal; story: RoadStory }) {
   const label = `${story.done} of ${goal.target} ${goal.unit}: ${Math.round(story.at * 100)}% of the road, ${story.ahead ? "ahead of" : "behind"} the steady pace`;
   const cat = 230 * cs;
   return (
-    <figure className="flat overflow-hidden rounded-3xl bg-surface">
-      <div className="relative">
+    <figure>
+      <div className="relative overflow-hidden rounded-3xl">
         {/* eslint-disable-next-line @next/next/no-img-element -- painted art, sized by the card */}
         <img src="/cat/road.webp" alt="" aria-hidden="true" width={W} height={H} className="block h-auto w-full" />
         <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label} className="absolute inset-0 h-full w-full">
@@ -134,7 +134,7 @@ export function Road({ goal, story }: { goal: Goal; story: RoadStory }) {
           <image href={story.at >= 1 ? "/cat/celebrate.png" : "/cat/happy.png"} x={cx - cat / 2} y={cy - cat + 8 * cs} width={cat} height={cat} />
         </svg>
       </div>
-      <figcaption className="px-3 pb-3 pt-2 text-center text-sm font-bold text-muted">
+      <figcaption className="px-3 pt-3 text-center text-sm font-bold text-muted">
         {/* The marker is a dashed ring, not a flag, and it is only drawn when it is clear of Titi, so the caption says so too
             (first-run check, 2026-10-18: "pace flag" sent a tester looking for a second flag) */}
         {story.at >= 1 ? "Titi made it to the end of the road!" : !showPace ? "Titi is right on pace!" : story.ahead ? "Titi is ahead of the dashed pace ring~" : "The dashed pace ring is a little ahead, one today catches up~"}

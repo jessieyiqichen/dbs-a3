@@ -37,7 +37,7 @@ export function NotificationsCard({ on, times }: { on: boolean; times: string[] 
   }
 
   return (
-    <section aria-labelledby="notify-title" className="flat flex flex-col gap-3 rounded-3xl bg-surface p-5">
+    <section aria-labelledby="notify-title" className="flex flex-col gap-3 border-t-2 border-wash-strong pt-6">
       <h2 id="notify-title" className="font-display text-xl font-semibold text-ink">Notifications while Nudge is open</h2>
       <p className="font-bold text-muted">With a Nudge tab open, I nudge you only until you start, with one last call at 22:30~</p>
 

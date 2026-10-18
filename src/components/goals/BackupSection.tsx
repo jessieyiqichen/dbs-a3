@@ -56,7 +56,7 @@ export function BackupSection({ data }: { data: AppData }) {
         </div>
         {error && <p role="alert" className="text-sm font-bold text-danger">{error}</p>}
         {pending && (
-          <div role="alert" className="flat flex flex-col gap-3 rounded-2xl bg-surface p-4">
+          <div role="alert" className="flex flex-col gap-3 px-1 py-2">
             <p className="font-bold text-ink">
               This replaces everything here with the {pending.goals.length === 1 ? "1 goal" : `${pending.goals.length} goals`} in the file
             </p>
