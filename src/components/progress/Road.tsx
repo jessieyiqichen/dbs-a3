@@ -21,8 +21,9 @@ function point(t: number): [number, number] {
 
 const PATH = `M${P[0][0]},${P[0][1]} C${P[1][0]},${P[1][1]} ${P[2][0]},${P[2][1]} ${P[3][0]},${P[3][1]}`;
 
-/** A by-date goal as a road Titi walks: paw prints behind her, a bowl at every quarter, a little flag where the
- *  steady pace would be today, and the finish at the deadline. No axes, no chart. */
+/** A by-date goal as a road Titi walks: paw prints behind her, a bowl at every quarter, a dashed ring where the
+ *  steady pace would be today, and a red flag at the deadline. Titi wears her closed-eye smile here (a different
+ *  frame from the avatar above), and her celebrate pose once she reaches the flag. No axes, no chart. */
 export function Road({ goal, story }: { goal: Goal; story: RoadStory }) {
   const [cx, cy] = point(story.at);
   const [px, py] = point(story.pace);
@@ -44,8 +45,8 @@ export function Road({ goal, story }: { goal: Goal; story: RoadStory }) {
           return <image key={m.at} href={m.reached ? "/cat/bowl-full.png" : "/cat/bowl-empty.png"} x={x - 15} y={y - 24} width={30} height={22} opacity={m.reached ? 1 : 0.7} />;
         })}
         {/* the finish: a flag on a post with the date */}
-        <line x1={P[3][0]} y1={P[3][1]} x2={P[3][0]} y2={P[3][1] - 30} stroke="var(--color-lip)" strokeWidth={3} strokeLinecap="round" />
-        <path d={`M${P[3][0]},${P[3][1] - 30} h18 l-5 6 l5 6 h-18 z`} fill="var(--color-primary)" />
+        <line x1={P[3][0]} y1={P[3][1]} x2={P[3][0]} y2={P[3][1] - 30} stroke="var(--color-reward-deep)" strokeWidth={3} strokeLinecap="round" />
+        <path d={`M${P[3][0]},${P[3][1] - 30} h18 l-5 6 l5 6 h-18 z`} fill="var(--color-flag)" />
         <text x={P[3][0] + 2} y={P[3][1] + 24} textAnchor="middle" fontSize={10} fontWeight={800} fill="var(--color-muted)">{formatShortDate(goal.deadline ?? "")}</text>
         {/* the steady pace: a small dashed marker, only when it isn't under Titi */}
         {Math.abs(story.pace - story.at) > 0.03 && (
@@ -54,7 +55,7 @@ export function Road({ goal, story }: { goal: Goal; story: RoadStory }) {
             <text x={px} y={py + 24} textAnchor="middle" fontSize={9} fontWeight={800} fill="var(--color-lip)">pace</text>
           </g>
         )}
-        <image href={story.at >= 1 ? "/cat/celebrate.png" : "/cat/idle.png"} x={cx - 26} y={cy - 50} width={52} height={52} />
+        <image href={story.at >= 1 ? "/cat/celebrate.png" : "/cat/happy.png"} x={cx - 26} y={cy - 50} width={52} height={52} />
       </svg>
       <figcaption className="px-3 text-center text-sm font-bold text-muted">
         {story.at >= 1 ? "Titi made it to the end of the road!" : story.ahead ? "Titi is ahead of the pace flag~" : "The pace flag is a little ahead, one today catches up~"}
