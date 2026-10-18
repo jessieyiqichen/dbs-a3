@@ -31,7 +31,7 @@ flowchart TD
 
 ## 2. The main task: Today, the session, and the results
 
-Today puts the main action on the first screen: a short window with the streak, the goal tabs, one sentence and one button, the road so far; Titi and the week of bowls sit below. The "Nudge you tomorrow?" card only appears once today's number is reached.
+Today is Titi's room: the window with the streak, Titi on her mat, the goal tabs, one sentence and one button, the road so far. The week of bowls is a shelf fixed at the foot of a phone screen (from 640px up it sits under the room), so Titi stays big and the button still lands on the first screen. The "Nudge you tomorrow?" card only appears once today's number is reached.
 
 ```mermaid
 flowchart TD
