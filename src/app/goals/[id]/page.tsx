@@ -15,7 +15,7 @@ async function Progress({ params }: { params: Params }) {
 
 export default function ProgressPage({ params }: PageProps<"/goals/[id]">) {
   return (
-    <AppShell>
+    <AppShell width="medium">
       <PageHeader title="Progress" back="/goals" backLabel="← Back to goals" />
       <Suspense fallback={<p className="pt-6 text-muted">Loading your progress…</p>}>
         <Progress params={params} />

@@ -81,14 +81,17 @@ interface Props {
 export function Room({ bowls, cat, corner, children }: Props) {
   const time = timeOfDay(useHour());
   return (
-    <div className="flex flex-col gap-4 max-sm:pb-24 lg:grid lg:grid-cols-2 lg:grid-rows-[auto_auto_auto] lg:items-start lg:gap-x-10 lg:gap-y-5">
+    <div className="flex flex-col gap-4 max-sm:pb-24 lg:grid lg:grid-cols-2 lg:grid-rows-[auto_auto] lg:items-start lg:gap-x-10 lg:gap-y-6">
       <div className="lg:col-start-1 lg:row-start-1"><Window time={time} corner={corner} /></div>
-      <div className="relative mx-auto flex w-52 flex-col items-center lg:col-start-1 lg:row-start-2 lg:w-64 lg:py-2">
-        <span aria-hidden="true" className="clay absolute bottom-1 left-1/2 h-10 w-48 -translate-x-1/2 rounded-full bg-sun [--lip:#e9cf7e] lg:h-12 lg:w-60" />
-        <CatArt key={cat.key} mood={cat.mood} effect={cat.effect} sun={false} className="relative w-40 lg:w-52" />
+      <div className="relative mx-auto flex w-52 flex-col items-center lg:col-start-1 lg:row-start-2 lg:w-96 lg:py-6">
+        <span aria-hidden="true" className="clay absolute bottom-1 left-1/2 h-10 w-48 -translate-x-1/2 rounded-full bg-sun [--lip:#e9cf7e] lg:bottom-4 lg:h-16 lg:w-80" />
+        <CatArt key={cat.key} mood={cat.mood} effect={cat.effect} sun={false} className="relative w-40 lg:w-72" />
       </div>
-      <div className="flex flex-col gap-4 lg:col-start-2 lg:row-start-1 lg:row-span-3 lg:sticky lg:top-6">{children}</div>
-      <div className="lg:col-start-1 lg:row-start-3"><Shelf bowls={bowls} /></div>
+      {/* On a desktop the goal and the week sit together on the right; on a phone the shelf is fixed at the foot anyway */}
+      <div className="flex flex-col gap-4 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center">
+        {children}
+        <Shelf bowls={bowls} />
+      </div>
     </div>
   );
 }

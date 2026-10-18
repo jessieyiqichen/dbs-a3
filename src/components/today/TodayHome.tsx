@@ -40,19 +40,31 @@ type Status = TodayPlan["status"];
 
 function title(goal: Goal, plan: TodayPlan): string {
   switch (plan.status) {
-    case "started": return `${plan.doneToday} done, ${plan.leftToday} to go!`;
-    case "done": return "Done for today!";
-    case "paused": return "Paused";
-    case "complete": return "Goal reached!";
+    case "started":
+      return `${plan.doneToday} done, ${plan.leftToday} to go!`;
+    case "done":
+      return "Done for today!";
+    case "paused":
+      return "Paused";
+    case "complete":
+      return "Goal reached!";
     // Progress first, then the push to keep going: encouraging, not a verdict
-    case "deadline-passed": return plan.doneTotal > 0 ? `${plan.doneTotal} of ${goal.target}, nice work!` : "Ready for a fresh start?";
-    default: return headline(goal.verb, plan.quota, goal.unit);
+    case "deadline-passed":
+      return plan.doneTotal > 0
+        ? `${plan.doneTotal} of ${goal.target}, nice work!`
+        : "Ready for a fresh start?";
+    default:
+      return headline(goal.verb, plan.quota, goal.unit);
   }
 }
 
 /** Titi in every state: asleep before you start or while paused, sitting with you otherwise, jumping when the goal is reached. */
-function catFor(status: Status, cheer: boolean): { mood: CatMood; effect?: CatEffect } {
-  if (status === "not-started" || status === "paused") return { mood: "sleep", effect: "zzz" };
+function catFor(
+  status: Status,
+  cheer: boolean,
+): { mood: CatMood; effect?: CatEffect } {
+  if (status === "not-started" || status === "paused")
+    return { mood: "sleep", effect: "zzz" };
   if (status === "complete") return { mood: "celebrate", effect: "party" };
   if (status === "done") return { mood: "idle", effect: "party" };
   return { mood: "idle", effect: cheer ? "hop" : undefined };
@@ -60,42 +72,88 @@ function catFor(status: Status, cheer: boolean): { mood: CatMood; effect?: CatEf
 
 /** The whole goal in one quiet line; it opens the goal's progress page. */
 function Road({ goal, plan }: { goal: Goal; plan: TodayPlan }) {
-  const card = "clay clay-press flex items-center gap-3 rounded-2xl bg-surface px-4 py-3 hover:bg-wash focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-focus";
+  const card =
+    "clay clay-press flex items-center gap-3 rounded-2xl bg-surface px-4 py-3 hover:bg-wash focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-focus";
   if (goal.type !== "by-date") {
     return (
-      <Link href={`/goals/${goal.id}`} className={`${card} justify-center font-bold text-muted`}>
-        {countOf(plan.doneTotal, goal.unit)} all time <span aria-hidden="true">→</span><span className="sr-only">, see progress</span>
+      <Link
+        href={`/goals/${goal.id}`}
+        className={`${card} justify-center font-bold text-muted`}
+      >
+        {countOf(plan.doneTotal, goal.unit)} all time{" "}
+        <span aria-hidden="true">→</span>
+        <span className="sr-only">, see progress</span>
       </Link>
     );
   }
-  const pct = Math.min(100, Math.round((plan.doneTotal / Math.max(goal.target, 1)) * 100));
+  const pct = Math.min(
+    100,
+    Math.round((plan.doneTotal / Math.max(goal.target, 1)) * 100),
+  );
   return (
-    <Link href={`/goals/${goal.id}`} className={card} aria-label={`Road to ${goal.target}: ${plan.doneTotal} done, see progress`}>
-      <span className="font-display font-semibold text-ink">Road to {goal.target}</span>
-      <div aria-hidden="true" className="h-3 flex-1 overflow-hidden rounded-full bg-wash-strong">
-        <div className="h-full rounded-full bg-reward shadow-[inset_0_2px_0_rgba(255,255,255,.5)]" style={{ width: `${pct}%` }} />
+    <Link
+      href={`/goals/${goal.id}`}
+      className={card}
+      aria-label={`Road to ${goal.target}: ${plan.doneTotal} done, see progress`}
+    >
+      <span className="font-display font-semibold text-ink">
+        Road to {goal.target}
+      </span>
+      <div
+        aria-hidden="true"
+        className="h-3 flex-1 overflow-hidden rounded-full bg-wash-strong"
+      >
+        <div
+          className="h-full rounded-full bg-reward shadow-[inset_0_2px_0_rgba(255,255,255,.5)]"
+          style={{ width: `${pct}%` }}
+        />
       </div>
-      <span className="text-sm font-extrabold tabular-nums text-muted">{plan.doneTotal} done</span>
+      <span className="text-sm font-extrabold tabular-nums text-muted">
+        {plan.doneTotal} done
+      </span>
     </Link>
   );
 }
 
 /** Which goal is up now: the person picks; the first tab is the one the app would pick on its own. */
-function GoalTabs({ goals, current, onPick }: { goals: { goal: Goal; done: boolean }[]; current: string; onPick: (id: string) => void }) {
-  const pill = "clay clay-press inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full px-4 font-display text-sm font-semibold focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus";
+function GoalTabs({
+  goals,
+  current,
+  onPick,
+}: {
+  goals: { goal: Goal; done: boolean }[];
+  current: string;
+  onPick: (id: string) => void;
+}) {
+  const pill =
+    "clay clay-press inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full px-4 font-display text-sm font-semibold focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus";
   return (
-    <nav aria-label="Up now" className="flex w-full gap-2 overflow-x-auto px-1 pb-2 pt-1 [scrollbar-width:none]">
+    <nav
+      aria-label="Up now"
+      className="flex w-full gap-2 overflow-x-auto px-1 pb-2 pt-1 [scrollbar-width:none]"
+    >
       {goals.map(({ goal, done }) => {
         const on = goal.id === current;
         return (
-          <button key={goal.id} type="button" aria-pressed={on} onClick={() => onPick(goal.id)} className={`${pill} ${on ? "bg-primary text-on-primary [--lip:var(--color-lip)]" : "bg-surface text-ink hover:bg-wash"}`}>
+          <button
+            key={goal.id}
+            type="button"
+            aria-pressed={on}
+            onClick={() => onPick(goal.id)}
+            className={`${pill} ${on ? "bg-primary text-on-primary [--lip:var(--color-lip)]" : "bg-surface text-ink hover:bg-wash"}`}
+          >
             {shortName(goal)}
             {done && <span aria-hidden="true">✓</span>}
             {done && <span className="sr-only">, done for today</span>}
           </button>
         );
       })}
-      <Link href="/goals/new" className={`${pill} bg-surface text-muted hover:bg-wash`}>+ Add</Link>
+      <Link
+        href="/goals/new"
+        className={`${pill} bg-surface text-muted hover:bg-wash`}
+      >
+        + Add
+      </Link>
     </nav>
   );
 }
@@ -108,18 +166,48 @@ function shortName(goal: Goal): string {
 
 /** Today: the window, Titi on her mat, which goal, one sentence and one button; this week's bowls on a shelf that stays at
  *  the foot of a phone screen while the room scrolls. */
-export function TodayHome({ goal, plan, today, hour, bowls, welcome, catchUp, notice, next, goals, onPick, corner, prompt, onStart, onStartNext, cheer = false }: Props) {
+export function TodayHome({
+  goal,
+  plan,
+  today,
+  hour,
+  bowls,
+  welcome,
+  catchUp,
+  notice,
+  next,
+  goals,
+  onPick,
+  corner,
+  prompt,
+  onStart,
+  onStartNext,
+  cheer = false,
+}: Props) {
   const active = plan.status === "not-started" || plan.status === "started";
-  const line = plan.status === "done" ? "Titi is so full! See you tomorrow~" : (welcome ?? nudgeLine(goal, plan, today, hour));
-  const cat = { ...catFor(plan.status, cheer), key: cheer ? "cheer" : plan.status };
+  const line =
+    plan.status === "done"
+      ? "Titi is so full! See you tomorrow~"
+      : (welcome ?? nudgeLine(goal, plan, today, hour));
+  const cat = {
+    ...catFor(plan.status, cheer),
+    key: cheer ? "cheer" : plan.status,
+  };
   return (
     <section aria-labelledby={`goal-${goal.id}`} className="flex flex-col">
       <Room bowls={bowls} cat={cat} corner={corner}>
         <GoalTabs goals={goals} current={goal.id} onPick={onPick} />
         <div className="clay relative w-full rounded-3xl bg-surface px-5 py-4">
-          <ScreenHeading id={`goal-${goal.id}`} className="font-display text-2xl font-bold leading-tight text-ink [text-wrap:balance]">{title(goal, plan)}</ScreenHeading>
+          <ScreenHeading
+            id={`goal-${goal.id}`}
+            className="font-display text-2xl font-bold leading-tight text-ink [text-wrap:balance]"
+          >
+            {title(goal, plan)}
+          </ScreenHeading>
           <p className="mt-1 font-bold text-muted">{line}</p>
-          {catchUp && plan.status === "not-started" && <p className="mt-1 text-sm font-bold text-muted">{catchUp}</p>}
+          {catchUp && plan.status === "not-started" && (
+            <p className="mt-1 text-sm font-bold text-muted">{catchUp}</p>
+          )}
         </div>
         <div className="flex w-full flex-col gap-3">
           {active && (
@@ -127,21 +215,46 @@ export function TodayHome({ goal, plan, today, hour, bowls, welcome, catchUp, no
               {plan.status === "started" ? "Keep going" : "Start"}
             </Button>
           )}
-          {plan.status === "done" && next && <Button size="lg" onClick={onStartNext} className="w-full">Next: {next.title} →</Button>}
-          {plan.status === "complete" && <ButtonLink href="/goals/new" size="lg" className="w-full">Set the next goal</ButtonLink>}
-          {plan.status === "deadline-passed" && <ButtonLink href={`/goals/${goal.id}/edit`} size="lg" className="w-full">Pick a new date</ButtonLink>}
-          {plan.status === "paused" && <ButtonLink href="/goals" variant="secondary" className="self-start">Manage goals</ButtonLink>}
+          {plan.status === "done" && next && (
+            <Button size="lg" onClick={onStartNext} className="w-full">
+              Next: {next.title} →
+            </Button>
+          )}
+          {plan.status === "complete" && (
+            <ButtonLink href="/goals/new" size="lg" className="w-full">
+              Set the next goal
+            </ButtonLink>
+          )}
+          {plan.status === "deadline-passed" && (
+            <ButtonLink
+              href={`/goals/${goal.id}/edit`}
+              size="lg"
+              className="w-full"
+            >
+              Pick a new date
+            </ButtonLink>
+          )}
+          {plan.status === "paused" && (
+            <ButtonLink
+              href="/goals"
+              variant="secondary"
+              className="self-start"
+            >
+              Manage goals
+            </ButtonLink>
+          )}
           <Road goal={goal} plan={plan} />
         </div>
-      </Room>
-      <div className="mt-4 flex w-full flex-col gap-3">
         {prompt}
         {notice && (
-          <Link href="/reminders" className="self-center text-sm font-bold text-muted underline decoration-2 underline-offset-4 hover:text-ink focus-visible:outline-3 focus-visible:outline-focus">
+          <Link
+            href="/reminders"
+            className="self-center text-sm font-bold text-muted underline decoration-2 underline-offset-4 hover:text-ink focus-visible:outline-3 focus-visible:outline-focus"
+          >
             {notice}
           </Link>
         )}
-      </div>
+      </Room>
     </section>
   );
 }
