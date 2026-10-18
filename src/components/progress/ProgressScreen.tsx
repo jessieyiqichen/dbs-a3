@@ -1,25 +1,28 @@
 "use client";
 
+import { CatArt } from "@/components/today/CatArt";
 import { ButtonLink } from "@/components/ui/Button";
-import { ProgressBar } from "@/components/ui/ProgressBar";
 import { StorageNotice } from "@/components/ui/StorageNotice";
 import { formatShortDate, toISODate } from "@/lib/dates";
 import { formatCount } from "@/lib/format";
-import { cumulativeSeries, history, type DayKind } from "@/lib/progress";
+import { cumulativeSeries, history } from "@/lib/progress";
 import { planToday } from "@/lib/quota";
 import { useStore } from "@/lib/store";
 import { streak } from "@/lib/streak";
+import type { Goal } from "@/lib/types";
+import type { TodayPlan } from "@/lib/quota";
 import { CumulativeChart } from "./CumulativeChart";
 import { DailyBars } from "./DailyBars";
+import { GoalActions } from "./GoalActions";
 
-const KIND_TEXT: Record<DayKind, string> = {
-  today: "today, not started yet",
-  done: "",
-  rest: "rest day",
-  paused: "paused",
-  missed: "missed",
-};
+function paceLine(goal: Goal, plan: TodayPlan, today: string): string {
+  if (plan.status === "complete") return "Goal reached, Titi is proud!";
+  if (plan.daysLeft === null) return "";
+  if (plan.behindBy > 0) return `${plan.behindBy} behind the steady pace, spread over ${plan.daysLeft} days, so today is ${formatCount(plan.quota, goal.unit)}~`;
+  return `On pace! ${plan.daysLeft} days left until ${formatShortDate(goal.deadline ?? today)}`;
+}
 
+/** One goal's story so far: the big number, the chart, the run of days, and what you can do with the goal. */
 export function ProgressScreen({ id }: { id: string }) {
   const state = useStore();
   if (state === null) return <p className="pt-6 text-muted">Loading your progress…</p>;
@@ -30,8 +33,7 @@ export function ProgressScreen({ id }: { id: string }) {
   if (!goal) {
     return (
       <div className="mt-8 flex flex-col gap-4">
-        <h2 className="text-2xl font-bold text-ink">Goal not found</h2>
-        <p className="text-lg text-ink">This goal isn&apos;t saved on this device. It may have been deleted.</p>
+        <p className="text-lg font-bold text-ink">This goal isn&apos;t saved on this device, it may have been removed~</p>
         <ButtonLink href="/goals" className="self-start">See your goals</ButtonLink>
       </div>
     );
@@ -42,61 +44,29 @@ export function ProgressScreen({ id }: { id: string }) {
   const run = streak(goal, data.entries, today);
   const rows = history(goal, data.entries, today, 14);
   const lastRest = run.restDays[0];
+  const byDate = goal.type === "by-date";
 
   return (
-    <div className="flex flex-col gap-8 pt-4">
-      <div className="flex flex-col gap-3">
-        <p className="text-sm font-semibold uppercase tracking-wide text-muted">{goal.title}</p>
-        {goal.type === "by-date" ? (
-          <>
-            <h2 className="text-4xl font-bold tracking-tight text-ink">
-              {plan.doneTotal} of {formatCount(goal.target, goal.unit)}
-            </h2>
-            <ProgressBar value={plan.doneTotal} max={goal.target} label={`${goal.title} progress`} />
-            <p className="text-ink">
-              {plan.behindBy > 0
-                ? `${plan.behindBy} behind plan. It's spread over the ${plan.daysLeft} days left, so today is ${formatCount(plan.quota, goal.unit)}.`
-                : `On plan. ${plan.daysLeft} days left until ${formatShortDate(goal.deadline ?? today)}.`}
-            </p>
-          </>
-        ) : (
-          <h2 className="text-4xl font-bold tracking-tight text-ink">{formatCount(goal.target, goal.unit)} a day</h2>
-        )}
+    <div className="flex flex-col gap-7 pt-2">
+      <div className="flex items-end gap-3">
+        <CatArt mood={plan.status === "done" || plan.status === "complete" ? "celebrate" : "idle"} className="w-24 shrink-0" />
+        <div className="clay mb-6 flex-1 rounded-2xl rounded-bl-sm bg-surface px-4 py-3">
+          <p className="font-display text-sm font-semibold text-muted">{goal.title}</p>
+          <p className="font-display text-3xl font-bold leading-tight text-ink tabular-nums">
+            {byDate ? `${plan.doneTotal} of ${goal.target}` : `${formatCount(goal.target, goal.unit)} a day`}
+          </p>
+          {byDate && <p className="mt-1 text-sm font-bold text-muted">{paceLine(goal, plan, today)}</p>}
+        </div>
       </div>
 
-      {goal.type === "by-date" ? (
-        <CumulativeChart {...cumulativeSeries(goal, data.entries, today)} unit={goal.unit} />
-      ) : (
-        <DailyBars rows={rows} target={goal.target} unit={goal.unit} />
-      )}
+      {byDate ? <CumulativeChart {...cumulativeSeries(goal, data.entries, today)} unit={goal.unit} /> : <DailyBars rows={rows} target={goal.target} unit={goal.unit} />}
 
-      <p className="text-lg font-semibold text-ink">
+      <p className="clay rounded-2xl bg-reward-soft px-4 py-3 font-display font-semibold text-ink [--lip:var(--color-reward)]">
         {run.days === 1 ? "1 day in a row" : `${run.days} days in a row`}
-        {lastRest && <span className="font-normal text-muted"> · {formatShortDate(lastRest)} was a rest day</span>}
+        {lastRest && <span className="font-sans text-sm font-bold text-muted"> · {formatShortDate(lastRest)} was a rest day~</span>}
       </p>
 
-      <section aria-labelledby="history-title" className="flex flex-col gap-2">
-        <h3 id="history-title" className="text-xl font-bold text-ink">Last 14 days</h3>
-        <table className="w-full text-left">
-          <thead className="sr-only">
-            <tr><th scope="col">Day</th><th scope="col">Done</th><th scope="col">Note</th></tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.date} className="border-b border-wash-strong">
-                <th scope="row" className="py-2 font-normal text-muted">{formatShortDate(row.date)}</th>
-                <td className="py-2 font-semibold text-ink">{row.amount > 0 ? row.amount : "—"}</td>
-                <td className="py-2 text-sm text-muted">{KIND_TEXT[row.kind]}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-
-      <div className="flex flex-wrap gap-3">
-        <ButtonLink href="/">Back to today&apos;s number</ButtonLink>
-        <ButtonLink href={`/goals/${goal.id}/edit`} variant="ghost">Edit goal</ButtonLink>
-      </div>
+      <GoalActions goal={goal} today={today} />
     </div>
   );
 }

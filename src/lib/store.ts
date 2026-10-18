@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { browserStore, emptyData, loadData, saveData, STORAGE_KEY } from "./storage";
+import type { Removed } from "./goals";
 import type { AppData } from "./types";
 
 export type StoreState =
@@ -82,6 +83,24 @@ export function setFocusGoal(id: string | null): void {
 
 export function getFocusGoal(): string | null {
   return focusGoalId;
+}
+
+/** A goal removed on one page can be undone on the next (Progress removes, Goals shows the Undo). */
+let removedGoal: Removed | null = null;
+const removedListeners = new Set<() => void>();
+export function stashRemoved(removed: Removed | null): void {
+  removedGoal = removed;
+  removedListeners.forEach((l) => l());
+}
+export function useRemoved(): Removed | null {
+  return useSyncExternalStore(
+    (l) => {
+      removedListeners.add(l);
+      return () => removedListeners.delete(l);
+    },
+    () => removedGoal,
+    () => null,
+  );
 }
 
 /** The latest data, for timers that fire outside React. */

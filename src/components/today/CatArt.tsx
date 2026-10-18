@@ -10,7 +10,7 @@ export type CatEffect = "zzz" | "hop" | "party";
 
 /** Each mood is a drawn loop with a still frame for people who ask for less motion. Sizes are the files' own. */
 const ART: Record<CatMood, { moving: string; still: string; width: number; height: number }> = {
-  sleep: { moving: "/cat/sleep.webp", still: "/cat/sleep.png", width: 300, height: 300 },
+  sleep: { moving: "/cat/sleep.png", still: "/cat/sleep.png", width: 300, height: 300 },
   idle: { moving: "/cat/idle.webp", still: "/cat/idle.png", width: 300, height: 300 },
   celebrate: { moving: "/cat/celebrate.webp", still: "/cat/celebrate.png", width: 300, height: 388 },
 };
@@ -40,13 +40,22 @@ function Particles({ effect }: { effect: CatEffect }) {
       </>
     );
   }
+  // A hop sends up three hearts; done for today sends up a fuller, softer burst of nine in three sizes.
   const many = effect === "party";
+  const count = many ? 9 : 3;
   return (
     <>
-      {Array.from({ length: many ? 5 : 3 }, (_, i) => (
+      {Array.from({ length: count }, (_, i) => (
         <Heart
           key={i}
-          style={{ left: `${26 + i * (many ? 11 : 16)}%`, top: "22%", ["--delay" as string]: `${0.15 + i * 0.25}s`, ["--drift" as string]: `${(i % 2 ? 1 : -1) * (10 + i * 4)}px`, ["--times" as string]: many ? "3" : "1" }}
+          style={{
+            left: `${many ? 14 + i * 9 : 26 + i * 16}%`,
+            top: many ? `${16 + (i % 3) * 8}%` : "22%",
+            width: many ? `${16 + (i % 3) * 5}px` : undefined,
+            ["--delay" as string]: `${0.15 + i * (many ? 0.18 : 0.25)}s`,
+            ["--drift" as string]: `${(i % 2 ? 1 : -1) * (8 + (i % 4) * 5)}px`,
+            ["--times" as string]: many ? "3" : "1",
+          }}
         />
       ))}
     </>
@@ -67,7 +76,7 @@ export function CatArt({ mood, effect, className = "", sun = true }: CatProps) {
   return (
     <div className={`relative ${className}`}>
       {sun && <span aria-hidden="true" className="absolute inset-x-[6%] bottom-0 aspect-square rounded-full bg-sun" />}
-      <picture className={`relative block ${effect === "hop" ? "cat-hop" : ""}`}>
+      <picture className={`relative block ${effect === "hop" ? "cat-hop" : mood === "sleep" ? "cat-breathe" : ""}`}>
         <source media="(prefers-reduced-motion: reduce)" srcSet={art.still} />
         <Image src={art.moving} alt="" width={art.width} height={art.height} unoptimized priority className="h-auto w-full" />
       </picture>

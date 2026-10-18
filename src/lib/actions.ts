@@ -1,6 +1,7 @@
 "use client";
 
 import { updateData } from "./store";
+import { putBack, takeOut, type Removed } from "./goals";
 import { withPause, withoutPause } from "./progress";
 import type { AppData, Entry, Goal, Settings } from "./types";
 import type { GoalValues } from "./validate";
@@ -46,12 +47,19 @@ export function resumeGoal(id: string, today: string): void {
   changeGoal(id, (g) => withoutPause(g, today));
 }
 
-export function deleteGoal(id: string): void {
-  updateData((data) => ({
-    ...data,
-    goals: data.goals.filter((g) => g.id !== id),
-    entries: data.entries.filter((e) => e.goalId !== id),
-  }));
+/** Removes a goal right away (Undo beats a confirm) and returns what was removed, for Undo. */
+export function deleteGoal(id: string): Removed | null {
+  let removed: Removed | null = null;
+  updateData((data) => {
+    const result = takeOut(data, id);
+    removed = result.removed;
+    return result.data;
+  });
+  return removed;
+}
+
+export function restoreGoal(removed: Removed): void {
+  updateData((data) => putBack(data, removed));
 }
 
 /** Replaces everything on this device with a validated backup. */

@@ -7,7 +7,6 @@ import { doneStats, type DoneStat } from "@/lib/session";
 import type { Goal } from "@/lib/types";
 import { useCountUp } from "@/lib/useCountUp";
 import { CatArt } from "./CatArt";
-import { Confetti } from "./Confetti";
 
 interface Props {
   /** Shown under the celebration: the moment something useful is done is when to ask. */
@@ -47,8 +46,7 @@ export function DoneToday({ prompt, goal, doneToday, doneTotal, streakDays, next
   return (
     <section aria-labelledby="done-title" className="relative flex flex-col items-center pt-2 text-center">
       <div aria-hidden="true" className="fixed inset-0 -z-10 bg-celebrate" />
-      <Confetti />
-      <CatArt mood="celebrate" effect="party" className="w-44" />
+      <CatArt mood="celebrate" effect="party" className="pop-in w-44" />
       <ScreenHeading id="done-title" className="mt-3 font-display text-4xl font-bold text-reward-deep">Done for today!</ScreenHeading>
       <ul aria-label="Today's results" className="mt-5 flex w-full gap-3">
         {stats.map((stat, i) => <StatCard key={stat.label} stat={stat} index={i} />)}

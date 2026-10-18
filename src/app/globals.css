@@ -67,18 +67,19 @@ body {
     0 2px 6px rgba(120, 80, 20, 0.12);
 }
 
-/* Confetti on the done screen: it falls once; nothing moves for people who ask for less motion. */
-@keyframes confetti-fall {
-  from { transform: translateY(-40px) rotate(0deg); opacity: 0; }
-  15% { opacity: 1; }
-  to { transform: translateY(var(--fall, 160px)) rotate(var(--spin, 200deg)); opacity: 0; }
-}
 @keyframes pop-in {
   from { transform: scale(.6); opacity: 0; }
   70% { transform: scale(1.08); opacity: 1; }
   to { transform: scale(1); }
 }
 /* Titi's own animations are drawn; code only adds a hop after a log and the floating hearts and z's */
+/* Asleep: no drawn frames (their outlines never quite matched), just a slow, shallow breath in code. */
+@keyframes cat-breathe {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.008, 1.02); }
+}
+.cat-breathe { transform-origin: 50% 100%; animation: cat-breathe 4.2s ease-in-out infinite; }
+
 @keyframes cat-hop {
   0% { transform: translateY(0) scale(1, 1); }
   25% { transform: translateY(0) scale(1.06, .92); }
@@ -115,8 +116,8 @@ body {
 .float-up { animation: float-up 2.4s ease-out var(--delay, 0s) var(--times, 1) both; }
 
 @media (prefers-reduced-motion: reduce) {
-  .confetti, .float-up { display: none; }
-  .pop-in, .cat-hop, .fish-fly, .card-in { animation: none !important; }
+  .float-up { display: none; }
+  .pop-in, .cat-hop, .cat-breathe, .fish-fly, .card-in { animation: none !important; }
   .plus-one { display: none; }
   .bar-fill, .clay-press { transition: none; }
 }
