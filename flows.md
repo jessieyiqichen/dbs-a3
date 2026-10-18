@@ -4,82 +4,99 @@ Main task, as one sentence:
 
 > I pick a goal → it tells me today's number and I do the first one now → if I haven't started, it nudges me again (and again) → I come back and see how close I am.
 
+A tool you use every day has three flows: the first visit, the main task, and coming back. Each page below is a route in Next.js; every step, state and error was drawn first and built second, then walked at 390px and 1440px (see `docs/states.png` for every state).
+
 ## 1. First visit: useful right away
 
-```mermaid
-flowchart TD
-    A([Open the app, nothing saved]) --> B["/ : What have you been putting off?"]
-    B -->|Tap an example| C[Goal created with sensible defaults]
-    B -->|Write my own| F["/goals/new form"]
-    C --> D["Today's number: 11 connections"]
-    D -->|Open LinkedIn| L[LinkedIn opens in a new tab]
-    L --> E
-    D -->|Tap +1| E[Day started. Progress moves]
-    E --> R{"Nice, that's day one. Want me to nudge you tomorrow?"}
-    R -->|Set up nudges| N["/reminders: times, calendar file, notifications"]
-    R -->|Not now| T([Stays on Today, prompt hidden])
-    S[(localStorage unavailable)] -.-> W[Banner: this browser won't save]
-```
-
-## 2. The form and its errors
+Nothing is saved. Titi asks one thing per screen, every answer is a tap, and the last screen starts the first task. The same walk (`GoalWizard`) is used for "+ Add" later, so a goal is always made the same way.
 
 ```mermaid
 flowchart TD
-    A["/goals/new"] --> B[Fill in: What, Type, Target, Unit, Deadline, Link]
-    B --> C{Submit}
-    C -->|What empty| E1["Enter what you want to do"]
-    C -->|Target not a whole number| E2["Enter a whole number, like 500"]
-    C -->|Deadline today or earlier| E3["Pick a date after today"]
-    C -->|Link not https| E4["Paste a full link that starts with https://"]
-    E1 & E2 & E3 & E4 --> K[Errors beside each field, typed values kept, focus on the first error]
-    K --> B
-    C -->|Valid but over 50 a day| W[Soft warning: pick a later date or a smaller number?]
-    W -->|Keep it| OK
-    W -->|Change| B
-    C -->|Valid| OK[Saved] --> T(["/ : today's number for the new goal"])
+    A([Open the app, nothing saved]) --> P["Hi, I'm Titi! What have you been putting off?"]
+    P -->|LinkedIn connections| D["When do you want to get there?\n2 weeks · a month · before Thanksgiving · pick a date"]
+    P -->|Applications · Coffee chats · Interview practice| N
+    P -->|Something else| W["Tell me what it is (one field)"]
+    W -->|empty| WE["Enter what you'll do, like 'Send cold emails'"] --> W
+    W --> O["Every day, or a total by a date?"]
+    O -->|a total| D
+    O -->|every day| N
+    D --> N["How many? Easy start · Steady · Go big\n(each shown as fish treats a day) · type my own"]
+    N -->|own goal| L["Is there a page I should open when you start? (skip)"]
+    L -->|not a link| LE["Paste a full link that starts with https://"] --> L
+    N --> PL
+    L --> PL["Here's our plan! Today's number as fish treats"]
+    PL -->|Start my first one| S["Session (flow 2)"]
+    X[(localStorage unavailable)] -.-> XB["This browser can't save, so your goals will be gone when you close the tab"]
 ```
 
-## 3. The daily task
+## 2. The main task: Today, the session, and the results
+
+Today is Titi's room in three layers that never overlap: hers (the streak, Titi, the week of bowls), yours (which goal is up now), and the goal's (one sentence, one button, the road so far).
 
 ```mermaid
 flowchart TD
-    A([Open the app]) --> B[Most urgent goal, big: today's number + a nudge line]
-    B -->|Open link| L[Do it in the other tab]
-    L --> C
-    B --> C{Log it}
-    C -->|+1| D[Count goes up, toast with Undo]
-    C -->|Log several| M[Enter a number] --> D
-    D -->|Undo| B
-    D --> S{"Today's state (a started goal stays on top until it's done)"}
-    S -->|Started, not done| B2[Still counts as a day. Keep going]
-    S -->|Quota done| G[Done for today. Next goal moves up]
-    S -->|Target reached| Z[Goal complete]
+    T([Today]) --> R["Titi's room: window by the hour · Titi · this week's bowls"]
+    R --> G["Goal tabs: pick which goal is up now (remembered while open)"]
+    G --> B["Bubble: 'Send 5 connection requests' + a nudge line\nStart on LinkedIn ↗"]
+    B -->|Start| L[LinkedIn opens in a new tab]
+    L --> S
+    B --> S["Session: bar on top, Titi cheering, the shared bowl, fish tiles\nOne more · Open LinkedIn · Did more than N?"]
+    S -->|tap a fish, One more| F["Fish flies into the bowl, +1, Titi hops\nToast: Added 2 · Undo"]
+    F --> S
+    S -->|Did more than N? → not a number| SE["Enter a whole number, like 30"] --> S
+    S -->|✕ Stop for now| T
+    F -->|today's number reached| D["Done for today! Three cards count up:\nfish today · streak · road"]
+    D -->|Next goal| S
+    D -->|Or stop here| T2["Today, done state: Titi is so full~\nNudge you tomorrow? (calendar · notifications · not now)"]
 ```
 
-## 4. Coming back: it remembers
+The nudge line changes through the day (gentle → firmer → one last call) and never shames. The bowl in the session is today's shared bowl: fish from every goal land in it, and it is heaped once every number is reached.
+
+## 3. Coming back: it remembers
 
 ```mermaid
 flowchart TD
-    N1[Calendar alarm: 10:00, 15:00, 20:00] --> O([Open the app])
-    N2["Browser notification while a tab is open: only if not started, plus a 22:30 last call"] --> O
-    N1 -->|Tapped the reminder| F["You came back. That's the hardest part."]
-    O --> Q{Since the last day you did something}
-    Q -->|Yesterday| A["Welcome back. 3 days in a row. Today: 11 connections."]
-    Q -->|One day missed, first this week| R["Yesterday was your rest day this week, so your streak is safe."]
-    Q -->|Several days| B["It's been 4 days, and that's okay. It's spread over the days left."]
-    Q -->|Paused| P[No nudges, not counted as behind]
-    F & A & R & B --> T[Do one now]
-    O --> H["/goals/:id : progress line vs plan, streak, history"]
+    C([Open the app again]) --> K{What happened?}
+    K -->|from a reminder| N1["You came back! That's the hardest part~"]
+    K -->|yesterday counted| N2["Welcome back · 3 days in a row!"]
+    K -->|one day missed| N3["Welcome back · yesterday was a rest day~"]
+    K -->|several days missed, by-date goal| N4["Welcome back! It's been 6 days, and that's okay~\nThe rest is spread over 20 days, 7 today~"]
+    K -->|Start yesterday, never answered| N5["A session from another day is dropped: Today, not the question"]
+    N1 & N2 & N3 & N4 & N5 --> T([Today, flow 2])
+    T -.->|calendar file about to run out| CAL["Your calendar nudges end Oct 20, grab a new file~ → Reminders"]
+    T -.->|a goal is on a break| P["Paused until Oct 20, Titi is napping too~"]
+    T -.->|date passed| DP["10 of 100, nice work! The date passed, pick a new one and keep going!"]
 ```
+
+One streak for the whole app, like Duolingo's: a day counts when any goal got at least one, with one forgiven rest day a week.
+
+## 4. Managing goals
+
+```mermaid
+flowchart TD
+    GL([Goals]) --> C["A card per goal: title, one line, a small road bar"]
+    C -->|tap| PR["Progress: Titi says the big number and the pace\nchart · days in a row · Edit goal · Take a break · Remove goal"]
+    PR -->|Edit goal| E["Edit form: errors beside the field, cleared as you fix them"]
+    E -->|Save changes| PR
+    PR -->|Take a break| BR["3 days · 1 week · 2 weeks · Never mind"] --> PR
+    PR -->|Remove goal| U["Goals, with a toast: Removed X · Undo (8 s)"]
+    U -->|Undo| GL
+    GL -->|+ Add a goal| WZ["GoalWizard (flow 1)"]
+    GL -->|Reminder times| RM["Reminders: times · calendar file · notifications"]
+    GL -->|Backup (folded)| BK["Download a copy · Restore from a file (confirm, since it replaces everything)"]
+```
+
+Removing one goal uses Undo; replacing everything from a backup uses a real confirm.
 
 ## Pages and navigation
 
-| Route | Step |
-|---|---|
-| `/` | First visit, daily task, coming back |
-| `/goals/new`, `/goals/[id]/edit` | The form |
-| `/goals` | All goals, pause, delete, backup |
-| `/goals/[id]` | Progress for one goal |
-| `/reminders` | Calendar file and browser notifications |
+| Route | Page | Shared pieces |
+|---|---|---|
+| `/` | Today (first visit, the room, the session, the results) | `AppShell`, `Nav` (Today · Goals; hidden until the first goal exists), `Button`, `Toast`, `CatArt`, `Coins` |
+| `/goals` | Your goals, backup | `GoalCard`, `BackupSection` |
+| `/goals/new` | Add a goal (the Titi walk) | `GoalWizard`, `SetupFrame`, `Choices`, `OwnAnswer`, `PlanStep` |
+| `/goals/[id]` | Progress | `CumulativeChart`, `DailyBars`, `GoalActions` |
+| `/goals/[id]/edit` | Edit goal | `GoalSetup`, `Field`, `RadioGroup` |
+| `/reminders` | Reminder times, calendar file, notifications | `TimesForm`, `CalendarCard`, `NotificationsCard` |
 
-Shared navigation: Today · Goals · Reminders. Sub-pages have a Back link.
+Navigation holds only the core needs (Today, Goals); Reminders is reached from Goals and from the done screen. Every page has a skip link, one `h1`, and the same header in the same place.

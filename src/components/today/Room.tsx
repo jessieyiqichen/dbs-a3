@@ -24,7 +24,7 @@ function Window({ time, corner }: { time: TimeOfDay; corner?: ReactNode }) {
     <div className="relative aspect-[1040/457] w-full overflow-hidden rounded-3xl bg-wash">
       {TIMES.map((t) => (
         // eslint-disable-next-line @next/next/no-img-element -- three paintings cross-fade; next/image would reload on each swap
-        <img key={t} src={`/cat/window-${t}.webp`} alt="" aria-hidden={t !== time} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 motion-reduce:transition-none ${t === time ? "opacity-100" : "opacity-0"}`} />
+        <img key={t} src={`/cat/window-${t}.webp`} alt="" aria-hidden="true" className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 motion-reduce:transition-none ${t === time ? "opacity-100" : "opacity-0"}`} />
       ))}
       {corner && <div className="absolute left-3 top-3">{corner}</div>}
       <span className="sr-only">Titi&apos;s window, {time}</span>
@@ -50,7 +50,7 @@ function ShelfBowl({ bowl }: { bowl: BowlDay }) {
 function Shelf({ bowls }: { bowls: BowlDay[] }) {
   return (
     <div className="clay rounded-2xl bg-reward-soft px-3 pb-2 pt-2 [--lip:var(--color-reward)]">
-      <p className="mb-1 text-center text-xs font-extrabold text-reward-deep">Titi&apos;s week, every goal counts!</p>
+      <p className="mb-1 text-center text-xs font-extrabold text-muted">Titi&apos;s week, every goal counts!</p>
       <ol aria-label="Titi's week" className="flex items-end gap-1">
         {bowls.map((b) => <ShelfBowl key={b.date} bowl={b} />)}
       </ol>

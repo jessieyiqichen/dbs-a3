@@ -47,7 +47,7 @@ export function DoneToday({ prompt, goal, doneToday, doneTotal, streakDays, next
     <section aria-labelledby="done-title" className="relative flex flex-col items-center pt-2 text-center">
       <div aria-hidden="true" className="fixed inset-0 -z-10 bg-celebrate" />
       <CatArt mood="celebrate" effect="party" className="pop-in w-44" />
-      <ScreenHeading id="done-title" className="mt-3 font-display text-4xl font-bold text-reward-deep">Done for today!</ScreenHeading>
+      <ScreenHeading id="done-title" className="mt-3 font-display text-4xl font-bold text-ink">Done for today!</ScreenHeading>
       <ul aria-label="Today's results" className="mt-5 flex w-full gap-3">
         {stats.map((stat, i) => <StatCard key={stat.label} stat={stat} index={i} />)}
       </ul>
