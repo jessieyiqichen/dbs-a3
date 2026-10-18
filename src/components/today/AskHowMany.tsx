@@ -7,6 +7,7 @@ import { ScreenHeading } from "@/components/ui/ScreenHeading";
 import { quickAmounts } from "@/lib/phrases";
 import type { Goal } from "@/lib/types";
 import { parseCount } from "@/lib/validate";
+import { CatArt } from "./CatArt";
 import { Coins } from "./Coins";
 
 interface Props {
@@ -18,8 +19,8 @@ interface Props {
   onNone: () => void;
 }
 
-/** After Start: one tap on the coin you reached logs the round (Undo is in the toast).
- *  More than today's number, or a number too big for coins, goes in the field. */
+/** After Start: one tap on the fish you reached logs the round (Undo is in the toast).
+ *  More than today's number, or a number too big for fish, goes in the field. */
 export function AskHowMany({ goal, total, done, onLog, onNone }: Props) {
   const id = useId();
   const [text, setText] = useState("");
@@ -42,7 +43,8 @@ export function AskHowMany({ goal, total, done, onLog, onNone }: Props) {
   }
 
   return (
-    <section aria-labelledby={`${id}-title`} className="flex flex-col pt-6">
+    <section aria-labelledby={`${id}-title`} className="flex flex-col pt-2">
+      <CatArt mood="idle" className="mb-4 w-40 self-center" />
       <ScreenHeading id={`${id}-title`} className="font-display text-4xl font-bold leading-tight text-ink">
         How many did you {verb}?
       </ScreenHeading>

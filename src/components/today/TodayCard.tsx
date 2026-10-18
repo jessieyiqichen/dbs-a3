@@ -7,6 +7,7 @@ import { headline } from "@/lib/phrases";
 import type { TodayPlan } from "@/lib/quota";
 import { siteName } from "@/lib/start";
 import type { Goal } from "@/lib/types";
+import { CatArt } from "./CatArt";
 import { Coins } from "./Coins";
 
 interface Props {
@@ -15,6 +16,8 @@ interface Props {
   today: string;
   hour: number;
   onStart: () => void;
+  /** True right after a log: Titi hops with hearts. */
+  cheer?: boolean;
 }
 
 function title(goal: Goal, plan: TodayPlan): string {
@@ -25,13 +28,21 @@ function title(goal: Goal, plan: TodayPlan): string {
   return headline(goal.verb, plan.quota, goal.unit);
 }
 
-/** Today's one thing: a sentence, a line of cheer, the coins, and one button. Nothing else competes. */
-export function TodayCard({ goal, plan, today, hour, onStart }: Props) {
+/** Today's one thing: Titi, a sentence, a line of cheer, the fish treats, and one button. Nothing else competes. */
+export function TodayCard({ goal, plan, today, hour, onStart, cheer = false }: Props) {
   const site = siteName(goal.link);
   const active = plan.status === "not-started" || plan.status === "started";
   const action = plan.status === "started" ? "Keep going" : "Start";
   return (
-    <section aria-labelledby={`goal-${goal.id}`} className="flex flex-col pt-6">
+    <section aria-labelledby={`goal-${goal.id}`} className="flex flex-col pt-2">
+      {active && (
+        <CatArt
+          key={cheer ? "cheer" : plan.status}
+          mood={plan.status === "started" ? "idle" : "sleep"}
+          effect={plan.status === "started" ? (cheer ? "hop" : undefined) : "zzz"}
+          className="mb-4 w-40 self-center"
+        />
+      )}
       <ScreenHeading id={`goal-${goal.id}`} className="font-display text-4xl font-bold leading-tight text-ink">{title(goal, plan)}</ScreenHeading>
       <p className="mt-3 text-lg font-bold text-muted">{nudgeLine(goal, plan, today, hour)}</p>
 

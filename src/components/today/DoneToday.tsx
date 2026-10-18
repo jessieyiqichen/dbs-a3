@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { ScreenHeading } from "@/components/ui/ScreenHeading";
-import { formatCount } from "@/lib/format";
 import type { HistoryRow } from "@/lib/progress";
 import type { Goal } from "@/lib/types";
-import { Celebration, Confetti } from "./Celebration";
+import { CatArt } from "./CatArt";
+import { Confetti } from "./Confetti";
 
 interface Props {
   /** Shown under the celebration: the moment something useful is done is when to ask. */
@@ -18,26 +18,26 @@ interface Props {
 }
 
 const DAY_DOT: Record<string, string> = {
-  done: "bg-primary border-ink",
-  rest: "bg-reward border-ink",
+  done: "bg-lip",
+  rest: "bg-reward",
 };
 
-/** The reward, the moment today's number is reached: the whole screen turns gold-cream, confetti falls once,
- *  and the streak shows how many days in a row. Everything else on this screen is quiet. */
+/** The reward, the moment today's number is reached: the whole screen turns soft mint, confetti falls once, Titi
+ *  jumps for joy with hearts, and the streak shows how many days in a row. Everything else on this screen is quiet. */
 export function DoneToday({ prompt, goal, doneToday, streakDays, week, next, onStartNext }: Props) {
   const days = [...week].reverse();
   return (
     <section aria-labelledby="done-title" className="relative flex flex-col items-center pt-4 text-center">
       <div aria-hidden="true" className="fixed inset-0 -z-10 bg-celebrate" />
       <Confetti />
-      <Celebration />
+      <CatArt mood="celebrate" effect="party" className="w-44" />
       <ScreenHeading id="done-title" className="mt-4 font-display text-4xl font-bold text-ink">Done for today!</ScreenHeading>
       <p className="mt-2 text-lg font-bold text-ink">
-        {formatCount(doneToday, goal.unit)} · {streakDays === 1 ? "1 day in a row" : `${streakDays} days in a row`}
+        {doneToday === 1 ? "1 fish treat" : `${doneToday} fish treats`} for Titi · {streakDays === 1 ? "1 day in a row" : `${streakDays} days in a row`}
       </p>
       <ol aria-label="Last 7 days" className="mt-5 flex gap-2">
         {days.map((d) => (
-          <li key={d.date} className={`size-5 rounded-full border-2 ${d.amount > 0 ? DAY_DOT.done : DAY_DOT[d.kind] ?? "border-line bg-surface"}`}>
+          <li key={d.date} className={`size-5 rounded-full ${d.amount > 0 ? DAY_DOT.done : DAY_DOT[d.kind] ?? "border-2 border-line bg-surface"}`}>
             <span className="sr-only">{d.date}: {d.amount > 0 ? `${d.amount} done` : d.kind}</span>
           </li>
         ))}

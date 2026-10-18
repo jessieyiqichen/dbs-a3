@@ -1,29 +1,31 @@
 @import "tailwindcss";
 
-/* The softened Trail Quest from A2: flat, warm off-white, navy text, green only for the primary action,
-   yellow only for rewards. Contrast (checked): ink 12.9:1 and muted 6.4:1 on the page; ink on green 6.8:1;
-   control lines 3.4:1; the error berry 6.6:1. No orange or red. */
+/* Cozy Cat, palette E "mint and butter": warm off-white, mint for the one primary action, honey for fish treats,
+   a butter sun behind Titi. No dark outlines; cards sit on soft shadows. Contrast (checked): ink 10.7:1 and
+   muted 5.4:1 on the page; ink on mint 7.2:1; control lines 3.7:1; the error berry 6.8:1. */
 @theme {
   --font-sans: var(--font-nunito), system-ui, sans-serif;
   --font-display: var(--font-fredoka), var(--font-nunito), system-ui, sans-serif;
 
-  --color-page: #faf7f0;
+  --color-page: #fbfaf2;
   --color-surface: #ffffff;
-  --color-ink: #1d2b53;
-  --color-muted: #4a5a85;
-  --color-wash: #f1ece0;
-  --color-wash-strong: #e6dfcf;
-  --color-line: #7c86a3;        /* borders of controls (3:1) */
-  --color-hairline: #e7e1d3;    /* decorative dividers only */
-  --color-primary: #6cc985;     /* the one primary action */
-  --color-primary-hover: #7bd393;
-  --color-primary-pressed: #5bb874;
-  --color-on-primary: #1d2b53;
-  --color-lip: #1d2b53;         /* the solid edge under the primary button */
-  --color-reward: #f6cf5f;      /* coins, streak, celebration */
-  --color-reward-deep: #e2b93c;
-  --color-celebrate: #fff1c7;   /* the done screen */
-  --color-focus: #1d2b53;
+  --color-ink: #3d3b33;
+  --color-muted: #6a675a;
+  --color-wash: #f2f0e2;
+  --color-wash-strong: #e7e4d2;
+  --color-line: #858170;        /* borders of controls (3:1) */
+  --color-hairline: #e9e6d6;    /* decorative dividers only */
+  --color-primary: #9edcbf;     /* the one primary action */
+  --color-primary-hover: #aee3ca;
+  --color-primary-pressed: #8cd2b1;
+  --color-on-primary: #3d3b33;
+  --color-lip: #6fbf9a;         /* the solid edge under the primary button */
+  --color-reward: #eab65d;      /* fish treats and the streak */
+  --color-reward-soft: #eee9d4;
+  --color-sun: #fff0b8;         /* the soft circle behind Titi */
+  --color-celebrate: #e9f8ef;   /* the done screen */
+  --color-heart: #e88fae;       /* decoration only */
+  --color-focus: #3d3b33;
   --color-danger: #9c2a6b;      /* errors and destructive actions only */
   --color-danger-wash: #fbeef5;
 }
@@ -50,7 +52,23 @@ body {
   70% { transform: scale(1.08); opacity: 1; }
   to { transform: scale(1); }
 }
+/* Titi's own animations are drawn; code only adds a hop after a log and the floating hearts and z's */
+@keyframes cat-hop {
+  0% { transform: translateY(0) scale(1, 1); }
+  25% { transform: translateY(0) scale(1.06, .92); }
+  50% { transform: translateY(-22px) scale(.96, 1.05); }
+  75% { transform: translateY(0) scale(1.05, .94); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+@keyframes float-up {
+  0% { transform: translate(0, 0) scale(.6); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translate(var(--drift, 0px), -70px) scale(1.1); opacity: 0; }
+}
+.cat-hop { transform-origin: 50% 100%; animation: cat-hop .7s ease-out var(--hops, 1); }
+.float-up { animation: float-up 2.4s ease-out var(--delay, 0s) var(--times, 1) both; }
+
 @media (prefers-reduced-motion: reduce) {
-  .confetti { display: none; }
-  .pop-in { animation: none !important; }
+  .confetti, .float-up { display: none; }
+  .pop-in, .cat-hop { animation: none !important; }
 }

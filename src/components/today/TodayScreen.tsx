@@ -101,7 +101,7 @@ export function TodayScreen() {
           onStartNext={() => next && startGoal(next)}
         />
       ) : (
-        <TodayCard goal={first.goal} plan={first.plan} today={today} hour={now.getHours()} onStart={() => startGoal(first.goal)} />
+        <TodayCard goal={first.goal} plan={first.plan} today={today} hour={now.getHours()} onStart={() => startGoal(first.goal)} cheer={undoable !== null} />
       )}
 
       {rest.length > 0 && !asking && (

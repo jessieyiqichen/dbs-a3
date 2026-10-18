@@ -27,8 +27,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 Voice and style (user, 2026-10-17, after researching Duolingo)
 - Write like a cheerleader, after Duolingo: short, active voice, celebrate small wins. The character may joke about itself, never about the person. A missed day talks about the best run and starting again, never "falling behind".
 - No full stops anywhere in the interface (they read as stern). Encouraging lines end with "!", easygoing ones with "~". Errors and labels take no end punctuation (no "!" on errors, it reads as shouting). `src/lib/copy.test.ts` checks this.
-- Look: the softened Trail Quest from A2 (allowed by the teacher). Flat, warm off-white, light hairlines; only the primary button has a solid lip; navy text, green only for the primary action, yellow only for rewards (coins, streak, celebration). No orange or red. Fredoka for headings, Nunito for text. Colour and noise live in the celebration and the character, not in the chrome.
-- Each screen holds one sentence, one central object and one button. The character appears only when today's number is done.
+- Look: "Cozy Cat", palette E "mint and butter" (user, 2026-10-17). The page follows Titi's soft painted style instead of the flat Trail Quest outlines: warm off-white page, warm dark text, no dark outlines (cards sit on soft shadows), mint only for the primary action (it keeps the solid lip from Trail Quest), honey only for fish treats and the streak, a butter sun behind Titi, pink hearts as decoration only. No orange or red in the chrome (Titi's own fur is illustration). Fredoka for headings, Nunito for text. Tokens and their contrast live in `src/app/globals.css`.
+- Each screen holds one sentence, one central object (Titi and the fish treats) and one button.
+- Titi is the user's own cat (art generated with GPT, credit it in the README). Drawn loops in `public/cat/`: asleep before you start, sitting with you while you work, jumping for joy when today is done; each has a still frame for reduced motion. Titi is never hungry, sad or disappointed. Every task done is one fish treat for Titi; the count always shows as a number too.
 
 Hierarchy (emphasize by de-emphasizing)
 - One primary action per screen, the only accent-colored thing on it. Everything else is secondary or quieter.

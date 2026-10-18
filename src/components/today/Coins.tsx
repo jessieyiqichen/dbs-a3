@@ -1,9 +1,9 @@
 "use client";
 
-/** Up to a dozen, today's number shows as coins; beyond that a bar says it more clearly. */
-const MAX_COINS = 12;
+/** Up to a dozen, today's number shows as fish treats for Titi; beyond that a bar says it more clearly. */
+const MAX_FISH = 12;
 
-/** Coins per row, balanced so 9 sits as 5 + 4, not 8 + 1. */
+/** Fish per row, balanced so 9 sits as 5 + 4, not 8 + 1. */
 function perRow(total: number): number {
   const rows = Math.ceil(total / 6);
   return Math.ceil(total / rows);
@@ -14,53 +14,66 @@ interface Props {
   done: number;
   /** Names the group for screen readers, e.g. "Today". */
   label: string;
-  /** When set, each coin past `done` is a button: tapping coin n means "I'm at n now". */
+  /** When set, each fish past `done` is a button: tapping fish n means "I'm at n now". */
   onPick?: (reached: number) => void;
 }
 
-/** Today's number as something you can see fill up. Done coins are gold; the rest wait in the wash. */
+function Fish({ earned }: { earned: boolean }) {
+  // eslint-disable-next-line @next/next/no-img-element -- a tiny decorative icon, repeated; no layout shift to manage
+  return <img src={earned ? "/cat/fish.png" : "/cat/fish-locked.png"} alt="" aria-hidden="true" className="w-full" />;
+}
+
+/** Today's number as fish treats you can see fill up, with the count beside them so it never rests on colour alone. */
 export function Coins({ total, done, label, onPick }: Props) {
-  if (total > MAX_COINS) {
+  const count = <p aria-hidden="true" className="mt-2 font-display text-lg font-semibold text-muted">{done} / {total}</p>;
+
+  if (total > MAX_FISH) {
     const pct = Math.min(100, Math.round((done / Math.max(total, 1)) * 100));
     return (
-      <div className="flex flex-col gap-2">
-        <div role="img" aria-label={`${label}: ${done} of ${total} done`} className="h-7 overflow-hidden rounded-full border-3 border-ink bg-wash">
+      <div>
+        <div role="img" aria-label={`${label}: ${done} of ${total} done`} className="h-5 overflow-hidden rounded-full bg-reward-soft">
           <div className="h-full rounded-full bg-reward" style={{ width: `${pct}%` }} />
         </div>
-        <p aria-hidden="true" className="font-display text-xl font-semibold text-ink">{done} / {total}</p>
+        {count}
       </div>
     );
   }
 
-  const coin = "size-11 rounded-full border-3 border-ink transition";
-  const filled = "bg-reward shadow-[inset_0_-4px_0_var(--color-reward-deep)]";
-  const empty = "bg-wash";
-  const coins = Array.from({ length: total }, (_, i) => i + 1);
-  const grid = { gridTemplateColumns: `repeat(${perRow(total)}, 2.75rem)` };
+  const cell = "flex h-11 items-center rounded-xl";
+  const fish = Array.from({ length: total }, (_, i) => i + 1);
+  const grid = { gridTemplateColumns: `repeat(${perRow(total)}, 3rem)` };
 
   if (!onPick) {
     return (
-      <div role="img" aria-label={`${label}: ${done} of ${total} done`} className="grid gap-3" style={grid}>
-        {coins.map((n) => <span key={n} aria-hidden="true" className={`${coin} ${n <= done ? filled : empty}`} />)}
+      <div>
+        <div role="img" aria-label={`${label}: ${done} of ${total} done`} className="grid gap-x-2 gap-y-1" style={grid}>
+          {fish.map((n) => <span key={n} className={cell}><Fish earned={n <= done} /></span>)}
+        </div>
+        {count}
       </div>
     );
   }
 
   return (
-    <div role="group" aria-label={label} className="grid gap-3" style={grid}>
-      {coins.map((n) =>
-        n <= done ? (
-          <span key={n} aria-hidden="true" className={`${coin} ${filled}`} />
-        ) : (
-          <button
-            key={n}
-            type="button"
-            onClick={() => onPick(n)}
-            aria-label={`I'm at ${n}`}
-            className={`${coin} ${empty} hover:bg-reward/60 active:translate-y-px active:bg-reward focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus`}
-          />
-        ),
-      )}
+    <div>
+      <div role="group" aria-label={label} className="grid gap-x-2 gap-y-1" style={grid}>
+        {fish.map((n) =>
+          n <= done ? (
+            <span key={n} className={cell}><Fish earned /></span>
+          ) : (
+            <button
+              key={n}
+              type="button"
+              onClick={() => onPick(n)}
+              aria-label={`I'm at ${n}`}
+              className={`${cell} px-0.5 transition hover:bg-wash active:translate-y-px active:bg-wash-strong focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus`}
+            >
+              <Fish earned={false} />
+            </button>
+          ),
+        )}
+      </div>
+      {count}
     </div>
   );
 }

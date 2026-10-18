@@ -21,7 +21,7 @@ export function NudgePrompt({ times, onActed }: Props) {
   const acted = calendarUntil !== null || (asked && permission === "granted");
 
   return (
-    <section aria-labelledby="nudge-prompt" className="flex flex-col gap-3 rounded-2xl bg-surface p-5 shadow-[0_2px_12px_rgba(29,43,83,.08)]">
+    <section aria-labelledby="nudge-prompt" className="flex flex-col gap-3 rounded-2xl bg-surface p-5 shadow-[0_2px_12px_rgba(61,59,51,.08)]">
       <h2 id="nudge-prompt" className="font-display text-xl font-semibold text-ink">Nudge you tomorrow?</h2>
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={() => { onActed(); setCalendarUntil(addToCalendar(times)); }}>Add to calendar</Button>
