@@ -24,6 +24,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Design rules (from Week 3 class, agreed with the user 2026-10-17)
 
+Voice and style (user, 2026-10-17, after researching Duolingo)
+- Write like a cheerleader, after Duolingo: short, active voice, celebrate small wins. The character may joke about itself, never about the person. A missed day talks about the best run and starting again, never "falling behind".
+- No full stops anywhere in the interface (they read as stern). Encouraging lines end with "!", easygoing ones with "~". Errors and labels take no end punctuation (no "!" on errors, it reads as shouting). `src/lib/copy.test.ts` checks this.
+- Look: the softened Trail Quest from A2 (allowed by the teacher). Flat, warm off-white, light hairlines; only the primary button has a solid lip; navy text, green only for the primary action, yellow only for rewards (coins, streak, celebration). No orange or red. Fredoka for headings, Nunito for text. Colour and noise live in the celebration and the character, not in the chrome.
+- Each screen holds one sentence, one central object and one button. The character appears only when today's number is done.
+
 Hierarchy (emphasize by de-emphasizing)
 - One primary action per screen, the only accent-colored thing on it. Everything else is secondary or quieter.
 - The most important number reads as a full sentence: what to do, how many, today.

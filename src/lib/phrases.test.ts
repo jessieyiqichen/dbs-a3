@@ -25,13 +25,13 @@ describe("headline", () => {
 describe("goalSentence", () => {
   it("describes a by-date goal", () => {
     expect(goalSentence({ verb: "Send", unit: "connection requests", type: "by-date", target: 500, deadline: "2026-12-01" })).toBe(
-      "I want to send 500 connection requests by Dec 1.",
+      "I want to send 500 connection requests by Dec 1",
     );
   });
 
   it("describes a daily goal", () => {
     expect(goalSentence({ verb: "Practice", unit: "interview questions", type: "daily", target: 2, deadline: null })).toBe(
-      "I want to practice 2 interview questions every day.",
+      "I want to practice 2 interview questions every day",
     );
   });
 });
@@ -39,7 +39,7 @@ describe("goalSentence", () => {
 describe("goalSentence while typing", () => {
   it("waits for a verb and a valid number", () => {
     expect(goalSentence({ verb: "", unit: "times", type: "daily", target: 3, deadline: null })).toBe("I want to \u2026");
-    expect(goalSentence({ verb: "Read", unit: "pages", type: "daily", target: null, deadline: null })).toBe("I want to read some pages every day.");
+    expect(goalSentence({ verb: "Read", unit: "pages", type: "daily", target: null, deadline: null })).toBe("I want to read some pages every day");
   });
 });
 

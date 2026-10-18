@@ -5,31 +5,32 @@ import type { Goal } from "./types";
 
 export type NudgeLevel = "gentle" | "firmer" | "last-call";
 
-/** Warm and motivating, never shaming, eight words at most. Lines rotate by day. */
+/** A cheerleader's voice, after Duolingo: short, warm, never shaming, eight words at most, and never a full stop
+ *  (house style: "!" when it cheers, "~" when it's easygoing). Lines rotate by day. */
 const NOT_STARTED: Record<NudgeLevel, string[]> = {
   gentle: [
-    "One is enough to start.",
-    "Small steps still count.",
-    "Start with one. Momentum follows.",
-    "One now, and today counts.",
+    "Just one to start today!",
+    "One counts, let's go~",
+    "Small start, big day!",
+    "Open it and do one~",
   ],
   firmer: [
-    "Still at zero? One keeps the day.",
-    "Every one opens a door.",
-    "Starting is the hardest part.",
-    "Future you will thank you.",
+    "Still time! Just one~",
+    "One now keeps your streak going!",
+    "You've got this, start with one!",
+    "Future you says thanks~",
   ],
   "last-call": [
-    "There's still time for one.",
-    "It's late. One still counts.",
-    "Just one before you rest.",
+    "There's still time for one!",
+    "One before bed? You've got it~",
+    "Late, but one still counts!",
   ],
 };
 
-// The headline already says how many are done and left, so these only encourage.
-const STARTED = ["You're already moving.", "The hard part is done.", "Keep the momentum."];
+// The headline already says how many are done and left, so these only cheer.
+const STARTED = ["Nice! Keep it rolling~", "You're on a roll!", "Look at you go!"];
 
-const DONE = ["This is how big goals happen.", "Be proud of today.", "You showed up today."];
+const DONE = ["You showed up again!", "That's how big goals happen~", "Be proud of today!"];
 
 export function levelFor(hour: number): NudgeLevel {
   if (hour >= 19) return "last-call";
@@ -45,12 +46,12 @@ function pick(lines: string[], goal: Goal, today: string): string {
 export function nudgeLine(goal: Goal, plan: TodayPlan, today: string, hour: number): string {
   switch (plan.status) {
     case "complete":
-      return `You did it: ${formatCount(goal.target, goal.unit)}.`;
+      return `You did it, ${formatCount(goal.target, goal.unit)}!`;
     case "deadline-passed":
-      return `${plan.doneTotal} of ${goal.target} is still real progress.`;
+      return `${plan.doneTotal} of ${goal.target} is still real progress!`;
     case "paused": {
       const pause = goal.pauses.find((p) => p.from <= today && today <= p.to);
-      return pause ? `Paused until ${formatShortDate(pause.to)}. Rest counts too.` : "Paused. Rest counts too.";
+      return pause ? `Paused until ${formatShortDate(pause.to)}, rest counts too~` : "Paused, rest counts too~";
     }
     case "done":
       return pick(DONE, goal, today);

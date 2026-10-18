@@ -28,13 +28,13 @@ interface SentenceParts {
   deadline: string | null;
 }
 
-/** The goal in the person's own words: "I want to send 500 connection requests by Dec 1." */
+/** The goal in the person's own words: "I want to send 500 connection requests by Dec 1" (no full stop, house style). */
 export function goalSentence({ verb, unit, type, target, deadline }: SentenceParts): string {
   if (!verb.trim()) return "I want to \u2026";
   const amount = target === null ? `some ${unit}` : countOf(target, unit);
   const what = `${verb.trim().toLowerCase()} ${amount}`;
   const when = type === "daily" ? "every day" : deadline ? `by ${formatShortDate(deadline)}` : "by a date you pick";
-  return `I want to ${what} ${when}.`;
+  return `I want to ${what} ${when}`;
 }
 
 /** One-tap amounts for "How many did you do?": about a quarter, half, three quarters, and all that's left. */

@@ -1,0 +1,81 @@
+// House style (user, 2026-10-17): no full stops anywhere in the interface; encouraging lines end with "!" or "~".
+import { describe, expect, it } from "vitest";
+import { calendarLine, nudgeLine } from "./nudges";
+import { welcomeMessage } from "./welcome";
+import { goalSentence } from "./phrases";
+import { dailyPreview, parseCount, parseTime, validateGoal } from "./validate";
+import { planToday } from "./quota";
+import type { Entry, Goal } from "./types";
+
+const goal: Goal = {
+  id: "g1", verb: "Send", title: "Send connection requests", unit: "connection requests", type: "by-date",
+  target: 500, deadline: "2026-12-01", link: null, startDate: "2026-10-10", pauses: [], createdAt: "",
+};
+const entry = (date: string, amount: number): Entry => ({ id: date + amount, goalId: "g1", date, amount, at: "" });
+const DAYS = ["2026-10-17", "2026-10-18", "2026-10-19", "2026-10-20", "2026-10-21"];
+const HOURS = [9, 15, 21];
+
+/** A full stop is a period followed by a space or the end; decimals like 1.5 are fine. */
+const FULL_STOP = /\.(\s|$)/;
+
+function nudges(): string[] {
+  const out: string[] = [];
+  for (const d of DAYS) for (const h of HOURS) {
+    out.push(calendarLine(d, h));
+    for (const entries of [[], [entry(d, 4)], [entry(d, 30)]]) out.push(nudgeLine(goal, planToday(goal, entries, d), d, h));
+  }
+  out.push(nudgeLine(goal, planToday(goal, [entry("2026-10-17", 500)], "2026-10-17"), "2026-10-17", 9)); // complete
+  out.push(nudgeLine({ ...goal, deadline: "2026-10-16" }, planToday({ ...goal, deadline: "2026-10-16" }, [entry("2026-10-15", 3)], "2026-10-17"), "2026-10-17", 9)); // deadline passed
+  const paused = { ...goal, pauses: [{ from: "2026-10-16", to: "2026-10-20" }] };
+  out.push(nudgeLine(paused, planToday(paused, [], "2026-10-17"), "2026-10-17", 9));
+  return out;
+}
+
+function welcomes(): string[] {
+  const t = "2026-10-17";
+  const cases = [
+    { prevVisit: t, fromNudge: true, entries: [] },
+    { prevVisit: "2026-10-16", fromNudge: false, entries: [entry("2026-10-15", 1), entry("2026-10-16", 1)] },
+    { prevVisit: "2026-10-16", fromNudge: false, entries: [entry("2026-10-16", 1)] },
+    { prevVisit: "2026-10-15", fromNudge: false, entries: [entry("2026-10-15", 1)] },
+    { prevVisit: "2026-10-15", fromNudge: false, entries: [] },
+    { prevVisit: "2026-10-13", fromNudge: false, entries: [entry("2026-10-13", 1)] },
+  ];
+  return cases.map((c) => welcomeMessage({ ...c, today: t, goal })).filter((m): m is string => m !== null);
+}
+
+function errors(): string[] {
+  const today = "2026-10-17";
+  const bad = [
+    { verb: "", unit: "", type: "by-date" as const, target: "", deadline: "", link: "" },
+    { verb: "x".repeat(60), unit: "y".repeat(60), type: "by-date" as const, target: "999999", deadline: "2026-10-01", link: "not a link" },
+  ];
+  const out = bad.flatMap((d) => Object.values(validateGoal(d, today).errors).filter(Boolean) as string[]);
+  for (const r of [parseCount("abc"), parseCount("5000"), parseTime("25:00")]) if (!r.ok) out.push(r.error);
+  return out;
+}
+
+describe("house style: no full stops", () => {
+  it("nudges end with ! or ~ and contain no full stop", () => {
+    for (const line of nudges()) {
+      expect(line, line).not.toMatch(FULL_STOP);
+      expect(line, line).toMatch(/[!~]$/);
+    }
+  });
+
+  it("welcome lines contain no full stop", () => {
+    const lines = welcomes();
+    expect(lines.length).toBeGreaterThan(3);
+    for (const line of lines) expect(line, line).not.toMatch(FULL_STOP);
+  });
+
+  it("form errors and previews contain no full stop", () => {
+    const lines = [...errors(), dailyPreview("500", "2026-12-01", "connection requests", "2026-10-17")!.message, dailyPreview("5000", "2026-10-20", "connection requests", "2026-10-17")!.message];
+    expect(lines.length).toBeGreaterThan(5);
+    for (const line of lines) expect(line, line).not.toMatch(FULL_STOP);
+  });
+
+  it("the goal sentence has no full stop", () => {
+    expect(goalSentence({ verb: "Send", unit: "connection requests", type: "by-date", target: 500, deadline: "2026-12-01" })).not.toMatch(FULL_STOP);
+  });
+});
