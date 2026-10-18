@@ -1,21 +1,31 @@
 @import "tailwindcss";
 
-/* Neutral tokens while the flows are built; the visual style comes later. */
+/* The softened Trail Quest from A2: flat, warm off-white, navy text, green only for the primary action,
+   yellow only for rewards. Contrast (checked): ink 12.9:1 and muted 6.4:1 on the page; ink on green 6.8:1;
+   control lines 3.4:1; the error berry 6.6:1. No orange or red. */
 @theme {
-  --color-page: #fafaf9;
+  --font-sans: var(--font-nunito), system-ui, sans-serif;
+  --font-display: var(--font-fredoka), var(--font-nunito), system-ui, sans-serif;
+
+  --color-page: #faf7f0;
   --color-surface: #ffffff;
-  --color-ink: #1c1917;
-  --color-muted: #57534e;
-  --color-wash: #f0eeec;
-  --color-wash-strong: #e2dfdc;
-  --color-line: #78716c;
-  --color-primary: #1c1917;
-  --color-primary-hover: #3a3532;
-  --color-primary-pressed: #000000;
-  --color-on-primary: #ffffff;
-  --color-focus: #2563eb;
-  --color-danger: #b91c1c;
-  --color-danger-wash: #fef2f2;
+  --color-ink: #1d2b53;
+  --color-muted: #4a5a85;
+  --color-wash: #f1ece0;
+  --color-wash-strong: #e6dfcf;
+  --color-line: #7c86a3;        /* borders of controls (3:1) */
+  --color-hairline: #e7e1d3;    /* decorative dividers only */
+  --color-primary: #6cc985;     /* the one primary action */
+  --color-primary-hover: #7bd393;
+  --color-primary-pressed: #5bb874;
+  --color-on-primary: #1d2b53;
+  --color-lip: #1d2b53;         /* the solid edge under the primary button */
+  --color-reward: #f6cf5f;      /* coins, streak, celebration */
+  --color-reward-deep: #e2b93c;
+  --color-celebrate: #fff1c7;   /* the done screen */
+  --color-focus: #1d2b53;
+  --color-danger: #9c2a6b;      /* errors and destructive actions only */
+  --color-danger-wash: #fbeef5;
 }
 
 html,
@@ -26,5 +36,21 @@ body {
 body {
   background: var(--color-page);
   color: var(--color-ink);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-sans);
+}
+
+/* Confetti on the done screen: it falls once; nothing moves for people who ask for less motion. */
+@keyframes confetti-fall {
+  from { transform: translateY(-40px) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  to { transform: translateY(var(--fall, 160px)) rotate(var(--spin, 200deg)); opacity: 0; }
+}
+@keyframes pop-in {
+  from { transform: scale(.6); opacity: 0; }
+  70% { transform: scale(1.08); opacity: 1; }
+  to { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .confetti { display: none; }
+  .pop-in { animation: none !important; }
 }

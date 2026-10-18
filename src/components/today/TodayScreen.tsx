@@ -20,6 +20,7 @@ import { GoalRow } from "./GoalRow";
 import { NudgePrompt } from "./NudgePrompt";
 import { TodayCard } from "./TodayCard";
 import { WelcomeBanner } from "./WelcomeBanner";
+import { StreakChip } from "./StreakChip";
 
 interface Undoable {
   entryId: string;
@@ -80,19 +81,21 @@ export function TodayScreen() {
   const { nudgesSetUp, nudgePromptDismissed, reminderTimes } = data.settings;
   const showPrompt = !nudgePromptDismissed && (promptPinned || !nudgesSetUp);
   const next = rest.find((item) => ACTIVE.has(item.plan.status))?.goal ?? null;
+  const run = streak(first.goal, data.entries, today).days;
 
   return (
     <>
+      {run > 0 && <StreakChip days={run} />}
       {!state.persistent ? <StorageNotice state={state} /> : welcome && !asking && <WelcomeBanner message={welcome} />}
 
       {asking ? (
-        <AskHowMany goal={first.goal} left={first.plan.leftToday} onLog={(n) => log(first.goal, n)} onNone={endSession} />
+        <AskHowMany goal={first.goal} total={first.plan.quota} done={first.plan.doneToday} onLog={(n) => log(first.goal, n)} onNone={endSession} />
       ) : first.plan.status === "done" ? (
         <DoneToday
           prompt={showPrompt ? <NudgePrompt times={reminderTimes} onActed={() => setPromptPinned(true)} /> : null}
           goal={first.goal}
           doneToday={first.plan.doneToday}
-          streakDays={streak(first.goal, data.entries, today).days}
+          streakDays={run}
           week={history(first.goal, data.entries, today, 7)}
           next={next}
           onStartNext={() => next && startGoal(next)}
@@ -103,7 +106,7 @@ export function TodayScreen() {
 
       {rest.length > 0 && !asking && (
         <section aria-labelledby="also-today" className="mt-12 flex flex-col">
-          <h2 id="also-today" className="text-sm font-semibold text-muted">Also today</h2>
+          <h2 id="also-today" className="font-display text-lg font-semibold text-muted">Also today</h2>
           <ul className="flex flex-col">
             {rest.map((item) => (
               <GoalRow key={item.goal.id} item={item} onStart={() => startGoal(item.goal)} />

@@ -5,20 +5,24 @@ type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors " +
-  "focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus " +
+  "inline-flex items-center justify-center gap-2 rounded-2xl font-display font-semibold transition " +
+  "focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-focus " +
   "disabled:cursor-not-allowed disabled:opacity-50";
 
+/** Only the primary action stands on a solid lip (Duolingo's chunky button); pressing it sinks onto the lip.
+ *  Everything else is flat, so the one thing to tap is never in doubt. */
 const variants: Record<Variant, string> = {
-  primary: "bg-primary text-on-primary hover:bg-primary-hover active:bg-primary-pressed",
-  secondary: "border-2 border-ink bg-surface text-ink hover:bg-wash active:bg-wash-strong",
-  ghost: "text-ink underline-offset-4 hover:underline",
-  danger: "border-2 border-danger bg-surface text-danger hover:bg-danger-wash",
+  primary:
+    "border-3 border-lip bg-primary text-on-primary shadow-[0_5px_0_var(--color-lip)] hover:bg-primary-hover " +
+    "active:translate-y-[3px] active:bg-primary-pressed active:shadow-[0_2px_0_var(--color-lip)]",
+  secondary: "border-2 border-line bg-surface text-ink hover:border-ink hover:bg-wash active:bg-wash-strong",
+  ghost: "text-ink underline decoration-2 underline-offset-4 decoration-line hover:decoration-ink active:text-muted",
+  danger: "border-2 border-danger bg-surface text-danger hover:bg-danger-wash active:bg-danger-wash",
 };
 
 const sizes: Record<Size, string> = {
   md: "min-h-11 px-4 text-base",
-  lg: "min-h-14 px-6 text-lg",
+  lg: "min-h-14 px-6 text-xl",
 };
 
 interface StyleProps {

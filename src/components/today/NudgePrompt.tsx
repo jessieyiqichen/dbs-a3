@@ -21,8 +21,8 @@ export function NudgePrompt({ times, onActed }: Props) {
   const acted = calendarUntil !== null || (asked && permission === "granted");
 
   return (
-    <section aria-labelledby="nudge-prompt" className="mt-8 flex flex-col gap-3 rounded-lg border-2 border-line bg-surface p-4">
-      <h2 id="nudge-prompt" className="text-xl font-bold text-ink">Nudge you tomorrow?</h2>
+    <section aria-labelledby="nudge-prompt" className="flex flex-col gap-3 rounded-2xl bg-surface p-5 shadow-[0_2px_12px_rgba(29,43,83,.08)]">
+      <h2 id="nudge-prompt" className="font-display text-xl font-semibold text-ink">Nudge you tomorrow?</h2>
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={() => { onActed(); setCalendarUntil(addToCalendar(times)); }}>Add to calendar</Button>
         {permission !== "unsupported" && !(asked && permission === "granted") && (
@@ -31,9 +31,9 @@ export function NudgePrompt({ times, onActed }: Props) {
         <Button variant="ghost" onClick={() => updateSettings({ nudgePromptDismissed: true })}>{acted ? "Done" : "Not now"}</Button>
       </div>
       <div role="status" className="flex flex-col gap-1 text-sm text-ink">
-        {calendarUntil && <p>Open the downloaded file to add it. Covers until {formatShortDate(calendarUntil)}.</p>}
-        {asked && permission === "granted" && <p>Notifications on.</p>}
-        {asked && permission === "denied" && <p>Blocked in this browser. Try the calendar.</p>}
+        {calendarUntil && <p>Open the downloaded file to add it, it covers until {formatShortDate(calendarUntil)}~</p>}
+        {asked && permission === "granted" && <p>Notifications on!</p>}
+        {asked && permission === "denied" && <p>Blocked in this browser, try the calendar instead~</p>}
       </div>
     </section>
   );

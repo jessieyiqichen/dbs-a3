@@ -9,7 +9,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         Skip to content
       </a>
       <header className="flex items-center justify-between gap-3 py-4">
-        <Link href="/" className="text-lg font-bold tracking-tight text-ink focus-visible:outline-3 focus-visible:outline-focus">
+        <Link href="/" className="font-display text-2xl font-bold text-ink focus-visible:outline-3 focus-visible:outline-focus">
           Nudge
         </Link>
         <Suspense fallback={<NavLinks pathname={null} />}>
