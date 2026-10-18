@@ -2,6 +2,7 @@
 
 import { addDays, daysBetween, formatShortDate } from "@/lib/dates";
 import { amountTiers, dateOptions, perDayFor } from "@/lib/onboarding";
+import { pageChoices } from "@/lib/pages";
 import { STARTERS } from "@/lib/starters";
 import type { GoalType } from "@/lib/types";
 import { linkError, MAX_TARGET } from "@/lib/validate";
@@ -113,10 +114,12 @@ export function AmountStep({ answers, today, typing, onType, onAnswer, question,
   return <Choices label={question} choices={[...tiers, { key: "own", label: "Type my own number" }]} onPick={(k) => (k === "own" ? onType() : onAnswer({ amount: Number(k) }))} />;
 }
 
-/** A goal of your own: the page Start should open, if there is one. */
-export function LinkStep({ answers, onAnswer }: StepProps) {
-  return (
-    <OwnAnswer
+/** Which page this goal is worked on: LinkedIn (the page that fits the goal) and Handshake as taps, your own link, or none.
+ *  Nothing is opened here; the session offers the page on its "Open" button (user, 2026-10-18). */
+export function LinkStep({ answers, typing, onType, onAnswer }: StepProps) {
+  if (typing) {
+    return (
+      <OwnAnswer
       id="own-link"
       label="Page you'll work on"
       hint="Like https://www.linkedin.com/jobs/"
@@ -125,6 +128,15 @@ export function LinkStep({ answers, onAnswer }: StepProps) {
       check={(v) => linkError(v)}
       onDone={(v) => onAnswer({ link: v })}
       onSkip={() => onAnswer({ link: "" })}
+      />
+    );
+  }
+  const sites = pageChoices(answers.starterKey).map((c) => ({ key: c.link, label: c.label, detail: c.detail }));
+  return (
+    <Choices
+      label="Pages"
+      choices={[...sites, { key: "own", label: "Type my own link" }, { key: "none", label: "No page, I'll just do it" }]}
+      onPick={(k) => (k === "own" ? onType() : onAnswer({ link: k === "none" ? "" : k }))}
     />
   );
 }
