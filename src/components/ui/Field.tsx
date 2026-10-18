@@ -23,18 +23,18 @@ export function Field({ id, label, hint, error, children }: FieldProps) {
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="font-semibold text-ink">
+      <label htmlFor={id} className="t-body font-extrabold text-ink">
         {label}
       </label>
       {hint && (
-        <p id={hintId} className="text-sm text-muted">
+        <p id={hintId} className="t-label text-muted">
           {hint}
         </p>
       )}
       {children({ id, "aria-describedby": describedBy, "aria-invalid": error ? true : undefined })}
       {error && (
-        <p id={errorId} className="flex items-start gap-1.5 text-sm font-semibold text-danger">
-          <span aria-hidden="true" className="mt-px inline-flex size-4 shrink-0 items-center justify-center rounded-full bg-danger text-[11px] text-on-primary">
+        <p id={errorId} className="t-label flex items-start gap-1.5 text-danger">
+          <span aria-hidden="true" className="mt-px inline-flex size-4 shrink-0 items-center justify-center rounded-full bg-danger text-surface">
             !
           </span>
           {error}
@@ -45,7 +45,7 @@ export function Field({ id, label, hint, error, children }: FieldProps) {
 }
 
 const inputClass =
-  "min-h-12 w-full rounded-xl border-2 border-line bg-surface px-3 text-base font-bold text-ink shadow-[inset_0_2px_0_rgba(0,0,0,.04)] " +
+  "min-h-12 w-full rounded-tile border-2 border-line bg-surface px-3 text-base font-bold text-ink shadow-[inset_0_2px_0_rgba(0,0,0,.04)] " +
   "placeholder:font-semibold placeholder:text-muted focus-visible:border-ink focus-visible:outline-3 focus-visible:outline-offset-1 focus-visible:outline-focus " +
   "aria-invalid:border-danger";
 
