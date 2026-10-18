@@ -38,7 +38,7 @@ function questionFor(step: Step, a: Answers, unit: string, firstVisit: boolean):
   if (step === "often") return "How often do you want to do it?";
   if (step === "date") return `${named}, nice! When do you want to get there?`;
   if (step === "amount") return a.type === "daily" ? `How many ${unit} a day?` : `How many ${unit} by ${formatShortDate(a.deadline)}?`;
-  if (step === "link") return "Is there a page I should open when you start?";
+  if (step === "link") return "Is there a page you'll work on?";
   return firstVisit ? "Hi, I'm Titi! What have you been putting off?" : "What else have you been putting off?";
 }
 

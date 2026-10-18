@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/Button";
 import { ScreenHeading } from "@/components/ui/ScreenHeading";
 import { formatShortDate } from "@/lib/dates";
 import { countOf, headline } from "@/lib/phrases";
-import { hostOf } from "@/lib/start";
 import type { GoalValues } from "@/lib/validate";
 
 interface Props {
@@ -19,7 +18,6 @@ interface Props {
 
 /** The end of setup: today's plan as fish treats, the whole goal in one quiet line, and the first task right away. */
 export function PlanStep({ goal, perDay, firstVisit = false, onBack, onStart }: Props) {
-  const host = hostOf(goal.link);
   const whole = `${countOf(goal.target, goal.unit)} ${goal.deadline ? `by ${formatShortDate(goal.deadline)}` : "every day"}`;
   return (
     <section aria-labelledby="plan-title" className="relative flex flex-col items-center pt-1 text-center">
@@ -48,14 +46,8 @@ export function PlanStep({ goal, perDay, firstVisit = false, onBack, onStart }: 
       </div>
       <Button size="lg" className="mt-8 w-full" onClick={onStart}>
         {firstVisit ? "Start my first one" : "Start the first one"}
-        {host && (
-          <>
-            <span aria-hidden="true">↗</span>
-            <span className="sr-only">(opens {host} in a new tab)</span>
-          </>
-        )}
       </Button>
-      <p className="mt-2 text-sm text-muted">{host ? `Opens ${host}, then come back and tell Titi how many~` : "Go do one, then come back and tell Titi how many~"}</p>
+      <p className="mt-2 text-sm text-muted">Go do one, then come back and tell Titi how many~</p>
     </section>
   );
 }

@@ -4,9 +4,9 @@ import { startSession } from "./actions";
 import { setFocusGoal } from "./store";
 import type { Goal } from "./types";
 
-/** Start: open the goal's page in a new tab (if it has one) and ask how many on return. */
+/** Start: begin today's session. The goal's page is never opened here; the session offers an "Open <site>" button, so
+ *  a new tab only ever appears because the person asked for it (user, 2026-10-18). */
 export function startGoal(goal: Goal): void {
-  if (goal.link) window.open(goal.link, "_blank", "noopener,noreferrer");
   setFocusGoal(goal.id);
   startSession(goal.id);
 }

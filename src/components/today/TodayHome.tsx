@@ -7,7 +7,6 @@ import { nudgeLine } from "@/lib/nudges";
 import { countOf, headline } from "@/lib/phrases";
 import type { TodayPlan } from "@/lib/quota";
 import type { BowlDay } from "@/lib/scene";
-import { siteName } from "@/lib/start";
 import type { Goal } from "@/lib/types";
 import type { CatEffect, CatMood } from "./CatArt";
 import { Room } from "./Room";
@@ -110,7 +109,6 @@ function shortName(goal: Goal): string {
 /** Today: the window, Titi on her mat, which goal, one sentence and one button; this week's bowls on a shelf that stays at
  *  the foot of a phone screen while the room scrolls. */
 export function TodayHome({ goal, plan, today, hour, bowls, welcome, catchUp, notice, next, goals, onPick, corner, prompt, onStart, onStartNext, cheer = false }: Props) {
-  const site = siteName(goal.link);
   const active = plan.status === "not-started" || plan.status === "started";
   const line = plan.status === "done" ? "Titi is so full! See you tomorrow~" : (welcome ?? nudgeLine(goal, plan, today, hour));
   const cat = { ...catFor(plan.status, cheer), key: cheer ? "cheer" : plan.status };
@@ -126,7 +124,7 @@ export function TodayHome({ goal, plan, today, hour, bowls, welcome, catchUp, no
         <div className="flex w-full flex-col gap-3">
           {active && (
             <Button size="lg" onClick={onStart} className="w-full">
-              {plan.status === "started" ? "Keep going" : "Start"}{site ? ` on ${site}` : ""} {site && <><span aria-hidden="true">↗</span><span className="sr-only">(opens in a new tab)</span></>}
+              {plan.status === "started" ? "Keep going" : "Start"}
             </Button>
           )}
           {plan.status === "done" && next && <Button size="lg" onClick={onStartNext} className="w-full">Next: {next.title} →</Button>}
