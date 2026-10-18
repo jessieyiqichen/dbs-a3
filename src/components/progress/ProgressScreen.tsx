@@ -5,14 +5,14 @@ import { ButtonLink } from "@/components/ui/Button";
 import { StorageNotice } from "@/components/ui/StorageNotice";
 import { formatShortDate, toISODate } from "@/lib/dates";
 import { formatCount } from "@/lib/format";
-import { cumulativeSeries, history } from "@/lib/progress";
 import { planToday } from "@/lib/quota";
 import { useStore } from "@/lib/store";
 import { streak } from "@/lib/streak";
 import type { Goal } from "@/lib/types";
 import type { TodayPlan } from "@/lib/quota";
-import { CumulativeChart } from "./CumulativeChart";
-import { DailyBars } from "./DailyBars";
+import { diaryWeeks, roadStory } from "@/lib/story";
+import { Diary } from "./Diary";
+import { Road } from "./Road";
 import { GoalActions } from "./GoalActions";
 
 function paceLine(goal: Goal, plan: TodayPlan, today: string): string {
@@ -42,7 +42,6 @@ export function ProgressScreen({ id }: { id: string }) {
   const today = toISODate(new Date());
   const plan = planToday(goal, data.entries, today);
   const run = streak(goal, data.entries, today);
-  const rows = history(goal, data.entries, today, 14);
   const lastRest = run.restDays[0];
   const byDate = goal.type === "by-date";
 
@@ -59,7 +58,7 @@ export function ProgressScreen({ id }: { id: string }) {
         </div>
       </div>
 
-      {byDate ? <CumulativeChart {...cumulativeSeries(goal, data.entries, today)} unit={goal.unit} /> : <DailyBars rows={rows} target={goal.target} unit={goal.unit} />}
+      {byDate ? <Road goal={goal} story={roadStory(goal, data.entries, today)} /> : <Diary weeks={diaryWeeks(goal, data.entries, today, 2)} target={goal.target} unit={goal.unit} />}
 
       <p className="clay rounded-2xl bg-reward-soft px-4 py-3 font-display font-semibold text-ink [--lip:var(--color-reward)]">
         {run.days === 1 ? "1 day in a row" : `${run.days} days in a row`}
