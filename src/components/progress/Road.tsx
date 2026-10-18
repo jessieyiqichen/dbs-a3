@@ -126,8 +126,8 @@ export function Road({ goal, story }: { goal: Goal; story: RoadStory }) {
           <Finish date={formatShortDate(goal.deadline ?? "")} />
           {showPace && (
             <g transform={`translate(${px} ${py}) scale(${depth(py)})`}>
-              <circle r={34} fill="var(--color-surface)" fillOpacity={0.55} stroke="var(--color-leaf)" strokeWidth={7} strokeDasharray="12 9" />
-              {paceLabel && <text y={80} textAnchor="middle" fontSize={34} fontWeight={800} fill="var(--color-leaf)" stroke="var(--color-surface)" strokeWidth={8} paintOrder="stroke">pace</text>}
+              <circle r={34} fill="var(--color-surface)" fillOpacity={0.55} stroke="var(--color-lip)" strokeWidth={7} strokeDasharray="12 9" />
+              {paceLabel && <text y={80} textAnchor="middle" fontSize={34} fontWeight={800} fill="var(--color-lip)" stroke="var(--color-surface)" strokeWidth={8} paintOrder="stroke">pace</text>}
             </g>
           )}
           <ellipse cx={cx} cy={cy + 4 * cs} rx={70 * cs} ry={16 * cs} fill="var(--color-ink)" opacity={0.2} />
