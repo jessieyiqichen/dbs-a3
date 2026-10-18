@@ -117,7 +117,7 @@ function SessionBar({ total, done }: { total: number; done: number }) {
 function Amounts({ total, done, log }: { total: number; done: number; log: (n: number) => void }) {
   const left = Math.max(total - done, 0);
   if (total <= 12) {
-    return <Coins total={total} done={done} label="Tap the last one you finished" onPick={(reached) => log(reached - done)} showCount={false} size="lg" />;
+    return <Coins total={total} done={done} label="Tap the last one you finished" onPick={(reached) => log(reached - done)} showCount={false} />;
   }
   return (
     <div role="group" aria-label="How many did you do" className="flex flex-wrap gap-2">
