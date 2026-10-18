@@ -28,7 +28,8 @@ function Window({ time, corner }: { time: TimeOfDay; corner?: ReactNode }) {
         <img key={t} src={`/cat/window-${t}.webp`} alt="" aria-hidden="true" className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 motion-reduce:transition-none ${t === time ? "opacity-100" : "opacity-0"}`} />
       ))}
       {corner && <div className="absolute left-3 top-3">{corner}</div>}
-      <span className="sr-only">Titi&apos;s window, {time}</span>
+      {/* The "morning" painting is the daytime sky (5:00 to 15:59), so it is read out as daytime */}
+      <span className="sr-only">Titi&apos;s window, {time === "morning" ? "daytime" : time}</span>
     </div>
   );
 }

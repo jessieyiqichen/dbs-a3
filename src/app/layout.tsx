@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fredoka, Nunito } from "next/font/google";
+import { preload } from "react-dom";
 import { Notifier } from "@/components/Notifier";
 import "./globals.css";
 
@@ -16,6 +17,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { viewportFit: "cover" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  // Titi's sitting loop is the first picture on every first visit; fetched early so she is not a blank circle for a moment
+  // (first-run check, 2026-10-18)
+  preload("/cat/idle.webp", { as: "image" });
   return (
     <html
       lang="en"

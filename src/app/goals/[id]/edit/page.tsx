@@ -6,20 +6,15 @@ import { PageHeader } from "@/components/ui/PageHeader";
 
 export const metadata: Metadata = { title: "Edit goal · Nudge" };
 
-type Params = PageProps<"/goals/[id]/edit">["params"];
-
 /** Goals live in the browser, so the id is only read here and the goal is found client-side. */
-async function EditGoal({ params }: { params: Params }) {
+export default async function EditGoalPage({ params }: PageProps<"/goals/[id]/edit">) {
   const { id } = await params;
-  return <EditGoalScreen id={id} />;
-}
-
-export default function EditGoalPage({ params }: PageProps<"/goals/[id]/edit">) {
   return (
     <AppShell>
-      <PageHeader title="Edit goal" />
+      {/* Back goes to the goal's progress page, where Edit was tapped (first-run check, 2026-10-18) */}
+      <PageHeader title="Edit goal" back={`/goals/${id}`} backLabel="← Back to progress" />
       <Suspense fallback={<p className="pt-6 text-muted">Loading your goal…</p>}>
-        <EditGoal params={params} />
+        <EditGoalScreen id={id} />
       </Suspense>
     </AppShell>
   );

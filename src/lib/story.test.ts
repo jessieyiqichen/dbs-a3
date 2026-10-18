@@ -7,7 +7,7 @@ const daily: Goal = { ...road, type: "daily", target: 2, deadline: null };
 const on = (date: string, amount: number, goalId = "g"): Entry => ({ id: date + amount, goalId, date, amount, at: "" });
 
 describe("roadStory: where Titi stands on the road", () => {
-  it("places Titi by what's done, the pace flag by the even plan, and marks milestones passed", () => {
+  it("places Titi by what's done, the pace ring by the even plan, and marks milestones passed", () => {
     // Oct 12 to Oct 31 is 20 days; by the end of Oct 16 (day 5 of 20) the even plan is 25
     const s = roadStory(road, [on("2026-10-13", 20), on("2026-10-16", 32)], "2026-10-17");
     expect(s.done).toBe(52);

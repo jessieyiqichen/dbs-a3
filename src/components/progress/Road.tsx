@@ -135,7 +135,9 @@ export function Road({ goal, story }: { goal: Goal; story: RoadStory }) {
         </svg>
       </div>
       <figcaption className="px-3 pb-3 pt-2 text-center text-sm font-bold text-muted">
-        {story.at >= 1 ? "Titi made it to the end of the road!" : story.ahead ? "Titi is ahead of the pace flag~" : "The pace flag is a little ahead, one today catches up~"}
+        {/* The marker is a dashed ring, not a flag, and it is only drawn when it is clear of Titi, so the caption says so too
+            (first-run check, 2026-10-18: "pace flag" sent a tester looking for a second flag) */}
+        {story.at >= 1 ? "Titi made it to the end of the road!" : !showPace ? "Titi is right on pace!" : story.ahead ? "Titi is ahead of the dashed pace ring~" : "The dashed pace ring is a little ahead, one today catches up~"}
       </figcaption>
     </figure>
   );
