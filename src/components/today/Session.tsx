@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Field, TextInput } from "@/components/ui/Field";
 import { ScreenHeading } from "@/components/ui/ScreenHeading";
 import { quickAmounts } from "@/lib/phrases";
-import { bowlFill, sessionLine } from "@/lib/session";
+import { sessionLine, type BowlFill } from "@/lib/session";
 import { siteName } from "@/lib/start";
 import type { Goal } from "@/lib/types";
 import { parseCount } from "@/lib/validate";
@@ -17,6 +17,8 @@ interface Props {
   goal: Goal;
   total: number;
   done: number;
+  /** Titi's bowl for today, shared by every goal. */
+  bowl: BowlFill;
   onLog: (amount: number) => void;
   onOpen: () => void;
   onStop: () => void;
@@ -51,7 +53,7 @@ function MoreForm({ total, onLog }: { total: number; onLog: (n: number) => void 
 
 /** Working through today's number, like a lesson: a bar on top, Titi cheering, fish flying into the bowl as you log.
  *  One tap on a fish logs up to it; "One more" logs one; the session ends on its own when today is done. */
-export function Session({ goal, total, done, onLog, onOpen, onStop }: Props) {
+export function Session({ goal, total, done, bowl, onLog, onOpen, onStop }: Props) {
   const id = useId();
   const [flight, setFlight] = useState<{ key: number; amount: number } | null>(null);
   const [typing, setTyping] = useState(false);
@@ -82,7 +84,7 @@ export function Session({ goal, total, done, onLog, onOpen, onStop }: Props) {
         </div>
       </div>
       <div className="mt-2 self-center">
-        <Bowl fill={bowlFill(done, total)} flight={flight} />
+        <Bowl fill={bowl} flight={flight} />
       </div>
 
       <div className="mt-6">

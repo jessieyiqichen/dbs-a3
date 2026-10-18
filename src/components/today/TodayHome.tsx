@@ -25,6 +25,9 @@ interface Props {
   /** The calendar file is running out. */
   notice: string | null;
   next: Goal | null;
+  /** Every goal, for the switcher; the first is the one shown. */
+  goals: { goal: Goal; done: boolean }[];
+  onPick: (id: string) => void;
   corner?: React.ReactNode;
   onStart: () => void;
   onStartNext: () => void;
@@ -76,8 +79,34 @@ function Road({ goal, plan }: { goal: Goal; plan: TodayPlan }) {
   );
 }
 
+/** Which goal is up now: the person picks; the first tab is the one the app would pick on its own. */
+function GoalTabs({ goals, current, onPick }: { goals: { goal: Goal; done: boolean }[]; current: string; onPick: (id: string) => void }) {
+  const pill = "clay clay-press inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full px-4 font-display text-sm font-semibold focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus";
+  return (
+    <nav aria-label="Up now" className="mx-auto mt-4 flex w-full max-w-[430px] gap-2 overflow-x-auto px-1 pb-2 pt-1 [scrollbar-width:none]">
+      {goals.map(({ goal, done }) => {
+        const on = goal.id === current;
+        return (
+          <button key={goal.id} type="button" aria-pressed={on} onClick={() => onPick(goal.id)} className={`${pill} ${on ? "bg-primary text-on-primary [--lip:var(--color-lip)]" : "bg-surface text-ink hover:bg-wash"}`}>
+            {shortName(goal)}
+            {done && <span aria-hidden="true">✓</span>}
+            {done && <span className="sr-only">, done for today</span>}
+          </button>
+        );
+      })}
+      <Link href="/goals/new" className={`${pill} bg-surface text-muted hover:bg-wash`}>+ Add</Link>
+    </nav>
+  );
+}
+
+/** "Connection requests" for a tab, from what the goal counts. */
+function shortName(goal: Goal): string {
+  const unit = goal.unit.trim() || goal.title;
+  return unit.charAt(0).toUpperCase() + unit.slice(1);
+}
+
 /** Today: Titi's room with this week's bowls on the sill, one sentence in Titi's bubble, and one button. */
-export function TodayHome({ goal, plan, today, hour, bowls, welcome, catchUp, notice, next, corner, onStart, onStartNext, cheer = false }: Props) {
+export function TodayHome({ goal, plan, today, hour, bowls, welcome, catchUp, notice, next, goals, onPick, corner, onStart, onStartNext, cheer = false }: Props) {
   const site = siteName(goal.link);
   const active = plan.status === "not-started" || plan.status === "started";
   const line = plan.status === "done" ? "Titi is so full! See you tomorrow~" : (welcome ?? nudgeLine(goal, plan, today, hour));
@@ -85,6 +114,7 @@ export function TodayHome({ goal, plan, today, hour, bowls, welcome, catchUp, no
   return (
     <section aria-labelledby={`goal-${goal.id}`} className="flex flex-col">
       <Room bowls={bowls} cat={cat} corner={corner} />
+      <GoalTabs goals={goals} current={goal.id} onPick={onPick} />
       <div className="clay relative mx-auto mt-5 w-full max-w-[430px] rounded-3xl bg-surface px-5 py-4">
         <ScreenHeading id={`goal-${goal.id}`} className="font-display text-2xl font-bold leading-tight text-ink [text-wrap:balance]">{title(goal, plan)}</ScreenHeading>
         <p className="mt-1 font-bold text-muted">{line}</p>

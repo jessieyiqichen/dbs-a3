@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { ButtonLink } from "@/components/ui/Button";
 import { StorageNotice } from "@/components/ui/StorageNotice";
 import { Toast } from "@/components/ui/Toast";
 import { addEntry, endSession, markVisited, removeEntry } from "@/lib/actions";
@@ -9,15 +8,14 @@ import { toISODate } from "@/lib/dates";
 import { formatCount } from "@/lib/format";
 import { sortByUrgency, type PlannedGoal } from "@/lib/quota";
 import { startGoal } from "@/lib/start";
-import { getFocusGoal, getVisitStart, useStore } from "@/lib/store";
+import { getFocusGoal, getVisitStart, setFocusGoal, useStore } from "@/lib/store";
 import { calendarNotice, catchUpLine, sessionIsToday } from "@/lib/returning";
-import { weekBowls } from "@/lib/scene";
+import { todayBowl, weekBowls } from "@/lib/scene";
 import { overallStreak } from "@/lib/streak";
 import type { AppData, Goal } from "@/lib/types";
 import { welcomeMessage } from "@/lib/welcome";
 import { DoneToday } from "./DoneToday";
 import { FirstVisit } from "./FirstVisit";
-import { GoalRow } from "./GoalRow";
 import { NudgePrompt } from "./NudgePrompt";
 import { Session } from "./Session";
 import { TodayHome } from "./TodayHome";
@@ -30,10 +28,10 @@ interface Undoable {
 
 const ACTIVE = new Set(["not-started", "started"]);
 
-/** The goal in a session goes first, then one just created or started, then the most urgent. */
-function pickFirst(items: PlannedGoal[], data: AppData): PlannedGoal[] {
-  const pinned = data.session?.goalId ?? getFocusGoal();
-  const index = items.findIndex((item) => item.goal.id === pinned && (data.session || ACTIVE.has(item.plan.status) || item.plan.status === "done"));
+/** The goal in a session goes first, then the one the person picked or just created, then the most urgent. */
+function pickFirst(items: PlannedGoal[], data: AppData, picked: string | null): PlannedGoal[] {
+  const pinned = data.session?.goalId ?? picked ?? getFocusGoal();
+  const index = items.findIndex((item) => item.goal.id === pinned && (data.session || picked === item.goal.id || ACTIVE.has(item.plan.status) || item.plan.status === "done"));
   return index <= 0 ? items : [items[index], ...items.slice(0, index), ...items.slice(index + 1)];
 }
 
@@ -43,6 +41,8 @@ export function TodayScreen() {
   const [promptPinned, setPromptPinned] = useState(false);
   // The goal whose number was just reached in this visit: the celebration shows once, then Titi's room again.
   const [justDone, setJustDone] = useState<string | null>(null);
+  // The goal the person tapped in the switcher; remembered while the app stays open.
+  const [picked, setPicked] = useState<string | null>(() => getFocusGoal());
   const closeToast = useCallback(() => setUndoable(null), []);
   const ready = state?.kind === "ready";
 
@@ -81,7 +81,8 @@ export function TodayScreen() {
     );
   }
 
-  const [first, ...rest] = pickFirst(sortByUrgency(data.goals, data.entries, today), data);
+  const planned = pickFirst(sortByUrgency(data.goals, data.entries, today), data, picked);
+  const [first, ...rest] = planned;
   const asking = data.session?.goalId === first.goal.id && sessionIsToday(data.session, today) && ACTIVE.has(first.plan.status);
   const visit = getVisitStart();
   const welcome = welcomeMessage({ ...visit, today, goals: data.goals, entries: data.entries });
@@ -99,6 +100,7 @@ export function TodayScreen() {
           goal={first.goal}
           total={first.plan.quota}
           done={first.plan.doneToday}
+          bowl={todayBowl(data.goals, data.entries, today)}
           onLog={(n) => log(first.goal, n, first.plan.doneToday + n >= first.plan.quota)}
           onOpen={() => first.goal.link && window.open(first.goal.link, "_blank", "noopener,noreferrer")}
           onStop={endSession}
@@ -125,6 +127,8 @@ export function TodayScreen() {
           catchUp={catchUpLine(first.plan)}
           notice={calendarNotice(data.settings.calendarUntil, today)}
           next={next}
+          goals={planned.map((item) => ({ goal: item.goal, done: item.plan.status === "done" || item.plan.status === "complete" }))}
+          onPick={(id) => { setFocusGoal(id); setPicked(id); }}
           corner={run > 0 ? <StreakChip days={run} /> : undefined}
           onStart={() => startGoal(first.goal)}
           onStartNext={() => next && startGoal(next)}
@@ -132,19 +136,6 @@ export function TodayScreen() {
         />
       )}
 
-      {!asking && (
-        <section aria-labelledby="also-today" className="mt-12 flex flex-col">
-          <h2 id="also-today" className="font-display text-lg font-semibold text-muted">{rest.length > 0 ? "Also today" : "Something else to push?"}</h2>
-          {rest.length > 0 && (
-            <ul className="flex flex-col">
-              {rest.map((item) => (
-                <GoalRow key={item.goal.id} item={item} onStart={() => startGoal(item.goal)} />
-              ))}
-            </ul>
-          )}
-          <ButtonLink href="/goals/new" variant="ghost" className="mt-2 self-start">+ Add another goal</ButtonLink>
-        </section>
-      )}
       <Toast message={undoable?.message ?? null} onUndo={undo} onClose={closeToast} />
     </>
   );

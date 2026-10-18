@@ -37,10 +37,10 @@ function ShelfBowl({ bowl }: { bowl: BowlDay }) {
   const said = bowl.future ? "not yet" : bowl.fill === "full" ? "all done" : bowl.fill === "some" ? "some done" : "nothing yet";
   return (
     <li className={`relative flex flex-1 flex-col items-center ${bowl.future ? "opacity-45" : ""}`}>
-      {bowl.today && <span aria-hidden="true" className="absolute left-1/2 top-[38%] aspect-square w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/30 blur-md" />}
       {/* eslint-disable-next-line @next/next/no-img-element -- painted art */}
       <img src={BOWL[bowl.fill]} alt="" aria-hidden="true" className="relative w-full max-w-11 drop-shadow-[0_3px_2px_rgba(90,60,20,.25)]" />
-      <span aria-hidden="true" className={`mt-1 text-[11px] font-extrabold ${bowl.today ? "text-ink" : "text-muted"}`}>{letter}</span>
+      {/* Today wears a small honey tag under its bowl, like the date on a calendar */}
+      <span aria-hidden="true" className={`mt-1 min-w-5 rounded-full px-1.5 text-center text-[11px] font-extrabold leading-5 ${bowl.today ? "bg-reward text-ink shadow-[0_2px_0_var(--color-reward-deep)]" : "text-muted"}`}>{letter}</span>
       <span className="sr-only">{bowl.today ? "Today" : name}: {said}</span>
     </li>
   );
@@ -49,9 +49,12 @@ function ShelfBowl({ bowl }: { bowl: BowlDay }) {
 /** This week as seven of Titi's bowls on a clay shelf: fish in the days that got something, heaped when the day was done. */
 function Shelf({ bowls }: { bowls: BowlDay[] }) {
   return (
-    <ol aria-label="This week" className="clay flex items-end gap-1 rounded-2xl bg-reward-soft px-3 pb-2 pt-3 [--lip:var(--color-reward)]">
-      {bowls.map((b) => <ShelfBowl key={b.date} bowl={b} />)}
-    </ol>
+    <div className="clay rounded-2xl bg-reward-soft px-3 pb-2 pt-2 [--lip:var(--color-reward)]">
+      <p className="mb-1 text-center text-xs font-extrabold text-reward-deep">Titi&apos;s week, every goal counts!</p>
+      <ol aria-label="Titi's week" className="flex items-end gap-1">
+        {bowls.map((b) => <ShelfBowl key={b.date} bowl={b} />)}
+      </ol>
+    </div>
   );
 }
 
