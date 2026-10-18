@@ -2,8 +2,8 @@
 
 /* Cozy Cat, clay edition (user, 2026-10-17: "playful like Duolingo, warm like Headspace"). A warm light page; the
    few objects you act on (buttons, fish, bowls) are saturated and chunky, everything else stays quiet.
-   Contrast (checked): ink 13.4:1 and muted 5.7:1 on the page; ink on green 5.7:1, on honey 7.0:1, on sky 5.6:1;
-   control edges 3.6:1; the deep green on white 4.1:1; the error berry 6.7:1. */
+   Contrast (checked): ink 13.4:1 and muted 5.7:1 on the page; ink on rose 4.6:1 (5.1:1 on hover), on honey 7.0:1,
+   on sky 5.6:1; control edges 3.6:1; the leaf green on white 4.1:1; the error berry 6.7:1. */
 @theme {
   --font-sans: var(--font-nunito), system-ui, sans-serif;
   --font-display: var(--font-fredoka), var(--font-nunito), system-ui, sans-serif;
@@ -16,11 +16,13 @@
   --color-wash-strong: #ede3c9;
   --color-line: #8f8068;        /* borders of controls (3:1) */
   --color-hairline: #e3d7bf;    /* decorative edges, the lip under white clay */
-  --color-primary: #3fb97a;     /* the one primary action */
-  --color-primary-hover: #4cc486;
-  --color-primary-pressed: #36a86d;
+  --color-primary: #ff4f8b;     /* the one primary action: rose (user's pick, 2026-10-18, option A of four) */
+  --color-primary-hover: #ff6399;
+  --color-primary-pressed: #f0417c;
   --color-on-primary: #2f2a24;
-  --color-lip: #2a8f5b;         /* the solid edge under the primary button */
+  --color-lip: #c23868;         /* the solid edge under the primary button */
+  --color-primary-soft: #ffe4ec; /* a chosen radio option */
+  --color-leaf: #2a8f5b;        /* green for things that grow (the pace ring, the streak card), never an action */
   --color-reward: #f5a623;      /* fish treats, the streak, the road */
   --color-reward-deep: #c97e0c;
   --color-reward-soft: #fff1cf;

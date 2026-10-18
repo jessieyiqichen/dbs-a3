@@ -25,7 +25,7 @@ interface Props {
 
 const CARD_TINT = [
   "bg-reward-soft [--lip:var(--color-reward)] text-reward-deep",
-  "bg-[#e3f6ec] [--lip:var(--color-lip)] text-lip",
+  "bg-[#e3f6ec] [--lip:var(--color-leaf)] text-leaf",
   "bg-[#e4f1fb] [--lip:var(--color-sky-deep)] text-sky-deep",
 ];
 

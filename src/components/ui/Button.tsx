@@ -9,7 +9,7 @@ const base =
   "focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-focus " +
   "disabled:cursor-not-allowed disabled:opacity-50";
 
-/** Clay buttons: the primary one is the only saturated block on the screen and sits on a deep green lip; white
+/** Clay buttons: the primary one is the only saturated block on the screen and sits on a deep rose lip; white
  *  clay for secondary and choice buttons; ghost is an underlined word. Pressing sinks a clay button onto its lip. */
 const variants: Record<Variant, string> = {
   primary: "clay clay-press [--lip:var(--color-lip)] bg-primary text-on-primary hover:bg-primary-hover",
