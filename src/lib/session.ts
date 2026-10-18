@@ -25,6 +25,8 @@ export interface DoneStat {
   label: string;
   value: number;
   suffix: string;
+  /** A unit that follows the number as it counts up, so "1 day" never reads "0 day" on the way. */
+  unit?: { one: string; many: string };
 }
 
 /** The three numbers on the done screen: today's fish, the streak, and how far the whole goal has come. */
@@ -35,7 +37,7 @@ export function doneStats(goal: Goal, { doneToday, doneTotal, streakDays }: { do
       : { label: "All time", value: doneTotal, suffix: "" };
   return [
     { label: "Done today", value: doneToday, suffix: "" },
-    { label: "Streak", value: streakDays, suffix: streakDays === 1 ? " day" : " days" },
+    { label: "Streak", value: streakDays, suffix: "", unit: { one: " day", many: " days" } },
     road,
   ];
 }

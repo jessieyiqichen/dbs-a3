@@ -136,8 +136,9 @@ export function Road({ goal, story }: { goal: Goal; story: RoadStory }) {
       </div>
       <figcaption className="px-3 pt-3 text-center text-sm font-bold text-muted">
         {/* The marker is a dashed ring, not a flag, and it is only drawn when it is clear of Titi, so the caption says so too
-            (first-run check, 2026-10-18: "pace flag" sent a tester looking for a second flag) */}
-        {story.at >= 1 ? "Titi made it to the end of the road!" : !showPace ? "Titi is right on pace!" : story.ahead ? "Titi is ahead of the dashed pace ring~" : "The dashed pace ring is a little ahead, one today catches up~"}
+            (first-run check, 2026-10-18: "pace flag" sent a tester looking for a second flag). Whether you are ahead or
+            behind is said once, in the headline above (reviewer, 2026-10-18). */}
+        {story.at >= 1 ? "Titi made it to the end of the road!" : showPace ? "The dashed ring is where the steady pace would be today" : "Titi is right on pace!"}
       </figcaption>
     </figure>
   );

@@ -38,11 +38,12 @@ export function GoalsScreen() {
           ))}
         </ul>
       )}
-      <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2">
-        <ButtonLink href="/goals/new" variant="ghost">+ Add a goal</ButtonLink>
-        <ButtonLink href="/reminders" variant="ghost">Reminder times</ButtonLink>
+      <ButtonLink href="/goals/new" variant="secondary" className="mt-5 self-start">+ Add a goal</ButtonLink>
+      {/* Settings, apart from the goals: when to nudge, and the backup */}
+      <div className="mt-10 flex flex-col gap-2 border-t-2 border-wash-strong pt-5">
+        <ButtonLink href="/reminders" variant="ghost" className="self-start">Reminder times</ButtonLink>
+        <BackupSection data={data} />
       </div>
-      <BackupSection data={data} />
       <Toast
         message={removed ? `Removed ${removed.goal.title}` : null}
         onUndo={() => { if (removed) restoreGoal(removed); stashRemoved(null); }}

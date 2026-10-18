@@ -22,30 +22,31 @@ export function SetupFrame({ step, steps, question, headingId, moveFocus, onBack
   const heading = "font-display text-xl font-semibold leading-snug text-ink";
   return (
     <section aria-labelledby={headingId} className="flex flex-col pt-1">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between">
         {onBack ? (
           <button
             type="button"
             onClick={onBack}
-            aria-label="Back"
-            className="-ml-2 inline-flex size-11 items-center justify-center rounded-full font-display text-2xl text-muted hover:bg-wash focus-visible:outline-3 focus-visible:outline-focus"
+            className="-ml-1 inline-flex min-h-11 items-center px-1 text-sm font-semibold text-muted underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus"
           >
-            ←
+            ← Back
           </button>
         ) : (
-          <span aria-hidden="true" className="-ml-2 size-11" />
+          <span aria-hidden="true" />
         )}
-        <div
-          role="progressbar"
-          aria-label="Setup"
-          aria-valuemin={1}
-          aria-valuemax={steps}
-          aria-valuenow={step + 1}
-          aria-valuetext={`Step ${step + 1} of ${steps}`}
-          className="h-2.5 flex-1 overflow-hidden rounded-full bg-wash"
-        >
-          <div className="h-full rounded-full bg-lip transition-[width] duration-300" style={{ width: `${((step + 1) / steps) * 100}%` }} />
-        </div>
+        {/* Which step this is, in words; the bar below only shows the share (reviewer, 2026-10-18) */}
+        <span className="text-sm font-bold text-muted tabular-nums">Step {step + 1} of {steps}</span>
+      </div>
+      <div
+        role="progressbar"
+        aria-label="Setup"
+        aria-valuemin={1}
+        aria-valuemax={steps}
+        aria-valuenow={step + 1}
+        aria-valuetext={`Step ${step + 1} of ${steps}`}
+        className="mt-1 h-2.5 w-full overflow-hidden rounded-full bg-wash"
+      >
+        <div className="h-full rounded-full bg-reward transition-[width] duration-300" style={{ width: `${((step + 1) / steps) * 100}%` }} />
       </div>
 
       <div className="mt-4 mb-6 flex items-end gap-2">

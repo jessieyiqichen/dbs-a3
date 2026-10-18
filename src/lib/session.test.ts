@@ -39,14 +39,14 @@ describe("doneStats: the three cards on the done screen", () => {
   it("shows the road for a by-date goal as a percentage", () => {
     expect(doneStats(byDate, { doneToday: 5, doneTotal: 56, streakDays: 4 })).toEqual([
       { label: "Done today", value: 5, suffix: "" },
-      { label: "Streak", value: 4, suffix: " days" },
+      { label: "Streak", value: 4, suffix: "", unit: { one: " day", many: " days" } },
       { label: "Road to 150", value: 37, suffix: "%" },
     ]);
   });
 
   it("shows the all-time total for a daily goal", () => {
     expect(doneStats(daily, { doneToday: 3, doneTotal: 21, streakDays: 1 })[2]).toEqual({ label: "All time", value: 21, suffix: "" });
-    expect(doneStats(daily, { doneToday: 3, doneTotal: 21, streakDays: 1 })[1]).toEqual({ label: "Streak", value: 1, suffix: " day" });
+    expect(doneStats(daily, { doneToday: 3, doneTotal: 21, streakDays: 1 })[1]).toEqual({ label: "Streak", value: 1, suffix: "", unit: { one: " day", many: " days" } });
   });
 });
 

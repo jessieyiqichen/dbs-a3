@@ -28,11 +28,12 @@ const CARD_TINT = ["text-reward-deep", "text-lip", "text-sky-deep"];
 /** One of the three result cards: it pops in after the one before it and its number counts up. */
 function StatCard({ stat, index }: { stat: DoneStat; index: number }) {
   const shown = useCountUp(stat.value, 350 + index * 150);
+  const suffix = stat.unit ? (shown === 1 ? stat.unit.one : stat.unit.many) : stat.suffix;
   return (
     <li className={`card-in flex flex-1 flex-col items-center px-2 py-3 ${CARD_TINT[index]}`} style={{ ["--delay" as string]: `${0.2 + index * 0.15}s` }}>
       <span className="text-xs font-extrabold text-muted">{stat.label}</span>
-      <span aria-hidden="true" className="mt-1 font-display text-2xl font-semibold tabular-nums">{shown}{stat.suffix}</span>
-      <span className="sr-only">{stat.value}{stat.suffix}</span>
+      <span aria-hidden="true" className="mt-1 font-display text-2xl font-semibold tabular-nums">{shown}{suffix}</span>
+      <span className="sr-only">{stat.value}{stat.unit ? (stat.value === 1 ? stat.unit.one : stat.unit.many) : stat.suffix}</span>
     </li>
   );
 }

@@ -30,7 +30,7 @@ export function GoalCard({ goal, plan, today }: Props) {
       <Link href={`/goals/${goal.id}`} className="clay clay-press flex flex-col gap-2 rounded-3xl bg-surface px-5 py-4 hover:bg-wash focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-focus">
         <span className="flex items-center justify-between gap-3">
           <span className="font-display text-lg font-semibold text-ink">{goal.title}</span>
-          <span aria-hidden="true" className="text-muted">{done ? "✓" : "→"}</span>
+          {!done && <span aria-hidden="true" className="text-muted">→</span>}
         </span>
         <span className="text-sm font-bold text-muted">{line(goal, plan, today)}</span>
         {pct !== null && (

@@ -40,7 +40,7 @@ export function BackupSection({ data }: { data: AppData }) {
   }
 
   return (
-    <details className="group mt-10 rounded-3xl bg-wash px-5 py-3 open:pb-5">
+    <details className="group mt-2 rounded-3xl bg-wash px-5 py-3 open:pb-5">
       <summary className="flex cursor-pointer list-none items-center justify-between font-display text-lg font-semibold text-ink focus-visible:outline-3 focus-visible:outline-focus [&::-webkit-details-marker]:hidden">
         Backup
         <span aria-hidden="true" className="text-muted transition-transform group-open:rotate-90">→</span>
