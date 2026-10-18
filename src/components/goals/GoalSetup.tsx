@@ -73,10 +73,9 @@ export function GoalSetup({ initial, fields, submitLabel, submitHint, onSubmit, 
 
   return (
     <form ref={formRef} onSubmit={submit} noValidate className="flex flex-col gap-6">
-      <div aria-live="polite" className="flex flex-col gap-2 rounded-lg bg-wash p-4">
-        <p className="text-sm font-semibold uppercase tracking-wide text-muted">Your goal</p>
-        <p className="text-2xl font-semibold leading-snug text-ink">{sentence}</p>
-        {preview && <p className={preview.perDay > 50 ? "font-semibold text-ink" : "text-ink"}>{preview.message}</p>}
+      <div aria-live="polite" className="flex flex-col gap-2">
+        <p className="font-display text-2xl font-semibold leading-snug text-ink">{sentence}</p>
+        {preview && <p className={`text-lg font-bold ${preview.perDay > 50 ? "text-ink" : "text-muted"}`}>{preview.message}</p>}
       </div>
 
       {fields === "full" && (

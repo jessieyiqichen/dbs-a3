@@ -1,74 +1,85 @@
 "use client";
 
 import { useState } from "react";
-import { GoalSetup, BLANK_DRAFT } from "@/components/goals/GoalSetup";
-import { Button } from "@/components/ui/Button";
-import { ScreenHeading } from "@/components/ui/ScreenHeading";
+import { PlanStep } from "@/components/onboarding/PlanStep";
+import { SetupFrame } from "@/components/onboarding/SetupFrame";
+import { AmountStep, DateStep, OftenStep, PickStep, WhatStep, type Answers } from "@/components/onboarding/Steps";
 import { addGoal } from "@/lib/actions";
-import { toISODate } from "@/lib/dates";
-import { startGoal, hostOf } from "@/lib/start";
-import { draftFromStarter, STARTERS, type Starter } from "@/lib/starters";
-import type { GoalValues } from "@/lib/validate";
+import { formatShortDate, toISODate } from "@/lib/dates";
+import { perDayFor, splitAction } from "@/lib/onboarding";
+import { startGoal } from "@/lib/start";
+import { STARTERS } from "@/lib/starters";
+import { DEFAULT_UNIT, validateGoal, type GoalValues } from "@/lib/validate";
 
-type Choice = Starter | "custom" | null;
+type Step = "pick" | "what" | "often" | "date" | "amount" | "plan";
 
-function begin(values: GoalValues) {
-  startGoal(addGoal(values, toISODate(new Date())));
+const BLANK: Answers = { starterKey: null, label: "", verb: "", unit: "", type: "daily", deadline: "", amount: 0, link: "" };
+
+/** Only the questions this person needs: your own goal asks what and how often; a daily goal skips the date. */
+function pathFor(a: Answers, picked: boolean): Step[] {
+  const own: Step[] = picked && a.starterKey === null ? ["what", "often"] : [];
+  const date: Step[] = a.type === "by-date" ? ["date"] : [];
+  return ["pick", ...own, ...date, "amount", "plan"];
 }
 
-function PickScreen({ onPick }: { onPick: (choice: Starter | "custom") => void }) {
-  return (
-    <section aria-labelledby="first-visit-title" className="flex flex-col gap-6 pt-6">
-      <div className="flex flex-col gap-2">
-        <p className="text-lg text-muted">Recruiting season is a lot.</p>
-        <h1 id="first-visit-title" className="text-4xl font-bold leading-tight tracking-tight text-ink">
-          What have you been putting off?
-        </h1>
-        <p className="text-lg text-muted">Pick one. You&apos;ll set the number next.</p>
-      </div>
-      <ul className="flex flex-col gap-3">
-        {STARTERS.map((starter) => (
-          <li key={starter.key}>
-            <Button variant="secondary" size="lg" className="w-full justify-start" onClick={() => onPick(starter)}>
-              {starter.label}
-            </Button>
-          </li>
-        ))}
-        <li>
-          <Button variant="secondary" size="lg" className="w-full justify-start" onClick={() => onPick("custom")}>
-            Something else…
-          </Button>
-        </li>
-      </ul>
-      <p className="text-sm text-muted">Saved on this device. No sign-up.</p>
-    </section>
-  );
+function goalFrom(a: Answers, today: string): GoalValues | null {
+  const { verb, unit } = a.starterKey ? a : splitAction(a.label);
+  return validateGoal({ verb, unit, type: a.type, target: String(a.amount), deadline: a.deadline, link: a.link }, today).value;
 }
 
+function startAnswers(starterKey: string | null): Answers {
+  const s = STARTERS.find((x) => x.key === starterKey);
+  return s ? { ...BLANK, starterKey: s.key, label: s.label, verb: s.verb, unit: s.unit, type: s.type, link: s.link ?? "" } : BLANK;
+}
+
+function questionFor(step: Step, a: Answers, unit: string): string {
+  const named = a.label.charAt(0).toUpperCase() + a.label.slice(1);
+  if (step === "what") return "Something else? Tell me what it is~";
+  if (step === "often") return "How often do you want to do it?";
+  if (step === "date") return `${named}, nice! When do you want to get there?`;
+  if (step === "amount") return a.type === "daily" ? `How many ${unit} a day?` : `How many ${unit} by ${formatShortDate(a.deadline)}?`;
+  return "Hi, I'm Titi! What have you been putting off?";
+}
+
+/** The first visit: Titi asks one thing per screen, every answer is a tap, and the last screen starts the first task. */
 export function FirstVisit() {
-  const [choice, setChoice] = useState<Choice>(null);
-  if (choice === null) return <PickScreen onPick={setChoice} />;
+  const today = toISODate(new Date());
+  const [step, setStep] = useState<Step>("pick");
+  const [answers, setAnswers] = useState<Answers>(BLANK);
+  const [typing, setTyping] = useState(false);
+  const [moved, setMoved] = useState(false);
+  const path = pathFor(answers, step !== "pick");
+  const index = path.indexOf(step);
+  const unit = (answers.starterKey ? answers.unit : splitAction(answers.label).unit) || DEFAULT_UNIT;
 
-  const starter = choice === "custom" ? null : choice;
-  const host = hostOf(starter?.link ?? null);
+  const go = (next: Answers, to: Step) => {
+    setAnswers(next);
+    setStep(to);
+    setTyping(false);
+    setMoved(true);
+  };
+  const answer = (change: Partial<Answers>) => {
+    const next = { ...answers, ...change };
+    const p = pathFor(next, true);
+    go(next, p[p.indexOf(step) + 1]);
+  };
+  const back = () => go(answers, path[index - 1]);
+
+  const goal = step === "plan" ? goalFrom(answers, today) : null;
+  if (goal) {
+    const perDay = perDayFor(goal.type, goal.target, answers.deadline, today);
+    return <PlanStep goal={goal} perDay={perDay} onBack={back} onStart={() => startGoal(addGoal(goal, today))} />;
+  }
+
+  const shared = { answers, today, typing, onType: () => setTyping(true), onAnswer: answer };
+  const question = questionFor(step, answers, unit);
   return (
-    <section aria-labelledby="setup-title" className="flex flex-col gap-6 pt-6">
-      <ScreenHeading id="setup-title" className="text-3xl font-bold tracking-tight text-ink">
-        {starter ? starter.label : "Your own goal"}
-      </ScreenHeading>
-      <GoalSetup
-        key={starter?.key ?? "custom"}
-        initial={starter ? draftFromStarter(starter, toISODate(new Date())) : BLANK_DRAFT}
-        fields={starter ? "numbers" : "full"}
-        submitLabel="Start my first one →"
-        submitHint={host ? `Opens ${host}. Come back and tell me how many.` : "Go do one, then come back and tell me how many."}
-        onSubmit={begin}
-        footer={
-          <Button variant="ghost" className="self-start" onClick={() => setChoice(null)}>
-            ← Pick something else
-          </Button>
-        }
-      />
-    </section>
+    <SetupFrame step={index} steps={path.length} question={question} headingId={`setup-${step}`} moveFocus={moved} onBack={index > 0 ? back : undefined}>
+      {step === "pick" && <PickStep onPick={(key) => go(startAnswers(key), pathFor(startAnswers(key), true)[1])} />}
+      {step === "what" && <WhatStep {...shared} />}
+      {step === "often" && <OftenStep {...shared} />}
+      {step === "date" && <DateStep {...shared} />}
+      {step === "amount" && <AmountStep {...shared} question={question} unit={unit} />}
+    </SetupFrame>
   );
 }

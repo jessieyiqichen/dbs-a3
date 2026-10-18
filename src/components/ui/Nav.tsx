@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useStore } from "@/lib/store";
 
 const LINKS = [
   { href: "/", label: "Today" },
@@ -41,6 +42,12 @@ export function NavLinks({ pathname }: { pathname: string | null }) {
   );
 }
 
+/** On Today, the sections appear once there is a goal: a first visit has nothing behind Goals or Reminders yet,
+ *  so it shows only the one thing to do. */
 export function Nav() {
-  return <NavLinks pathname={usePathname()} />;
+  const pathname = usePathname();
+  const store = useStore();
+  const hasGoals = store?.kind === "ready" ? store.data.goals.length > 0 : store?.kind === "corrupt";
+  if (pathname === "/" && !hasGoals) return null;
+  return <NavLinks pathname={pathname} />;
 }
