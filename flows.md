@@ -40,8 +40,8 @@ flowchart TD
     G --> B["Bubble: 'Send 5 connection requests' + a nudge line\nStart on LinkedIn ↗"]
     B -->|Start| L[LinkedIn opens in a new tab]
     L --> S
-    B --> S["Session: bar on top, Titi cheering, this goal's bowl, fish as progress\nI finished one · Open LinkedIn · Did more than N?"]
-    S -->|I finished one| F["Fish flies into the bowl, +1, Titi hops\nToast: Added 2 · Undo"]
+    B --> S["Session: bar on top, Titi cheering, this goal's bowl, tap the fish you finished\nI finished one · Open LinkedIn · Did more than N?"]
+    S -->|tap a fish, I finished one| F["Fish flies into the bowl, +1, Titi hops\nToast: Added 2 · Undo"]
     F --> S
     S -->|Did more than N? → not a number| SE["Enter a whole number, like 30"] --> S
     S -->|✕ Stop for now| T

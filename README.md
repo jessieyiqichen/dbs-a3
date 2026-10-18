@@ -37,7 +37,7 @@ flowchart LR
 | Flow | What happens | Where |
 |---|---|---|
 | First visit | Titi asks one thing per screen, every answer is a tap: what you've been putting off, by when, how many (each choice shown as fish treats a day), then today's plan and the first task right away. Nothing to read, no empty screen, no sign-up. | `/` with nothing saved; the same walk is "+ Add" later |
-| Main task | Today is Titi's room: the painted window changes with the hour, Titi waits on her mat, then which goal is up now, one sentence and the Start button; this week's bowls sit on a shelf that stays at the foot of a phone screen while the room scrolls. Tap Start (the page opens in a new tab), come back and tap "I finished one" for each one done. Each log sends a fish into Titi's bowl; reaching today's number ends in a results screen whose three cards count up. | `/` |
+| Main task | Today is Titi's room: the painted window changes with the hour, Titi waits on her mat, then which goal is up now, one sentence and the Start button; this week's bowls sit on a shelf that stays at the foot of a phone screen while the room scrolls. Tap Start (the page opens in a new tab), come back and tap the fish you just finished (or "I finished one"). Each log sends a fish into Titi's bowl; reaching today's number ends in a results screen whose three cards count up. | `/` |
 | Coming back | It remembers: your goals, the streak (one for the whole app, with a forgiven rest day a week), what you did this week. A warm line says why today's number is what it is. Reminders come two ways: a calendar file that works when Nudge is closed, and browser notifications that stop once you've started. | `/`, `/reminders` |
 
 ![Every state of every page](docs/states.png)

@@ -54,8 +54,8 @@ function MoreForm({ total, onLog }: { total: number; onLog: (n: number) => void 
 }
 
 /** Working through today's number, like a lesson: a bar on top, Titi cheering, fish flying into the bowl as you log.
- *  One button logs one; the fish only show progress; "Did more than N?" covers a batch. The session ends on its own
- *  when today is done. */
+ *  Tapping a fish logs up to it (user, 2026-10-18: fish that cannot be tapped felt wrong); "I finished one" logs one;
+ *  "Did more than N?" covers a batch. The session ends on its own when today is done. */
 export function Session({ goal, total, done, bowl, firstTime = false, onLog, onOpen, onStop }: Props) {
   const id = useId();
   const [flight, setFlight] = useState<{ key: number; amount: number } | null>(null);
@@ -92,7 +92,7 @@ export function Session({ goal, total, done, bowl, firstTime = false, onLog, onO
 
       <div className="mt-6">
         {tiles ? (
-          <Coins total={total} done={done} label="Today" showCount={false} />
+          <Coins total={total} done={done} label="Tap the last one you finished" onPick={(reached) => log(reached - done)} showCount={false} />
         ) : (
           <div role="group" aria-label="How many did you do" className="flex flex-wrap gap-2">
             {quickAmounts(left).map((n) => (
