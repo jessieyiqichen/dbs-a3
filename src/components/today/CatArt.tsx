@@ -54,11 +54,19 @@ function Particles({ effect }: { effect: CatEffect }) {
 }
 
 /** Titi on a soft butter sun. Purely decorative: the words on the screen carry the meaning. */
-export function CatArt({ mood, effect, className = "" }: { mood: CatMood; effect?: CatEffect; className?: string }) {
+interface CatProps {
+  mood: CatMood;
+  effect?: CatEffect;
+  className?: string;
+  /** The butter sun behind Titi; off inside the painted room. */
+  sun?: boolean;
+}
+
+export function CatArt({ mood, effect, className = "", sun = true }: CatProps) {
   const art = ART[mood];
   return (
     <div className={`relative ${className}`}>
-      <span aria-hidden="true" className="absolute inset-x-[6%] bottom-0 aspect-square rounded-full bg-sun" />
+      {sun && <span aria-hidden="true" className="absolute inset-x-[6%] bottom-0 aspect-square rounded-full bg-sun" />}
       <picture className={`relative block ${effect === "hop" ? "cat-hop" : ""}`}>
         <source media="(prefers-reduced-motion: reduce)" srcSet={art.still} />
         <Image src={art.moving} alt="" width={art.width} height={art.height} unoptimized priority className="h-auto w-full" />

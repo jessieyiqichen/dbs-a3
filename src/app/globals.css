@@ -1,31 +1,35 @@
 @import "tailwindcss";
 
-/* Cozy Cat, palette E "mint and butter": warm off-white, mint for the one primary action, honey for fish treats,
-   a butter sun behind Titi. No dark outlines; cards sit on soft shadows. Contrast (checked): ink 10.7:1 and
-   muted 5.4:1 on the page; ink on mint 7.2:1; control lines 3.7:1; the error berry 6.8:1. */
+/* Cozy Cat, clay edition (user, 2026-10-17: "playful like Duolingo, warm like Headspace"). A warm light page; the
+   few objects you act on (buttons, fish, bowls) are saturated and chunky, everything else stays quiet.
+   Contrast (checked): ink 13.4:1 and muted 5.7:1 on the page; ink on green 5.7:1, on honey 7.0:1, on sky 5.6:1;
+   control edges 3.6:1; the deep green on white 4.1:1; the error berry 6.7:1. */
 @theme {
   --font-sans: var(--font-nunito), system-ui, sans-serif;
   --font-display: var(--font-fredoka), var(--font-nunito), system-ui, sans-serif;
 
-  --color-page: #fbfaf2;
+  --color-page: #fff8ea;
   --color-surface: #ffffff;
-  --color-ink: #3d3b33;
-  --color-muted: #6a675a;
-  --color-wash: #f2f0e2;
-  --color-wash-strong: #e7e4d2;
-  --color-line: #858170;        /* borders of controls (3:1) */
-  --color-hairline: #e9e6d6;    /* decorative dividers only */
-  --color-primary: #9edcbf;     /* the one primary action */
-  --color-primary-hover: #aee3ca;
-  --color-primary-pressed: #8cd2b1;
-  --color-on-primary: #3d3b33;
-  --color-lip: #6fbf9a;         /* the solid edge under the primary button */
-  --color-reward: #eab65d;      /* fish treats and the streak */
-  --color-reward-soft: #eee9d4;
-  --color-sun: #fff0b8;         /* the soft circle behind Titi */
-  --color-celebrate: #e9f8ef;   /* the done screen */
-  --color-heart: #e88fae;       /* decoration only */
-  --color-focus: #3d3b33;
+  --color-ink: #2f2a24;
+  --color-muted: #6b6256;
+  --color-wash: #f6efdc;
+  --color-wash-strong: #ede3c9;
+  --color-line: #8f8068;        /* borders of controls (3:1) */
+  --color-hairline: #e3d7bf;    /* decorative edges, the lip under white clay */
+  --color-primary: #3fb97a;     /* the one primary action */
+  --color-primary-hover: #4cc486;
+  --color-primary-pressed: #36a86d;
+  --color-on-primary: #2f2a24;
+  --color-lip: #2a8f5b;         /* the solid edge under the primary button */
+  --color-reward: #f5a623;      /* fish treats, the streak, the road */
+  --color-reward-deep: #c97e0c;
+  --color-reward-soft: #fff1cf;
+  --color-sky: #5aa9e6;         /* Titi's bowl */
+  --color-sky-deep: #3a7fb8;
+  --color-sun: #ffe9a8;         /* the soft circle behind Titi */
+  --color-celebrate: #fff3dc;   /* the done screen */
+  --color-heart: #f0729a;       /* decoration only */
+  --color-focus: #2f2a24;
   --color-danger: #9c2a6b;      /* errors and destructive actions only */
   --color-danger-wash: #fbeef5;
 }
@@ -39,6 +43,28 @@ body {
   background: var(--color-page);
   color: var(--color-ink);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Clay: a highlight along the top, a solid lip underneath (--lip, set per surface), a soft tinted shadow. */
+.clay {
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.1),
+    0 5px 0 var(--lip, var(--color-hairline)),
+    0 9px 14px rgba(120, 80, 20, 0.12);
+}
+/* Pressed: it sinks onto its lip. */
+.clay-press {
+  transition: transform 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 120ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.clay-press:active {
+  transform: translateY(4px) scale(0.98);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 0 var(--lip, var(--color-hairline)),
+    0 2px 6px rgba(120, 80, 20, 0.12);
 }
 
 /* Confetti on the done screen: it falls once; nothing moves for people who ask for less motion. */
@@ -60,6 +86,26 @@ body {
   75% { transform: translateY(0) scale(1.05, .94); }
   100% { transform: translateY(0) scale(1, 1); }
 }
+/* A fish treat flies from the tap up into Titi's bowl, then a +1 floats off it. */
+@keyframes fish-fly {
+  0% { transform: translate(0, 120px) rotate(-30deg) scale(0.8); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translate(0, 0) rotate(8deg) scale(1); opacity: 1; }
+}
+@keyframes plus-one {
+  0% { transform: translateY(6px) scale(0.9); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(-34px) scale(1.1); opacity: 0; }
+}
+@keyframes card-in {
+  from { transform: translateY(16px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+.fish-fly { animation: fish-fly 0.45s cubic-bezier(0.23, 1, 0.32, 1) both; }
+.plus-one { animation: plus-one 0.9s ease-out 0.3s both; }
+.card-in { animation: card-in 0.4s cubic-bezier(0.23, 1, 0.32, 1) var(--delay, 0s) both; }
+.bar-fill { transform-origin: left; transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1); }
+
 @keyframes float-up {
   0% { transform: translate(0, 0) scale(.6); opacity: 0; }
   20% { opacity: 1; }
@@ -70,5 +116,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .confetti, .float-up { display: none; }
-  .pop-in, .cat-hop { animation: none !important; }
+  .pop-in, .cat-hop, .fish-fly, .card-in { animation: none !important; }
+  .plus-one { display: none; }
+  .bar-fill, .clay-press { transition: none; }
 }

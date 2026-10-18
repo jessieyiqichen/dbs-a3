@@ -9,16 +9,16 @@ import { formatCount } from "@/lib/format";
 import { sortByUrgency, type PlannedGoal } from "@/lib/quota";
 import { startGoal } from "@/lib/start";
 import { getFocusGoal, getVisitStart, useStore } from "@/lib/store";
-import { overallStreak, overallWeek } from "@/lib/streak";
+import { weekBowls } from "@/lib/scene";
+import { overallStreak } from "@/lib/streak";
 import type { AppData, Goal } from "@/lib/types";
 import { welcomeMessage } from "@/lib/welcome";
-import { AskHowMany } from "./AskHowMany";
 import { DoneToday } from "./DoneToday";
 import { FirstVisit } from "./FirstVisit";
 import { GoalRow } from "./GoalRow";
 import { NudgePrompt } from "./NudgePrompt";
-import { TodayCard } from "./TodayCard";
-import { WelcomeBanner } from "./WelcomeBanner";
+import { Session } from "./Session";
+import { TodayHome } from "./TodayHome";
 import { StreakChip } from "./StreakChip";
 
 interface Undoable {
@@ -39,6 +39,8 @@ export function TodayScreen() {
   const state = useStore();
   const [undoable, setUndoable] = useState<Undoable | null>(null);
   const [promptPinned, setPromptPinned] = useState(false);
+  // The goal whose number was just reached in this visit: the celebration shows once, then Titi's room again.
+  const [justDone, setJustDone] = useState<string | null>(null);
   const closeToast = useCallback(() => setUndoable(null), []);
   const ready = state?.kind === "ready";
 
@@ -55,8 +57,12 @@ export function TodayScreen() {
   const { data } = state;
   const now = new Date();
   const today = toISODate(now);
-  const log = (goal: Goal, amount: number) => {
+  const log = (goal: Goal, amount: number, reachesQuota: boolean) => {
     const entry = addEntry(goal.id, amount, today);
+    if (reachesQuota) {
+      endSession();
+      setJustDone(goal.id); // today's number is reached: on to the celebration
+    }
     setUndoable({ entryId: entry.id, message: `Added ${formatCount(amount, goal.unit)}` });
   };
   const undo = () => {
@@ -74,7 +80,7 @@ export function TodayScreen() {
   }
 
   const [first, ...rest] = pickFirst(sortByUrgency(data.goals, data.entries, today), data);
-  const asking = data.session?.goalId === first.goal.id;
+  const asking = data.session?.goalId === first.goal.id && ACTIVE.has(first.plan.status);
   const visit = getVisitStart();
   const welcome = welcomeMessage({ ...visit, today, goals: data.goals, entries: data.entries });
   const { nudgesSetUp, nudgePromptDismissed, reminderTimes } = data.settings;
@@ -84,23 +90,42 @@ export function TodayScreen() {
 
   return (
     <>
-      {run > 0 && <StreakChip days={run} />}
-      {!state.persistent ? <StorageNotice state={state} /> : welcome && !asking && <WelcomeBanner message={welcome} />}
+      {!state.persistent && <StorageNotice state={state} />}
 
       {asking ? (
-        <AskHowMany goal={first.goal} total={first.plan.quota} done={first.plan.doneToday} onLog={(n) => log(first.goal, n)} onNone={endSession} />
-      ) : first.plan.status === "done" ? (
+        <Session
+          goal={first.goal}
+          total={first.plan.quota}
+          done={first.plan.doneToday}
+          onLog={(n) => log(first.goal, n, first.plan.doneToday + n >= first.plan.quota)}
+          onOpen={() => first.goal.link && window.open(first.goal.link, "_blank", "noopener,noreferrer")}
+          onStop={endSession}
+        />
+      ) : first.plan.status === "done" && justDone === first.goal.id ? (
         <DoneToday
           prompt={showPrompt ? <NudgePrompt times={reminderTimes} onActed={() => setPromptPinned(true)} /> : null}
           goal={first.goal}
           doneToday={first.plan.doneToday}
+          doneTotal={first.plan.doneTotal}
           streakDays={run}
-          week={overallWeek(data.goals, data.entries, today)}
           next={next}
-          onStartNext={() => next && startGoal(next)}
+          onStartNext={() => { setJustDone(null); if (next) startGoal(next); }}
+          onContinue={() => setJustDone(null)}
         />
       ) : (
-        <TodayCard goal={first.goal} plan={first.plan} today={today} hour={now.getHours()} onStart={() => startGoal(first.goal)} cheer={undoable !== null} />
+        <TodayHome
+          goal={first.goal}
+          plan={first.plan}
+          today={today}
+          hour={now.getHours()}
+          bowls={weekBowls(data.goals, data.entries, today)}
+          welcome={welcome}
+          next={next}
+          corner={run > 0 ? <StreakChip days={run} /> : undefined}
+          onStart={() => startGoal(first.goal)}
+          onStartNext={() => next && startGoal(next)}
+          cheer={undoable !== null}
+        />
       )}
 
       {rest.length > 0 && !asking && (

@@ -1,8 +1,11 @@
+"use client";
+
 import type { ReactNode } from "react";
-import { Button, ButtonLink } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
 import { ScreenHeading } from "@/components/ui/ScreenHeading";
-import type { WeekDayKind } from "@/lib/streak";
+import { doneStats, type DoneStat } from "@/lib/session";
 import type { Goal } from "@/lib/types";
+import { useCountUp } from "@/lib/useCountUp";
 import { CatArt } from "./CatArt";
 import { Confetti } from "./Confetti";
 
@@ -11,58 +14,56 @@ interface Props {
   prompt?: ReactNode;
   goal: Goal;
   doneToday: number;
+  doneTotal: number;
   streakDays: number;
-  /** The last seven days across all goals, oldest first. */
-  week: { date: string; kind: WeekDayKind }[];
   next: Goal | null;
   onStartNext: () => void;
+  /** Back to Titi's room. */
+  onContinue: () => void;
 }
 
-const DAY_DOT: Record<WeekDayKind, string> = {
-  done: "bg-lip",
-  rest: "bg-reward",
-  missed: "border-2 border-line bg-surface",
-  today: "border-2 border-line bg-surface",
-};
-const DAY_WORD: Record<WeekDayKind, string> = { done: "done", rest: "rest day", missed: "missed", today: "not yet" };
-const WEEKDAY = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const CARD_TINT = [
+  "bg-reward-soft [--lip:var(--color-reward)] text-reward-deep",
+  "bg-[#e3f6ec] [--lip:var(--color-lip)] text-lip",
+  "bg-[#e4f1fb] [--lip:var(--color-sky-deep)] text-sky-deep",
+];
 
-function weekday(iso: string): string {
-  return WEEKDAY[new Date(`${iso}T12:00:00Z`).getUTCDay()];
-}
-
-/** The reward, the moment today's number is reached: the whole screen turns soft mint, confetti falls once, Titi
- *  jumps for joy with hearts, and the streak shows how many days in a row. Everything else on this screen is quiet. */
-export function DoneToday({ prompt, goal, doneToday, streakDays, week, next, onStartNext }: Props) {
+/** One of the three result cards: it pops in after the one before it and its number counts up. */
+function StatCard({ stat, index }: { stat: DoneStat; index: number }) {
+  const shown = useCountUp(stat.value, 350 + index * 150);
   return (
-    <section aria-labelledby="done-title" className="relative flex flex-col items-center pt-4 text-center">
+    <li className={`card-in clay flex flex-1 flex-col items-center rounded-2xl px-2 py-3 ${CARD_TINT[index]}`} style={{ ["--delay" as string]: `${0.2 + index * 0.15}s` }}>
+      <span className="text-xs font-extrabold text-muted">{stat.label}</span>
+      <span aria-hidden="true" className="mt-1 font-display text-2xl font-semibold tabular-nums">{shown}{stat.suffix}</span>
+      <span className="sr-only">{stat.value}{stat.suffix}</span>
+    </li>
+  );
+}
+
+/** The reward when today's number is reached, like a lesson-complete screen: Titi jumps for joy, confetti falls once,
+ *  three cards pop in with today's fish, the streak and the road so far, then one button on to what's next. */
+export function DoneToday({ prompt, goal, doneToday, doneTotal, streakDays, next, onStartNext, onContinue }: Props) {
+  const stats = doneStats(goal, { doneToday, doneTotal, streakDays });
+  return (
+    <section aria-labelledby="done-title" className="relative flex flex-col items-center pt-2 text-center">
       <div aria-hidden="true" className="fixed inset-0 -z-10 bg-celebrate" />
       <Confetti />
       <CatArt mood="celebrate" effect="party" className="w-44" />
-      <ScreenHeading id="done-title" className="mt-4 font-display text-4xl font-bold text-ink">Done for today!</ScreenHeading>
-      <p className="mt-2 text-lg font-bold text-ink">
-        {doneToday === 1 ? "1 fish treat" : `${doneToday} fish treats`} for Titi · {streakDays === 1 ? "1 day in a row" : `${streakDays} days in a row`}
-      </p>
-      <ol aria-label="Last 7 days" className="mt-5 flex gap-3">
-        {week.map((d, i) => {
-          const isToday = i === week.length - 1;
-          return (
-            <li key={d.date} className="flex flex-col items-center gap-1">
-              <span aria-hidden="true" className={`size-6 rounded-full ${DAY_DOT[d.kind]}`} />
-              <span aria-hidden="true" className={`text-xs ${isToday ? "font-extrabold text-ink" : "font-bold text-muted"}`}>{weekday(d.date).charAt(0)}</span>
-              <span className="sr-only">{isToday ? "Today" : weekday(d.date)}: {DAY_WORD[d.kind]}</span>
-            </li>
-          );
-        })}
-      </ol>
-      {next ? (
-        <div className="mt-10 flex w-full flex-col items-center gap-3">
-          <Button size="lg" onClick={onStartNext} className="w-full">Next: {next.title} →</Button>
-          <p className="font-bold text-muted">Or stop here, today counts~</p>
-        </div>
-      ) : (
-        <ButtonLink href={`/goals/${goal.id}`} variant="secondary" className="mt-10">See your progress</ButtonLink>
-      )}
+      <ScreenHeading id="done-title" className="mt-3 font-display text-4xl font-bold text-reward-deep">Done for today!</ScreenHeading>
+      <ul aria-label="Today's results" className="mt-5 flex w-full gap-3">
+        {stats.map((stat, i) => <StatCard key={stat.label} stat={stat} index={i} />)}
+      </ul>
+      <p className="mt-5 font-bold text-muted">Titi is so full! See you tomorrow~</p>
+      <div className="mt-8 flex w-full flex-col items-center gap-3">
+        {next ? (
+          <>
+            <Button size="lg" onClick={onStartNext} className="w-full">Next: {next.title} →</Button>
+            <Button variant="ghost" onClick={onContinue}>Or stop here, today counts~</Button>
+          </>
+        ) : (
+          <Button size="lg" onClick={onContinue} className="w-full">Continue</Button>
+        )}
+      </div>
       {prompt && <div className="mt-6 w-full text-left">{prompt}</div>}
     </section>
   );

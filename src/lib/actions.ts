@@ -7,12 +7,8 @@ import type { GoalValues } from "./validate";
 
 export function addEntry(goalId: string, amount: number, date: string): Entry {
   const entry: Entry = { id: crypto.randomUUID(), goalId, date, amount, at: new Date().toISOString() };
-  // Logging answers "how many did you do?", so it ends that goal's session.
-  updateData((data) => ({
-    ...data,
-    entries: [...data.entries, entry],
-    session: data.session?.goalId === goalId ? null : data.session,
-  }));
+  // The session stays open while you work; Today ends it once the number is reached (or on Stop).
+  updateData((data) => ({ ...data, entries: [...data.entries, entry] }));
   return entry;
 }
 
