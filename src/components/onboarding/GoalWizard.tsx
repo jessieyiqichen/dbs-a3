@@ -91,7 +91,7 @@ export function GoalWizard({ firstVisit = false, onCancel, onStarted }: Props) {
   const onBack = index > 0 ? back : onCancel;
   return (
     <SetupFrame step={index} steps={path.length} question={question} headingId={`setup-${step}`} moveFocus={moved} onBack={onBack}>
-      {step === "pick" && <PickStep onPick={(key) => go(startAnswers(key), pathFor(startAnswers(key), true)[1])} />}
+      {step === "pick" && <PickStep firstVisit={firstVisit} onPick={(key) => go(startAnswers(key), pathFor(startAnswers(key), true)[1])} />}
       {step === "what" && <WhatStep {...shared} />}
       {step === "often" && <OftenStep {...shared} />}
       {step === "date" && <DateStep {...shared} />}
