@@ -48,10 +48,10 @@ export function nudgeLine(goal: Goal, plan: TodayPlan, today: string, hour: numb
     case "complete":
       return `You did it, ${formatCount(goal.target, goal.unit)}!`;
     case "deadline-passed":
-      return `${plan.doneTotal} of ${goal.target} is still real progress!`;
+      return "The date passed, pick a new one and keep going!";
     case "paused": {
       const pause = goal.pauses.find((p) => p.from <= today && today <= p.to);
-      return pause ? `Paused until ${formatShortDate(pause.to)}, rest counts too~` : "Paused, rest counts too~";
+      return pause ? `Paused until ${formatShortDate(pause.to)}, Titi is napping too~` : "Paused, Titi is napping too~";
     }
     case "done":
       return pick(DONE, goal, today);

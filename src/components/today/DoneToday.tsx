@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { ScreenHeading } from "@/components/ui/ScreenHeading";
-import type { HistoryRow } from "@/lib/progress";
+import type { WeekDayKind } from "@/lib/streak";
 import type { Goal } from "@/lib/types";
 import { CatArt } from "./CatArt";
 import { Confetti } from "./Confetti";
@@ -12,20 +12,28 @@ interface Props {
   goal: Goal;
   doneToday: number;
   streakDays: number;
-  week: HistoryRow[];
+  /** The last seven days across all goals, oldest first. */
+  week: { date: string; kind: WeekDayKind }[];
   next: Goal | null;
   onStartNext: () => void;
 }
 
-const DAY_DOT: Record<string, string> = {
+const DAY_DOT: Record<WeekDayKind, string> = {
   done: "bg-lip",
   rest: "bg-reward",
+  missed: "border-2 border-line bg-surface",
+  today: "border-2 border-line bg-surface",
 };
+const DAY_WORD: Record<WeekDayKind, string> = { done: "done", rest: "rest day", missed: "missed", today: "not yet" };
+const WEEKDAY = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+function weekday(iso: string): string {
+  return WEEKDAY[new Date(`${iso}T12:00:00Z`).getUTCDay()];
+}
 
 /** The reward, the moment today's number is reached: the whole screen turns soft mint, confetti falls once, Titi
  *  jumps for joy with hearts, and the streak shows how many days in a row. Everything else on this screen is quiet. */
 export function DoneToday({ prompt, goal, doneToday, streakDays, week, next, onStartNext }: Props) {
-  const days = [...week].reverse();
   return (
     <section aria-labelledby="done-title" className="relative flex flex-col items-center pt-4 text-center">
       <div aria-hidden="true" className="fixed inset-0 -z-10 bg-celebrate" />
@@ -35,12 +43,17 @@ export function DoneToday({ prompt, goal, doneToday, streakDays, week, next, onS
       <p className="mt-2 text-lg font-bold text-ink">
         {doneToday === 1 ? "1 fish treat" : `${doneToday} fish treats`} for Titi · {streakDays === 1 ? "1 day in a row" : `${streakDays} days in a row`}
       </p>
-      <ol aria-label="Last 7 days" className="mt-5 flex gap-2">
-        {days.map((d) => (
-          <li key={d.date} className={`size-5 rounded-full ${d.amount > 0 ? DAY_DOT.done : DAY_DOT[d.kind] ?? "border-2 border-line bg-surface"}`}>
-            <span className="sr-only">{d.date}: {d.amount > 0 ? `${d.amount} done` : d.kind}</span>
-          </li>
-        ))}
+      <ol aria-label="Last 7 days" className="mt-5 flex gap-3">
+        {week.map((d, i) => {
+          const isToday = i === week.length - 1;
+          return (
+            <li key={d.date} className="flex flex-col items-center gap-1">
+              <span aria-hidden="true" className={`size-6 rounded-full ${DAY_DOT[d.kind]}`} />
+              <span aria-hidden="true" className={`text-xs ${isToday ? "font-extrabold text-ink" : "font-bold text-muted"}`}>{weekday(d.date).charAt(0)}</span>
+              <span className="sr-only">{isToday ? "Today" : weekday(d.date)}: {DAY_WORD[d.kind]}</span>
+            </li>
+          );
+        })}
       </ol>
       {next ? (
         <div className="mt-10 flex w-full flex-col items-center gap-3">

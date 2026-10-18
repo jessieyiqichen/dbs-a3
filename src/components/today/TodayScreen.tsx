@@ -6,11 +6,10 @@ import { Toast } from "@/components/ui/Toast";
 import { addEntry, endSession, markVisited, removeEntry } from "@/lib/actions";
 import { toISODate } from "@/lib/dates";
 import { formatCount } from "@/lib/format";
-import { history } from "@/lib/progress";
 import { sortByUrgency, type PlannedGoal } from "@/lib/quota";
 import { startGoal } from "@/lib/start";
 import { getFocusGoal, getVisitStart, useStore } from "@/lib/store";
-import { streak } from "@/lib/streak";
+import { overallStreak, overallWeek } from "@/lib/streak";
 import type { AppData, Goal } from "@/lib/types";
 import { welcomeMessage } from "@/lib/welcome";
 import { AskHowMany } from "./AskHowMany";
@@ -77,11 +76,11 @@ export function TodayScreen() {
   const [first, ...rest] = pickFirst(sortByUrgency(data.goals, data.entries, today), data);
   const asking = data.session?.goalId === first.goal.id;
   const visit = getVisitStart();
-  const welcome = welcomeMessage({ ...visit, today, goal: first.goal, entries: data.entries });
+  const welcome = welcomeMessage({ ...visit, today, goals: data.goals, entries: data.entries });
   const { nudgesSetUp, nudgePromptDismissed, reminderTimes } = data.settings;
   const showPrompt = !nudgePromptDismissed && (promptPinned || !nudgesSetUp);
   const next = rest.find((item) => ACTIVE.has(item.plan.status))?.goal ?? null;
-  const run = streak(first.goal, data.entries, today).days;
+  const run = overallStreak(data.goals, data.entries, today).days;
 
   return (
     <>
@@ -96,7 +95,7 @@ export function TodayScreen() {
           goal={first.goal}
           doneToday={first.plan.doneToday}
           streakDays={run}
-          week={history(first.goal, data.entries, today, 7)}
+          week={overallWeek(data.goals, data.entries, today)}
           next={next}
           onStartNext={() => next && startGoal(next)}
         />

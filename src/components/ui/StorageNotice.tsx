@@ -11,7 +11,7 @@ export function StorageNotice({ state }: { state: StoreState }) {
     return (
       <section role="alert" className="mt-6 flex flex-col gap-4 rounded-lg border-2 border-danger p-4">
         <h1 className="text-xl font-bold text-ink">Your saved goals couldn&apos;t be read</h1>
-        <p className="text-ink">Download a copy to keep it, then start fresh.</p>
+        <p className="text-ink">Download a copy to keep it, then start fresh</p>
         <div className="flex flex-wrap gap-3">
           <Button variant="secondary" onClick={() => downloadRaw(state.raw)}>Download a copy</Button>
           <Button variant="danger" onClick={() => { if (window.confirm("Delete the unreadable data and start fresh?")) resetData(); }}>
@@ -22,8 +22,8 @@ export function StorageNotice({ state }: { state: StoreState }) {
     );
   }
   return (
-    <p role="status" className="mt-2 rounded-lg bg-wash p-3 text-sm text-ink">
-      This browser isn&apos;t saving (private mode or blocked storage). Your goals will be gone when you close the tab.
+    <p role="status" className="mt-2 rounded-2xl bg-surface px-4 py-3 text-sm font-bold text-ink shadow-[0_2px_12px_rgba(61,59,51,.10)]">
+      This browser can&apos;t save (private mode or blocked storage), so your goals will be gone when you close the tab
     </p>
   );
 }

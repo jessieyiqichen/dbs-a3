@@ -41,7 +41,7 @@ function welcomes(): string[] {
     { prevVisit: "2026-10-15", fromNudge: false, entries: [] },
     { prevVisit: "2026-10-13", fromNudge: false, entries: [entry("2026-10-13", 1)] },
   ];
-  return cases.map((c) => welcomeMessage({ ...c, today: t, goal })).filter((m): m is string => m !== null);
+  return cases.map((c) => welcomeMessage({ ...c, today: t, goals: [goal] })).filter((m): m is string => m !== null);
 }
 
 function errors(): string[] {

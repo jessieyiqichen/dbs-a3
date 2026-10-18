@@ -41,7 +41,10 @@ export function GoalsScreen() {
               />
             ))}
           </ul>
-          <ButtonLink href="/goals/new" variant="ghost" className="mt-3 self-start">+ Add a goal</ButtonLink>
+          <div className="mt-3 flex flex-wrap gap-x-6">
+            <ButtonLink href="/goals/new" variant="ghost">+ Add a goal</ButtonLink>
+            <ButtonLink href="/reminders" variant="ghost">Reminder times</ButtonLink>
+          </div>
         </>
       )}
       <BackupSection data={data} />

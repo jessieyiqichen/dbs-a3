@@ -4,15 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useStore } from "@/lib/store";
 
+/** The core needs only: today's task, and your goals. Reminders are a setting, reached from Goals and the done screen. */
 const LINKS = [
-  { href: "/", label: "Today" },
-  { href: "/goals", label: "Goals" },
-  { href: "/reminders", label: "Reminders" },
+  { href: "/", label: "Today", also: [] as string[] },
+  { href: "/goals", label: "Goals", also: ["/reminders"] },
 ];
 
-function isCurrent(href: string, pathname: string | null): boolean {
+function isCurrent({ href, also }: (typeof LINKS)[number], pathname: string | null): boolean {
   if (pathname === null) return false;
-  return href === "/" ? pathname === "/" : pathname.startsWith(href);
+  if (href === "/") return pathname === "/";
+  return [href, ...also].some((p) => pathname.startsWith(p));
 }
 
 /** The links themselves; `pathname` is null while it isn't known yet (prerender fallback). */
@@ -20,8 +21,9 @@ export function NavLinks({ pathname }: { pathname: string | null }) {
   return (
     <nav aria-label="Main">
       <ul className="flex gap-1">
-        {LINKS.map(({ href, label }) => {
-          const current = isCurrent(href, pathname);
+        {LINKS.map((link) => {
+          const { href, label } = link;
+          const current = isCurrent(link, pathname);
           return (
             <li key={href}>
               <Link

@@ -25,10 +25,13 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## Design rules (from Week 3 class, agreed with the user 2026-10-17)
 
 Voice and style (user, 2026-10-17, after researching Duolingo)
+- Encourage, don't remove the push (user, 2026-10-17): the app still pushes people to finish, but always by cheering them on. Lead with progress, then the next step ("10 of 100, nice work!" then "pick a new one and keep going!"), never with a verdict ("The deadline has passed").
 - Write like a cheerleader, after Duolingo: short, active voice, celebrate small wins. The character may joke about itself, never about the person. A missed day talks about the best run and starting again, never "falling behind".
 - No full stops anywhere in the interface (they read as stern). Encouraging lines end with "!", easygoing ones with "~". Errors and labels take no end punctuation (no "!" on errors, it reads as shouting). `src/lib/copy.test.ts` checks this.
 - Look: "Cozy Cat", palette E "mint and butter" (user, 2026-10-17). The page follows Titi's soft painted style instead of the flat Trail Quest outlines: warm off-white page, warm dark text, no dark outlines (cards sit on soft shadows), mint only for the primary action (it keeps the solid lip from Trail Quest), honey only for fish treats and the streak, a butter sun behind Titi, pink hearts as decoration only. No orange or red in the chrome (Titi's own fur is illustration). Fredoka for headings, Nunito for text. Tokens and their contrast live in `src/app/globals.css`.
 - Each screen holds one sentence, one central object (Titi and the fish treats) and one button.
+- Navigation holds only the core needs: Today and Goals. Reminders are a setting, reached from Goals and from the done screen.
+- One streak for the whole app, like Duolingo's: a day counts when any goal got at least one ("One now keeps your streak going!"), with one forgiven rest day a week. It reads as "N-day streak".
 - Titi is the user's own cat (art generated with GPT, credit it in the README). Drawn loops in `public/cat/`: asleep before you start, sitting with you while you work, jumping for joy when today is done; each has a still frame for reduced motion. Titi is never hungry, sad or disappointed. Every task done is one fish treat for Titi; the count always shows as a number too.
 
 Hierarchy (emphasize by de-emphasizing)

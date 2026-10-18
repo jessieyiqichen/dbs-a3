@@ -15,7 +15,7 @@ const variants: Record<Variant, string> = {
   primary:
     "bg-primary text-on-primary shadow-[0_5px_0_var(--color-lip)] hover:bg-primary-hover " +
     "active:translate-y-[3px] active:bg-primary-pressed active:shadow-[0_2px_0_var(--color-lip)]",
-  secondary: "border-2 border-line bg-surface text-ink hover:border-ink hover:bg-wash active:bg-wash-strong",
+  secondary: "bg-surface text-ink shadow-[0_2px_10px_rgba(61,59,51,.12)] hover:bg-wash active:translate-y-px active:bg-wash-strong",
   ghost: "text-ink underline decoration-2 underline-offset-4 decoration-line hover:decoration-ink active:text-muted",
   danger: "border-2 border-danger bg-surface text-danger hover:bg-danger-wash active:bg-danger-wash",
   /** One of several options to pick from (first visit): a soft card, no outline, so the list reads as calm. */
