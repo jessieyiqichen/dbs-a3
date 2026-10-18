@@ -22,7 +22,7 @@ flowchart LR
         A([Nothing saved]) --> P["Titi: what have you been putting off?"] --> W["By when? · How many?\n(each a tap)"] --> PL["Here's our plan: today's number as fish treats"]
     end
     subgraph main [Main task]
-        T["Today: Titi's room, goal tabs,\none sentence, one button"] -->|Start| S["Session: I finished one,\nfish fly into Titi's bowl"] -->|today's number reached| D["Done for today!\nfish · streak · road"]
+        T["Today: Titi's room, goal tabs,\none sentence, one button"] -->|Start| S["/session: tap a fish or I finished one,\nfish fly into Titi's bowl; Open LinkedIn ↗ is yours to tap"] -->|today's number reached| D["Done for today!\nfish · streak · road"]
         S -->|Did more than N? not a number| E["Enter a whole number, like 30"] --> S
     end
     subgraph back [Coming back]
@@ -37,7 +37,7 @@ flowchart LR
 | Flow | What happens | Where |
 |---|---|---|
 | First visit | Titi asks one thing per screen, every answer is a tap: what you've been putting off, by when, how many (each choice shown as fish treats a day), then today's plan and the first task right away. Nothing to read, no empty screen, no sign-up. | `/` with nothing saved; the same walk is "+ Add" later |
-| Main task | Today is Titi's room: the painted window changes with the hour, Titi waits on her mat, then which goal is up now, one sentence and the Start button; this week's bowls sit on a shelf that stays at the foot of a phone screen while the room scrolls. Tap Start (the page opens in a new tab), come back and tap the fish you just finished (or "I finished one"). Each log sends a fish into Titi's bowl; reaching today's number ends in a results screen whose three cards count up. | `/` |
+| Main task | Today is Titi's room: the painted window changes with the hour, Titi waits on her mat, then which goal is up now, one sentence and the Start button; this week's bowls sit on a shelf that stays at the foot of a phone screen while the room scrolls. Tap Start to open the session (its own page); open LinkedIn from there if you want it, come back and tap the fish you just finished (or "I finished one"). Back returns to the room and keeps the session going. Each log sends a fish into Titi's bowl; reaching today's number ends in a results screen whose three cards count up. | `/`, `/session` |
 | Coming back | It remembers: your goals, the streak (one for the whole app, with a forgiven rest day a week), what you did this week. A warm line says why today's number is what it is. Reminders come two ways: a calendar file that works when Nudge is closed, and browser notifications that stop once you've started. | `/`, `/reminders` |
 
 ![Every state of every page](docs/states.png)

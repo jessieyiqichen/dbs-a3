@@ -38,19 +38,17 @@ flowchart TD
     T([Today]) --> R["Titi's room: window by the hour · Titi · this week's bowls"]
     R --> G["Goal tabs: pick which goal is up now (remembered while open)"]
     G --> B["Bubble: 'Send 5 connection requests' + a nudge line\nStart on LinkedIn ↗"]
-    B -->|Start| L[LinkedIn opens in a new tab]
-    L --> S
-    B --> S["Session: bar on top, Titi cheering, this goal's bowl, tap the fish you finished\nI finished one · Open LinkedIn · Did more than N?"]
+    B -->|Start| S["/session: bar on top, Titi cheering, this goal's bowl, tap the fish you finished\nI finished one · Open LinkedIn ↗ (only here, only if you tap it) · Did more than N?"]
     S -->|tap a fish, I finished one| F["Fish flies into the bowl, +1, Titi hops\nToast: Added 2 · Undo"]
     F --> S
     S -->|Did more than N? → not a number| SE["Enter a whole number, like 30"] --> S
-    S -->|✕ Stop for now| T
+    S -->|← Today, or the browser's Back| T
     F -->|today's number reached| D["Done for today! Three cards count up:\nfish today · streak · road"]
     D -->|Next goal| S
     D -->|Or stop here| T2["Today, done state: Titi is so full~\nNudge you tomorrow? (calendar · notifications · not now)"]
 ```
 
-The nudge line changes through the day (gentle → firmer → one last call) and never shames. The bowl in the session belongs to the goal being worked on, so it always agrees with the bar; the week of bowls on Today is where every goal counts together. Leaving the session clears the Undo toast so it never covers the Today button.
+The session is its own page: Start never opens a website; "Open LinkedIn ↗" in the session does, only when tapped. Leaving keeps the session, so Today says "Keep going". The nudge line changes through the day (gentle → firmer → one last call) and never shames. The bowl in the session belongs to the goal being worked on, so it always agrees with the bar; the week of bowls on Today is where every goal counts together. Leaving the session leaves its Undo toast behind, so it never covers the Today button.
 
 ## 3. Coming back: it remembers
 
@@ -92,7 +90,8 @@ Removing one goal uses Undo; replacing everything from a backup uses a real conf
 
 | Route | Page | Shared pieces |
 |---|---|---|
-| `/` | Today (first visit, the room, the session, the results) | `AppShell`, `Nav` (Today · Goals; hidden until the first goal exists), `Button`, `Toast`, `CatArt`, `Coins` |
+| `/` | Today (first visit, Titi's room) | `AppShell`, `Nav` (Today · Goals; hidden until the first goal exists), `Button`, `Toast`, `CatArt`, `Room` |
+| `/session` | Working through today's number, then the results; Back (the link or the browser's) returns to Today and keeps the session | `Session`, `Coins`, `Bowl`, `DoneToday` |
 | `/goals` | Your goals, backup | `GoalCard`, `BackupSection` |
 | `/goals/new` | Add a goal (the Titi walk) | `GoalWizard`, `SetupFrame`, `Choices`, `OwnAnswer`, `PlanStep` |
 | `/goals/[id]` | Progress | `Road` (by-date goal), `Diary` (daily goal), `GoalActions` |
