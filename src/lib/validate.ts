@@ -76,7 +76,8 @@ function checkDeadline(type: GoalType, text: string, today: string): string | un
   if (text <= today) return "Pick a date after today";
 }
 
-function checkLink(text: string): string | undefined {
+/** "" is fine (no page to open); otherwise it must be a full http(s) link. */
+export function linkError(text: string): string | undefined {
   if (text.length === 0) return;
   try {
     const url = new URL(text);
@@ -99,7 +100,7 @@ export function validateGoal(draft: GoalDraft, today: string): GoalValidation {
     ["unit", checkUnit(unit)],
     ["target", checkTarget(target)],
     ["deadline", checkDeadline(draft.type, draft.deadline, today)],
-    ["link", checkLink(link)],
+    ["link", linkError(link)],
   ];
   for (const [field, error] of found) if (error) errors[field] = error;
   if (Object.keys(errors).length > 0) return { errors, value: null };

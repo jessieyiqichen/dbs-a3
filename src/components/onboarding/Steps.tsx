@@ -4,7 +4,7 @@ import { addDays, daysBetween, formatShortDate } from "@/lib/dates";
 import { amountTiers, dateOptions, perDayFor } from "@/lib/onboarding";
 import { STARTERS } from "@/lib/starters";
 import type { GoalType } from "@/lib/types";
-import { MAX_TARGET } from "@/lib/validate";
+import { linkError, MAX_TARGET } from "@/lib/validate";
 import { Choices, TreatsPerDay } from "./Choices";
 import { OwnAnswer } from "./OwnAnswer";
 
@@ -109,4 +109,20 @@ export function AmountStep({ answers, today, typing, onType, onAnswer, question,
     aside: <TreatsPerDay n={perDay(t.amount)} />,
   }));
   return <Choices label={question} choices={[...tiers, { key: "own", label: "Type my own number" }]} onPick={(k) => (k === "own" ? onType() : onAnswer({ amount: Number(k) }))} />;
+}
+
+/** A goal of your own: the page Start should open, if there is one. */
+export function LinkStep({ answers, onAnswer }: StepProps) {
+  return (
+    <OwnAnswer
+      id="own-link"
+      label="Page to open when you start"
+      hint="Like https://www.linkedin.com/jobs/"
+      kind="url"
+      initial={answers.link}
+      check={(v) => linkError(v)}
+      onDone={(v) => onAnswer({ link: v })}
+      onSkip={() => onAnswer({ link: "" })}
+    />
+  );
 }

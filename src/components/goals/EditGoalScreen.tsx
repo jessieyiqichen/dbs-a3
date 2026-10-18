@@ -17,7 +17,7 @@ export function EditGoalScreen({ id }: { id: string }) {
   if (!goal) {
     return (
       <div className="mt-8 flex flex-col gap-4">
-        <p className="text-lg text-ink">This goal isn&apos;t saved on this device. It may have been deleted.</p>
+        <p className="text-lg font-bold text-ink">This goal isn&apos;t saved on this device, it may have been deleted~</p>
         <ButtonLink href="/goals" className="self-start">See your goals</ButtonLink>
       </div>
     );

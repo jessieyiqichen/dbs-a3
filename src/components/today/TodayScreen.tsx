@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { ButtonLink } from "@/components/ui/Button";
 import { StorageNotice } from "@/components/ui/StorageNotice";
 import { Toast } from "@/components/ui/Toast";
 import { addEntry, endSession, markVisited, removeEntry } from "@/lib/actions";
@@ -131,14 +132,17 @@ export function TodayScreen() {
         />
       )}
 
-      {rest.length > 0 && !asking && (
+      {!asking && (
         <section aria-labelledby="also-today" className="mt-12 flex flex-col">
-          <h2 id="also-today" className="font-display text-lg font-semibold text-muted">Also today</h2>
-          <ul className="flex flex-col">
-            {rest.map((item) => (
-              <GoalRow key={item.goal.id} item={item} onStart={() => startGoal(item.goal)} />
-            ))}
-          </ul>
+          <h2 id="also-today" className="font-display text-lg font-semibold text-muted">{rest.length > 0 ? "Also today" : "Something else to push?"}</h2>
+          {rest.length > 0 && (
+            <ul className="flex flex-col">
+              {rest.map((item) => (
+                <GoalRow key={item.goal.id} item={item} onStart={() => startGoal(item.goal)} />
+              ))}
+            </ul>
+          )}
+          <ButtonLink href="/goals/new" variant="ghost" className="mt-2 self-start">+ Add another goal</ButtonLink>
         </section>
       )}
       <Toast message={undoable?.message ?? null} onUndo={undo} onClose={closeToast} />

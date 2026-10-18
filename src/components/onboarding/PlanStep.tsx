@@ -12,12 +12,13 @@ import type { GoalValues } from "@/lib/validate";
 interface Props {
   goal: GoalValues;
   perDay: number;
+  firstVisit?: boolean;
   onBack: () => void;
   onStart: () => void;
 }
 
 /** The end of setup: today's plan as fish treats, the whole goal in one quiet line, and the first task right away. */
-export function PlanStep({ goal, perDay, onBack, onStart }: Props) {
+export function PlanStep({ goal, perDay, firstVisit = false, onBack, onStart }: Props) {
   const host = hostOf(goal.link);
   const whole = `${countOf(goal.target, goal.unit)} ${goal.deadline ? `by ${formatShortDate(goal.deadline)}` : "every day"}`;
   return (
@@ -46,7 +47,7 @@ export function PlanStep({ goal, perDay, onBack, onStart }: Props) {
         <p className="text-sm font-bold text-muted">You can change this anytime in Goals~</p>
       </div>
       <Button size="lg" className="mt-8 w-full" onClick={onStart}>
-        Start my first one
+        {firstVisit ? "Start my first one" : "Start the first one"}
         {host && (
           <>
             <span aria-hidden="true">↗</span>

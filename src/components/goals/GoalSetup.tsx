@@ -49,7 +49,13 @@ export function GoalSetup({ initial, fields, submitLabel, submitHint, onSubmit, 
   const [draft, setDraft] = useState<GoalDraft>(initial);
   const [errors, setErrors] = useState<GoalValidation["errors"]>({});
   const today = toISODate(new Date());
-  const set = (field: GoalField) => (value: string) => setDraft((d) => ({ ...d, [field]: value }));
+  // Typing into a field that shows an error re-checks just that field, so the error leaves as soon as it is fixed.
+  const set = (field: GoalField) => (value: string) =>
+    setDraft((d) => {
+      const next = { ...d, [field]: value };
+      if (errors[field]) setErrors((e) => ({ ...e, [field]: validateGoal(next, today).errors[field] }));
+      return next;
+    });
   const preview = draft.type === "by-date" ? dailyPreview(draft.target, draft.deadline, draft.unit, today) : null;
   const sentence = goalSentence({
     verb: draft.verb,
@@ -74,16 +80,16 @@ export function GoalSetup({ initial, fields, submitLabel, submitHint, onSubmit, 
   return (
     <form ref={formRef} onSubmit={submit} noValidate className="flex flex-col gap-6">
       <div aria-live="polite" className="flex flex-col gap-2">
-        <p className="font-display text-2xl font-semibold leading-snug text-ink">{sentence}</p>
+        <p className="font-display text-xl font-semibold leading-snug text-muted">{sentence}</p>
         {preview && <p className={`text-lg font-bold ${preview.perDay > 50 ? "text-ink" : "text-muted"}`}>{preview.message}</p>}
       </div>
 
       {fields === "full" && (
         <>
-          <Field id="goal-verb" label="What will you do?" hint='One or two words, like "Send" or "Practice".' error={errors.verb}>
+          <Field id="goal-verb" label="What will you do?" hint='One or two words, like "Send" or "Practice"' error={errors.verb}>
             {(control) => <TextInput {...control} value={draft.verb} onChange={(e) => set("verb")(e.target.value)} className="max-w-64" autoComplete="off" />}
           </Field>
-          <Field id="goal-unit" label="What are you counting? (optional)" hint='Like "applications" or "interview questions". Leave it blank to count times.' error={errors.unit}>
+          <Field id="goal-unit" label="What are you counting? (optional)" hint='Like "applications" or "interview questions", or blank to count times' error={errors.unit}>
             {(control) => <TextInput {...control} value={draft.unit} onChange={(e) => set("unit")(e.target.value)} className="max-w-80" autoComplete="off" />}
           </Field>
           <RadioGroup name="goal-type" legend="How often?" options={TYPE_OPTIONS} value={draft.type} onChange={(v) => set("type")(v)} />
