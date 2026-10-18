@@ -52,8 +52,3 @@ export function weekBowls(goals: Goal[], entries: Entry[], today: string): BowlD
     return { date, fill: future || !logged ? "empty" : allDone ? "full" : "some", today: date === today, future };
   });
 }
-
-/** Today's bowl is Titi's, not a goal's: fish from any goal land in it, and it is heaped once every number is reached. */
-export function todayBowl(goals: Goal[], entries: Entry[], today: string): BowlFill {
-  return weekBowls(goals, entries, today).find((b) => b.today)?.fill ?? "empty";
-}

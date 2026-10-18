@@ -48,7 +48,7 @@ Research behind these choices: [research.md](research.md), and a study of Duolin
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # vitest, 128 tests (quota, streak, nudges, copy rules, onboarding, undo)
+npm test           # vitest, 127 tests (quota, streak, nudges, copy rules, onboarding, undo)
 npm run build
 ```
 
