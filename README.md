@@ -14,6 +14,24 @@ Design, Build, Ship · Assignment 3 (Patterns & Flows).
 
 > I pick a goal → it tells me today's number and I do the first one now → if I haven't started, it nudges me again (and again) → I come back and see how close I am.
 
+The three flows in one picture (each step is a route; every state and error is drawn in [flows.md](flows.md)):
+
+```mermaid
+flowchart LR
+    subgraph first [First visit]
+        A([Nothing saved]) --> P["Titi: what have you been putting off?"] --> W["By when? · How many?\n(each a tap)"] --> PL["Here's our plan: today's number as fish treats"]
+    end
+    subgraph main [Main task]
+        T["Today: Titi's room, goal tabs,\none sentence, one button"] -->|Start| S["Session: I finished one,\nfish fly into Titi's bowl"] -->|today's number reached| D["Done for today!\nfish · streak · road"]
+        S -->|Did more than N? not a number| E["Enter a whole number, like 30"] --> S
+    end
+    subgraph back [Coming back]
+        C([Open it again]) --> K["Welcome back · streak · this week's bowls\n(or: it's been 6 days, and that's okay)"] --> T
+        D -->|Nudge you tomorrow?| N["Calendar file · notifications"]
+    end
+    PL -->|Start my first one| S
+```
+
 ## The three flows
 
 | Flow | What happens | Where |
@@ -40,7 +58,7 @@ Research behind these choices: [research.md](research.md), and a study of Duolin
 
 - Every page and error state was checked with axe-core (WCAG 2.2 AA + best practices): 0 violations across 16 pages and states.
 - Keyboard only: the whole first visit, a session from Start to done, and Undo were walked with Tab and Enter; focus moves to each new screen's heading.
-- Text contrast, checked pair by pair: ink 13.4:1 and muted 5.7:1 on the page; ink on the rose button 4.6:1 (5.1:1 on hover), on honey 7.0:1, on sky 5.6:1; control edges 3.6:1; the error berry 6.7:1.
+- Text contrast, checked pair by pair: ink 13.4:1 and muted 5.7:1 on the page; ink on the green button 6.4:1 (7.3:1 on hover), on honey 7.0:1, on sky 5.6:1; control edges 3.6:1; the error berry 6.7:1.
 - Every field has a visible label; every action is a real button or link; the drawn animations fall back to stills under `prefers-reduced-motion`, and the count-ups, hops and hearts stop.
 
 ## Build and check
