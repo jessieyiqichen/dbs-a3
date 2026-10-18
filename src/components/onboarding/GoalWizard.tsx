@@ -15,11 +15,12 @@ type Step = "pick" | "what" | "often" | "date" | "amount" | "link" | "plan";
 
 const BLANK: Answers = { starterKey: null, label: "", verb: "", unit: "", type: "daily", deadline: "", amount: 0, link: "" };
 
-/** Only the questions this person needs: your own goal asks what, how often and which page; a daily goal skips the date. */
+/** Only the questions this person needs: your own goal asks what and how often; a daily goal skips the date. Everyone is
+ *  asked which page they will work on (a preset may suggest one, kept or cleared here; user, 2026-10-18). */
 function pathFor(a: Answers, picked: boolean): Step[] {
   const own = picked && a.starterKey === null;
   const date: Step[] = a.type === "by-date" ? ["date"] : [];
-  return ["pick", ...(own ? (["what", "often"] as Step[]) : []), ...date, "amount", ...(own ? (["link"] as Step[]) : []), "plan"];
+  return ["pick", ...(own ? (["what", "often"] as Step[]) : []), ...date, "amount", "link", "plan"];
 }
 
 function goalFrom(a: Answers, today: string): GoalValues | null {

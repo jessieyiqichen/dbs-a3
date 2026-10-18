@@ -118,7 +118,7 @@ export function LinkStep({ answers, onAnswer }: StepProps) {
   return (
     <OwnAnswer
       id="own-link"
-      label="Page to open when you start"
+      label="Page you'll work on"
       hint="Like https://www.linkedin.com/jobs/"
       kind="url"
       initial={answers.link}
