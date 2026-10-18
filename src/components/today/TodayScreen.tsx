@@ -143,7 +143,8 @@ export function TodayScreen() {
         />
       )}
 
-      <Toast message={undoable?.message ?? null} onUndo={undo} onClose={closeToast} />
+      {/* On the home view the week's shelf holds the foot of a phone screen, so the toast floats above it */}
+      <Toast message={undoable?.message ?? null} onUndo={undo} onClose={closeToast} raised={!asking && !(first.plan.status === "done" && justDone === first.goal.id)} />
     </>
   );
 }

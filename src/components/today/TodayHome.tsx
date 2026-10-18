@@ -107,7 +107,8 @@ function shortName(goal: Goal): string {
   return unit.charAt(0).toUpperCase() + unit.slice(1);
 }
 
-/** Today: a short window, then which goal, one sentence and one button on the first screen; Titi and this week's bowls below. */
+/** Today: the window, Titi on her mat, which goal, one sentence and one button; this week's bowls on a shelf that stays at
+ *  the foot of a phone screen while the room scrolls. */
 export function TodayHome({ goal, plan, today, hour, bowls, welcome, catchUp, notice, next, goals, onPick, corner, prompt, onStart, onStartNext, cheer = false }: Props) {
   const site = siteName(goal.link);
   const active = plan.status === "not-started" || plan.status === "started";

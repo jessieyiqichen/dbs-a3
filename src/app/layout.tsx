@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fredoka, Nunito } from "next/font/google";
 import { Notifier } from "@/components/Notifier";
 import "./globals.css";
@@ -11,6 +11,9 @@ export const metadata: Metadata = {
   title: "Nudge",
   description: "Turns the thing you keep putting off into today's number, and nudges you until you start",
 };
+
+// The week's shelf is fixed at the foot of a phone screen, so the page reaches into the home-indicator area and pads for it
+export const viewport: Viewport = { viewportFit: "cover" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

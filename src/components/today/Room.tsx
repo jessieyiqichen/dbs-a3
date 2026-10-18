@@ -22,7 +22,7 @@ function useHour(): number {
 /** The window (art generated with GPT) as a short banner: the sky says what time it is, nothing is drawn over it. */
 function Window({ time, corner }: { time: TimeOfDay; corner?: ReactNode }) {
   return (
-    <div className="relative aspect-[1040/300] w-full overflow-hidden rounded-3xl bg-wash">
+    <div className="relative aspect-[1040/457] w-full overflow-hidden rounded-3xl bg-wash">
       {TIMES.map((t) => (
         // eslint-disable-next-line @next/next/no-img-element -- three paintings cross-fade; next/image would reload on each swap
         <img key={t} src={`/cat/window-${t}.webp`} alt="" aria-hidden="true" className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 motion-reduce:transition-none ${t === time ? "opacity-100" : "opacity-0"}`} />
@@ -49,14 +49,18 @@ export function ShelfBowl({ bowl, label = "letter" }: { bowl: BowlDay; label?: "
   );
 }
 
-/** This week as seven of Titi's bowls on a clay shelf: fish in the days that got something, heaped when the day was done. */
+/** This week as seven of Titi's bowls on a clay shelf: fish in the days that got something, heaped when the day was done.
+ *  On a phone the shelf stays at the foot of the screen while the room scrolls (status, not navigation: nothing on it is a
+ *  button); from 640px up it sits in the page under the room. */
 function Shelf({ bowls }: { bowls: BowlDay[] }) {
   return (
-    <div className="clay rounded-2xl bg-reward-soft px-3 pb-2 pt-2 [--lip:var(--color-reward)]">
-      <p className="mb-1 text-center text-xs font-extrabold text-muted">Titi&apos;s week, every goal counts!</p>
-      <ol aria-label="Titi's week" className="flex items-end gap-1">
-        {bowls.map((b) => <ShelfBowl key={b.date} bowl={b} />)}
-      </ol>
+    <div className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-reward-soft bg-page/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-sm sm:static sm:border-0 sm:bg-transparent sm:pb-0 sm:backdrop-blur-none">
+      <div className="clay mx-auto max-w-xl rounded-t-2xl bg-reward-soft px-3 pb-1 pt-1.5 [--lip:var(--color-reward)] sm:rounded-2xl sm:pb-2 sm:pt-2">
+        <p className="mb-1 text-center text-xs font-extrabold text-muted max-sm:sr-only">Titi&apos;s week, every goal counts!</p>
+        <ol aria-label="Titi's week, every goal counts" className="flex items-end gap-1">
+          {bowls.map((b) => <ShelfBowl key={b.date} bowl={b} />)}
+        </ol>
+      </div>
     </div>
   );
 }
@@ -65,23 +69,24 @@ interface Props {
   bowls: BowlDay[];
   cat: { mood: CatMood; effect?: CatEffect; key?: string };
   corner?: ReactNode;
-  /** Today's goal and its one button: placed right under the window so the main action is on the first screen. */
+  /** Today's goal and its one button, placed right under Titi. */
   children?: ReactNode;
 }
 
-/** Titi's room, in layers that never overlap: a short window banner, then the goal and its button, then Titi with
- *  her drawn animations on a clay mat, and the week's bowls on a shelf. Each piece is whole art or plain interface,
- *  so nothing is stitched. The action comes before the scenery so it is visible without scrolling. */
+/** Titi's room, in layers that never overlap: the window banner, Titi with her drawn animations on a clay mat, the goal
+ *  and its button, and the week's bowls on a shelf. Each piece is whole art or plain interface, so nothing is stitched.
+ *  On a phone the shelf is fixed at the foot of the screen, so Titi stays big and the button still lands on the first
+ *  screen (user, 2026-10-18: Titi is the design, she must be seen). */
 export function Room({ bowls, cat, corner, children }: Props) {
   const time = timeOfDay(useHour());
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 max-sm:pb-24">
       <Window time={time} corner={corner} />
-      {children}
-      <div className="relative mx-auto mt-2 flex w-48 flex-col items-center">
-        <span aria-hidden="true" className="clay absolute bottom-1 left-1/2 h-9 w-44 -translate-x-1/2 rounded-full bg-sun [--lip:#e9cf7e]" />
-        <CatArt key={cat.key} mood={cat.mood} effect={cat.effect} sun={false} className="relative w-36" />
+      <div className="relative mx-auto flex w-52 flex-col items-center">
+        <span aria-hidden="true" className="clay absolute bottom-1 left-1/2 h-10 w-48 -translate-x-1/2 rounded-full bg-sun [--lip:#e9cf7e]" />
+        <CatArt key={cat.key} mood={cat.mood} effect={cat.effect} sun={false} className="relative w-40" />
       </div>
+      {children}
       <Shelf bowls={bowls} />
     </div>
   );
@@ -92,11 +97,11 @@ export function RoomSkeleton() {
   const block = "animate-pulse rounded-3xl bg-wash motion-reduce:animate-none";
   return (
     <div aria-busy="true" aria-label="Loading your goals" className="flex flex-col gap-4 pt-2">
-      <div className={`${block} aspect-[1040/300] w-full`} />
+      <div className={`${block} aspect-[1040/457] w-full`} />
+      <div className={`${block} mx-auto h-40 w-40 rounded-full`} />
       <div className={`${block} h-10 w-56 rounded-full`} />
       <div className={`${block} h-20 w-full`} />
       <div className={`${block} h-14 w-full rounded-2xl`} />
-      <div className={`${block} mx-auto h-36 w-36 rounded-full`} />
     </div>
   );
 }

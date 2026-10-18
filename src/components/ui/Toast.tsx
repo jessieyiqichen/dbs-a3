@@ -9,10 +9,12 @@ interface ToastProps {
   message: string | null;
   onUndo?: () => void;
   onClose: () => void;
+  /** Lifted above the week's shelf, which is fixed at the foot of a phone screen on Today. */
+  raised?: boolean;
 }
 
 /** A short confirmation at the bottom of the screen, with an optional Undo. */
-export function Toast({ message, onUndo, onClose }: ToastProps) {
+export function Toast({ message, onUndo, onClose, raised = false }: ToastProps) {
   useEffect(() => {
     if (!message) return;
     const timer = window.setTimeout(onClose, TOAST_MS);
@@ -20,7 +22,7 @@ export function Toast({ message, onUndo, onClose }: ToastProps) {
   }, [message, onClose]);
 
   return (
-    <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-4 flex justify-center px-4">
+    <div aria-live="polite" className={`pointer-events-none fixed inset-x-0 z-30 flex justify-center px-4 ${raised ? "bottom-28 sm:bottom-4" : "bottom-4"}`}>
       {message && (
         <div className="pointer-events-auto flex w-full max-w-md items-center justify-between gap-3 rounded-2xl bg-ink px-4 py-2 font-bold text-surface shadow-lg">
           <span>{message}</span>
