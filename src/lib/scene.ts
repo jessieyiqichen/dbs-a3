@@ -31,6 +31,8 @@ export interface BowlDay {
   fill: BowlFill;
   today: boolean;
   future: boolean;
+  /** Before any goal existed: shown dim, never as a miss. */
+  before: boolean;
 }
 
 const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -46,9 +48,10 @@ export function weekBowls(goals: Goal[], entries: Entry[], today: string): BowlD
   return Array.from({ length: 7 }, (_, i) => addDays(monday, i)).map((date) => {
     const future = date > today;
     const active = goals.filter((g) => g.startDate <= date);
+    const before = !future && active.length === 0;
     const plans = active.map((g) => planToday(g, entries, date));
     const logged = entries.some((e) => e.date === date && e.amount > 0 && active.some((g) => g.id === e.goalId));
     const allDone = plans.length > 0 && plans.every((p) => p.status === "done" || p.status === "complete");
-    return { date, fill: future || !logged ? "empty" : allDone ? "full" : "some", today: date === today, future };
+    return { date, fill: future || !logged ? "empty" : allDone ? "full" : "some", today: date === today, future, before };
   });
 }

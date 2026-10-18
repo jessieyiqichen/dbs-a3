@@ -38,11 +38,12 @@ function Window({ time, corner }: { time: TimeOfDay; corner?: ReactNode }) {
 export function ShelfBowl({ bowl, label = "letter" }: { bowl: BowlDay; label?: "letter" | "day" }) {
   const { letter, name } = weekdayLetter(bowl.date);
   const text = label === "letter" ? letter : String(Number(bowl.date.slice(8)));
-  const said = bowl.future ? "not yet" : bowl.fill === "full" ? "all done" : bowl.fill === "some" ? "some done" : "nothing yet";
+  const said = bowl.future ? "not yet" : bowl.before ? "before you started" : bowl.fill === "full" ? "all done" : bowl.fill === "some" ? "some done" : "nothing yet";
   return (
-    <li className={`relative flex flex-1 flex-col items-center ${bowl.future ? "opacity-45" : ""}`}>
+    <li className="relative flex flex-1 flex-col items-center">
       {/* eslint-disable-next-line @next/next/no-img-element -- painted art */}
-      <img src={BOWL[bowl.fill]} alt="" aria-hidden="true" className="relative w-full max-w-11 drop-shadow-[0_3px_2px_rgba(90,60,20,.25)]" />
+      {/* Only the bowl fades for a day not yet come or before the goal existed; the day label keeps its contrast */}
+      <img src={BOWL[bowl.fill]} alt="" aria-hidden="true" className={`relative w-full max-w-11 drop-shadow-[0_3px_2px_rgba(90,60,20,.25)] ${bowl.future || bowl.before ? "opacity-45" : ""}`} />
       {/* Today wears a small honey tag under its bowl, like the date on a calendar */}
       <span aria-hidden="true" className={`mt-1 min-w-5 rounded-full px-1.5 text-center text-[11px] font-extrabold leading-5 ${bowl.today ? "bg-reward text-ink shadow-[0_2px_0_var(--color-reward-deep)]" : "text-muted"}`}>{text}</span>
       <span className="sr-only">{bowl.today ? "Today" : `${name} ${formatShortDate(bowl.date)}`}: {said}</span>

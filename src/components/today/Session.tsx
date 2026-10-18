@@ -107,6 +107,9 @@ export function Session({
         >
           ← Today
         </Link>
+        {/* With fish tiles the tiles are the progress; the bar only steps in for big numbers (reviewer, 2026-10-18) */}
+        {!tiles && (
+          <>
         <div
           role="progressbar"
           aria-label="Today"
@@ -128,6 +131,8 @@ export function Session({
         >
           {done} / {total}
         </span>
+          </>
+        )}
       </div>
 
       <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-12">
@@ -185,20 +190,21 @@ export function Session({
             )}
           </div>
 
-          <Button size="lg" className="mt-6 w-full" onClick={() => log(1)}>
-            I finished one
-          </Button>
+          {/* Open the page first, then log: the order of the work itself (reviewer, 2026-10-18) */}
           {site && (
             <Button
               variant="secondary"
               size="lg"
-              className="mt-3 w-full"
+              className="mt-6 w-full"
               onClick={onOpen}
             >
               Open {site} <span aria-hidden="true">↗</span>
               <span className="sr-only">(opens in a new tab)</span>
             </Button>
           )}
+          <Button size="lg" className={`${site ? "mt-3" : "mt-6"} w-full`} onClick={() => log(1)}>
+            I finished one
+          </Button>
           {typing ? (
             <MoreForm total={total} onLog={log} />
           ) : (

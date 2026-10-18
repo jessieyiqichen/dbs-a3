@@ -21,6 +21,11 @@ describe("weekBowls: the seven bowls on the sill, Monday to Sunday", () => {
     expect(bowls.map((b) => b.future)).toEqual([false, false, false, false, false, false, true]);
   });
 
+  it("marks the days before the first goal existed as before, not as misses", () => {
+    const late: Goal = { ...goal, startDate: "2026-10-15" };
+    expect(weekBowls([late], [], "2026-10-17").map((b) => b.before)).toEqual([true, true, true, false, false, false, false]);
+  });
+
   it("names the days by their first letter, with the full name for screen readers", () => {
     expect(weekdayLetter("2026-10-12")).toEqual({ letter: "M", name: "Monday" });
     expect(weekdayLetter("2026-10-18")).toEqual({ letter: "S", name: "Sunday" });

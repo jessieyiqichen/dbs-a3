@@ -87,7 +87,9 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
     const entry = addEntry(goal.id, amount, today);
     if (reachesQuota) {
       endSession();
-      setJustDone(goal.id); // today's number is reached: on to the celebration
+      setJustDone(goal.id); // today's number is reached: the celebration is the confirmation, so no toast over it
+      setUndoable(null);
+      return;
     }
     setUndoable({ entryId: entry.id, message: `Added ${formatCount(amount, goal.unit)}` });
   };
@@ -161,8 +163,6 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
           goals={planned.map((item) => ({ goal: item.goal, done: item.plan.status === "done" || item.plan.status === "complete" }))}
           onPick={(id) => { setFocusGoal(id); setPicked(id); }}
           corner={run > 0 ? <StreakChip days={run} /> : undefined}
-          // Asked only once today's number is reached, never while there is still work to do
-          prompt={showPrompt && !firstTime && first.plan.status === "done" ? <NudgePrompt times={reminderTimes} onActed={() => setPromptPinned(true)} /> : null}
           onStart={() => begin(first.goal)}
           onStartNext={() => next && begin(next)}
           cheer={undoable !== null}

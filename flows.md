@@ -31,21 +31,22 @@ flowchart TD
 
 ## 2. The main task: Today, the session, and the results
 
-Today is Titi's room: the window with the streak, Titi on her mat, the goal tabs, one sentence and one button, the road so far. The week of bowls is a shelf fixed at the foot of a phone screen (from 640px up it sits under the room), so Titi stays big and the button still lands on the first screen. The "Nudge you tomorrow?" card only appears once today's number is reached.
+Today is Titi's room: the window with the streak, Titi on her mat, the goal tabs, one sentence and one button, the road so far. The week of bowls is a shelf fixed at the foot of a phone screen (from 640px up it sits under the room), so Titi stays big and the button still lands on the first screen. The "Nudge you tomorrow?" card appears once, on the done screen.
 
 ```mermaid
 flowchart TD
     T([Today]) --> R["Titi's room: window by the hour · Titi · this week's bowls"]
     R --> G["Goal tabs: pick which goal is up now (remembered while open)"]
     G --> B["Bubble: 'Send 5 connection requests' + a nudge line\nStart on LinkedIn ↗"]
-    B -->|Start| S["/session: bar on top, Titi cheering, this goal's bowl, tap the fish you finished\nI finished one · Open LinkedIn ↗ (only here, only if you tap it) · Did more than N?"]
+    B -->|Start| S["/session: Titi cheering, her bowl, the fish tiles (tap one to log up to it)\nOpen LinkedIn ↗ (only here, only if you tap it) · I finished one · Did more than N?"]
     S -->|tap a fish, I finished one| F["Fish flies into the bowl, +1, Titi hops\nToast: Added 2 · Undo"]
     F --> S
     S -->|Did more than N? → not a number| SE["Enter a whole number, like 30"] --> S
     S -->|← Today, or the browser's Back| T
     F -->|today's number reached| D["Done for today! Three cards count up:\nfish today · streak · road"]
     D -->|Next goal| S
-    D -->|Or stop here| T2["Today, done state: Titi is so full~\nNudge you tomorrow? (calendar · notifications · not now)"]
+    D -->|Nudge you tomorrow? (calendar · notifications · not now)| D
+    D -->|Or stop here| T2["Today, done state: Titi is so full~"]
 ```
 
 The session is its own page: Start never opens a website; "Open LinkedIn ↗" in the session does, only when tapped. Leaving keeps the session, so Today says "Keep going". The nudge line changes through the day (gentle → firmer → one last call) and never shames. The bowl in the session belongs to the goal being worked on, so it always agrees with the bar; the week of bowls on Today is where every goal counts together. Leaving the session leaves its Undo toast behind, so it never covers the Today button.

@@ -4,7 +4,7 @@ import type { Goal } from "./types";
  *  The very first time, before anything was ever logged, it says how (progressive onboarding: one tip, in place). */
 export function sessionLine(done: number, total: number, firstTime = false): string {
   const left = total - done;
-  if (done === 0 && firstTime) return "Tap the fish you just finished, or I finished one~";
+  if (done === 0 && firstTime) return "Tap a fish, or I finished one~";
   if (done === 0) return "Ready when you are~";
   if (left <= 0) return "Titi is so full~";
   if (left === 1) return "One more and Titi is full!";
@@ -16,8 +16,9 @@ export type BowlFill = "empty" | "some" | "full";
 
 /** How full Titi's bowl looks: fish go in as you log, and it is heaped once today's number is reached. */
 export function bowlFill(done: number, total: number): BowlFill {
-  if (done <= 0) return "empty";
-  return done >= total ? "full" : "some";
+  // Empty until today's number is reached: the fish tiles carry the count, so the bowl never shows a number of its own
+  // (reviewer, 2026-10-18: "some" fish in the bowl did not match 1 / 5)
+  return total > 0 && done >= total ? "full" : "empty";
 }
 
 export interface DoneStat {
@@ -33,7 +34,7 @@ export function doneStats(goal: Goal, { doneToday, doneTotal, streakDays }: { do
       ? { label: `Road to ${goal.target}`, value: Math.min(100, Math.round((doneTotal / Math.max(goal.target, 1)) * 100)), suffix: "%" }
       : { label: "All time", value: doneTotal, suffix: "" };
   return [
-    { label: "Fish today", value: doneToday, suffix: "" },
+    { label: "Done today", value: doneToday, suffix: "" },
     { label: "Streak", value: streakDays, suffix: streakDays === 1 ? " day" : " days" },
     road,
   ];

@@ -28,8 +28,6 @@ interface Props {
   goals: { goal: Goal; done: boolean }[];
   onPick: (id: string) => void;
   corner?: React.ReactNode;
-  /** Asked once something useful was done: set up nudges. */
-  prompt?: React.ReactNode;
   onStart: () => void;
   onStartNext: () => void;
   /** True right after a log: Titi hops. */
@@ -179,7 +177,6 @@ export function TodayHome({
   goals,
   onPick,
   corner,
-  prompt,
   onStart,
   onStartNext,
   cheer = false,
@@ -245,7 +242,6 @@ export function TodayHome({
           )}
           <Road goal={goal} plan={plan} />
         </div>
-        {prompt}
         {notice && (
           <Link
             href="/reminders"

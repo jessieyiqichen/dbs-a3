@@ -13,7 +13,7 @@ describe("sessionLine: what Titi says while you work", () => {
   });
 
   it("tells a first-timer how to log, once, in place", () => {
-    expect(sessionLine(0, 5, true)).toBe("Tap the fish you just finished, or I finished one~");
+    expect(sessionLine(0, 5, true)).toBe("Tap a fish, or I finished one~");
     expect(sessionLine(1, 5, true)).toBe("First one down!");
   });
 
@@ -25,8 +25,8 @@ describe("sessionLine: what Titi says while you work", () => {
 describe("bowlFill", () => {
   it("shows an empty, half or full bowl by how far today has come", () => {
     expect(bowlFill(0, 5)).toBe("empty");
-    expect(bowlFill(1, 5)).toBe("some");
-    expect(bowlFill(3, 5)).toBe("some");
+    expect(bowlFill(1, 5)).toBe("empty");
+    expect(bowlFill(3, 5)).toBe("empty");
     expect(bowlFill(5, 5)).toBe("full");
     expect(bowlFill(1, 1)).toBe("full");
   });
@@ -38,7 +38,7 @@ describe("doneStats: the three cards on the done screen", () => {
 
   it("shows the road for a by-date goal as a percentage", () => {
     expect(doneStats(byDate, { doneToday: 5, doneTotal: 56, streakDays: 4 })).toEqual([
-      { label: "Fish today", value: 5, suffix: "" },
+      { label: "Done today", value: 5, suffix: "" },
       { label: "Streak", value: 4, suffix: " days" },
       { label: "Road to 150", value: 37, suffix: "%" },
     ]);

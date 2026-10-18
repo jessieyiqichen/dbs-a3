@@ -42,7 +42,7 @@ export function diaryWeeks(goal: Goal, entries: Entry[], today: string, weeks: n
     Array.from({ length: 7 }, (_, i) => addDays(monday, i)).map((date) => {
       const amount = totals.get(date) ?? 0;
       const future = date > today;
-      return { date, fill: future || amount === 0 ? "empty" : amount >= goal.target ? "full" : "some", today: date === today, future };
+      return { date, fill: future || amount === 0 ? "empty" : amount >= goal.target ? "full" : "some", today: date === today, future, before: date < goal.startDate };
     }),
   );
 }
