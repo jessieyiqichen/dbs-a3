@@ -60,7 +60,8 @@ export function ProgressScreen({ id }: { id: string }) {
 
       {byDate ? <Road goal={goal} story={roadStory(goal, data.entries, today)} /> : <Diary weeks={diaryWeeks(goal, data.entries, today, 2)} target={goal.target} unit={goal.unit} />}
 
-      <p className="clay rounded-2xl bg-reward-soft px-4 py-3 font-display font-semibold text-ink [--lip:var(--color-reward)]">
+      {/* Plain text, not a clay surface: chunky clay is kept for things you can tap */}
+      <p className="px-1 font-display font-semibold text-ink">
         {run.days === 1 ? "1 day in a row" : `${run.days} days in a row`}
         {lastRest && <span className="font-sans text-sm font-bold text-muted"> · {formatShortDate(lastRest)} was a rest day~</span>}
       </p>

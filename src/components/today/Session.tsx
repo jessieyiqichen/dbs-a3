@@ -17,7 +17,7 @@ interface Props {
   goal: Goal;
   total: number;
   done: number;
-  /** Titi's bowl for today, shared by every goal. */
+  /** Titi's bowl for this goal today: it matches the bar, so the two never disagree. */
   bowl: BowlFill;
   /** Nothing was ever logged: Titi says how, once. */
   firstTime?: boolean;
@@ -54,7 +54,8 @@ function MoreForm({ total, onLog }: { total: number; onLog: (n: number) => void 
 }
 
 /** Working through today's number, like a lesson: a bar on top, Titi cheering, fish flying into the bowl as you log.
- *  One tap on a fish logs up to it; "One more" logs one; the session ends on its own when today is done. */
+ *  One button logs one; the fish only show progress; "Did more than N?" covers a batch. The session ends on its own
+ *  when today is done. */
 export function Session({ goal, total, done, bowl, firstTime = false, onLog, onOpen, onStop }: Props) {
   const id = useId();
   const [flight, setFlight] = useState<{ key: number; amount: number } | null>(null);
@@ -91,7 +92,7 @@ export function Session({ goal, total, done, bowl, firstTime = false, onLog, onO
 
       <div className="mt-6">
         {tiles ? (
-          <Coins total={total} done={done} label="Tap the last one you finished" onPick={(reached) => log(reached - done)} showCount={false} />
+          <Coins total={total} done={done} label="Today" showCount={false} />
         ) : (
           <div role="group" aria-label="How many did you do" className="flex flex-wrap gap-2">
             {quickAmounts(left).map((n) => (
@@ -101,7 +102,7 @@ export function Session({ goal, total, done, bowl, firstTime = false, onLog, onO
         )}
       </div>
 
-      <Button size="lg" className="mt-6 w-full" onClick={() => log(1)}>One more</Button>
+      <Button size="lg" className="mt-6 w-full" onClick={() => log(1)}>I finished one</Button>
       {site && (
         <Button variant="secondary" size="lg" className="mt-3 w-full" onClick={onOpen}>
           Open {site} <span aria-hidden="true">↗</span><span className="sr-only">(opens in a new tab)</span>

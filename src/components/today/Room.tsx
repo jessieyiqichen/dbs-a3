@@ -22,7 +22,7 @@ function useHour(): number {
 /** The window (art generated with GPT) as a short banner: the sky says what time it is, nothing is drawn over it. */
 function Window({ time, corner }: { time: TimeOfDay; corner?: ReactNode }) {
   return (
-    <div className="relative aspect-[1040/457] w-full overflow-hidden rounded-3xl bg-wash">
+    <div className="relative aspect-[1040/300] w-full overflow-hidden rounded-3xl bg-wash">
       {TIMES.map((t) => (
         // eslint-disable-next-line @next/next/no-img-element -- three paintings cross-fade; next/image would reload on each swap
         <img key={t} src={`/cat/window-${t}.webp`} alt="" aria-hidden="true" className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 motion-reduce:transition-none ${t === time ? "opacity-100" : "opacity-0"}`} />
@@ -65,18 +65,22 @@ interface Props {
   bowls: BowlDay[];
   cat: { mood: CatMood; effect?: CatEffect; key?: string };
   corner?: ReactNode;
+  /** Today's goal and its one button: placed right under the window so the main action is on the first screen. */
+  children?: ReactNode;
 }
 
-/** Titi's room, in layers that never overlap: the window banner, Titi with her drawn animations on a clay mat,
- *  and the week's bowls on a shelf. Each piece is whole art or plain interface, so nothing is stitched. */
-export function Room({ bowls, cat, corner }: Props) {
+/** Titi's room, in layers that never overlap: a short window banner, then the goal and its button, then Titi with
+ *  her drawn animations on a clay mat, and the week's bowls on a shelf. Each piece is whole art or plain interface,
+ *  so nothing is stitched. The action comes before the scenery so it is visible without scrolling. */
+export function Room({ bowls, cat, corner, children }: Props) {
   const time = timeOfDay(useHour());
   return (
     <div className="flex flex-col gap-4">
       <Window time={time} corner={corner} />
-      <div className="relative mx-auto flex w-56 flex-col items-center">
-        <span aria-hidden="true" className="clay absolute bottom-1 left-1/2 h-10 w-52 -translate-x-1/2 rounded-full bg-sun [--lip:#e9cf7e]" />
-        <CatArt key={cat.key} mood={cat.mood} effect={cat.effect} sun={false} className="relative w-44" />
+      {children}
+      <div className="relative mx-auto mt-2 flex w-48 flex-col items-center">
+        <span aria-hidden="true" className="clay absolute bottom-1 left-1/2 h-9 w-44 -translate-x-1/2 rounded-full bg-sun [--lip:#e9cf7e]" />
+        <CatArt key={cat.key} mood={cat.mood} effect={cat.effect} sun={false} className="relative w-36" />
       </div>
       <Shelf bowls={bowls} />
     </div>
@@ -88,11 +92,11 @@ export function RoomSkeleton() {
   const block = "animate-pulse rounded-3xl bg-wash motion-reduce:animate-none";
   return (
     <div aria-busy="true" aria-label="Loading your goals" className="flex flex-col gap-4 pt-2">
-      <div className={`${block} aspect-[1040/457] w-full`} />
-      <div className={`${block} mx-auto h-40 w-44 rounded-full`} />
-      <div className={`${block} h-20 w-full rounded-2xl`} />
-      <div className={`${block} mx-auto h-20 w-full max-w-[430px]`} />
-      <div className={`${block} mx-auto h-14 w-full max-w-[430px] rounded-2xl`} />
+      <div className={`${block} aspect-[1040/300] w-full`} />
+      <div className={`${block} h-10 w-56 rounded-full`} />
+      <div className={`${block} h-20 w-full`} />
+      <div className={`${block} h-14 w-full rounded-2xl`} />
+      <div className={`${block} mx-auto h-36 w-36 rounded-full`} />
     </div>
   );
 }

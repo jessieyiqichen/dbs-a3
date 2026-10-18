@@ -31,7 +31,7 @@ flowchart TD
 
 ## 2. The main task: Today, the session, and the results
 
-Today is Titi's room in three layers that never overlap: hers (the streak, Titi, the week of bowls), yours (which goal is up now), and the goal's (one sentence, one button, the road so far).
+Today puts the main action on the first screen: a short window with the streak, the goal tabs, one sentence and one button, the road so far; Titi and the week of bowls sit below. The "Nudge you tomorrow?" card only appears once today's number is reached.
 
 ```mermaid
 flowchart TD
@@ -40,8 +40,8 @@ flowchart TD
     G --> B["Bubble: 'Send 5 connection requests' + a nudge line\nStart on LinkedIn ↗"]
     B -->|Start| L[LinkedIn opens in a new tab]
     L --> S
-    B --> S["Session: bar on top, Titi cheering, the shared bowl, fish tiles\nOne more · Open LinkedIn · Did more than N?"]
-    S -->|tap a fish, One more| F["Fish flies into the bowl, +1, Titi hops\nToast: Added 2 · Undo"]
+    B --> S["Session: bar on top, Titi cheering, this goal's bowl, fish as progress\nI finished one · Open LinkedIn · Did more than N?"]
+    S -->|I finished one| F["Fish flies into the bowl, +1, Titi hops\nToast: Added 2 · Undo"]
     F --> S
     S -->|Did more than N? → not a number| SE["Enter a whole number, like 30"] --> S
     S -->|✕ Stop for now| T
@@ -50,7 +50,7 @@ flowchart TD
     D -->|Or stop here| T2["Today, done state: Titi is so full~\nNudge you tomorrow? (calendar · notifications · not now)"]
 ```
 
-The nudge line changes through the day (gentle → firmer → one last call) and never shames. The bowl in the session is today's shared bowl: fish from every goal land in it, and it is heaped once every number is reached.
+The nudge line changes through the day (gentle → firmer → one last call) and never shames. The bowl in the session belongs to the goal being worked on, so it always agrees with the bar; the week of bowls on Today is where every goal counts together. Leaving the session clears the Undo toast so it never covers the Today button.
 
 ## 3. Coming back: it remembers
 

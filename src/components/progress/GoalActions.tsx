@@ -34,7 +34,6 @@ export function GoalActions({ goal, today }: { goal: Goal; today: string }) {
         ) : (
           <Button variant="secondary" aria-expanded={pausing} onClick={() => setPausing((v) => !v)}>Take a break</Button>
         )}
-        <Button variant="ghost" onClick={remove}>Remove goal</Button>
       </div>
       {pause && <p className="text-sm font-bold text-muted">Taking a break until {formatShortDate(pause.to)}, no nudges and nothing counts as behind~</p>}
       {pausing && !pause && (
@@ -48,6 +47,10 @@ export function GoalActions({ goal, today }: { goal: Goal; today: string }) {
           </div>
         </div>
       )}
+      {/* Kept apart from Edit and Take a break, at the bottom, so it is hard to tap by mistake */}
+      <div className="mt-6 border-t-2 border-wash-strong pt-4">
+        <Button variant="ghost" onClick={remove}>Remove goal</Button>
+      </div>
     </section>
   );
 }

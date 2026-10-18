@@ -13,7 +13,7 @@ describe("sessionLine: what Titi says while you work", () => {
   });
 
   it("tells a first-timer how to log, once, in place", () => {
-    expect(sessionLine(0, 5, true)).toBe("Tap the last fish you finished, or One more~");
+    expect(sessionLine(0, 5, true)).toBe("Every one you finish is a fish for me~");
     expect(sessionLine(1, 5, true)).toBe("First one down!");
   });
 

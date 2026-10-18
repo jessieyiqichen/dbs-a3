@@ -85,7 +85,7 @@ function Road({ goal, plan }: { goal: Goal; plan: TodayPlan }) {
 function GoalTabs({ goals, current, onPick }: { goals: { goal: Goal; done: boolean }[]; current: string; onPick: (id: string) => void }) {
   const pill = "clay clay-press inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full px-4 font-display text-sm font-semibold focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus";
   return (
-    <nav aria-label="Up now" className="mx-auto mt-4 flex w-full max-w-[430px] gap-2 overflow-x-auto px-1 pb-2 pt-1 [scrollbar-width:none]">
+    <nav aria-label="Up now" className="flex w-full gap-2 overflow-x-auto px-1 pb-2 pt-1 [scrollbar-width:none]">
       {goals.map(({ goal, done }) => {
         const on = goal.id === current;
         return (
@@ -107,7 +107,7 @@ function shortName(goal: Goal): string {
   return unit.charAt(0).toUpperCase() + unit.slice(1);
 }
 
-/** Today: Titi's room with this week's bowls on the sill, one sentence in Titi's bubble, and one button. */
+/** Today: a short window, then which goal, one sentence and one button on the first screen; Titi and this week's bowls below. */
 export function TodayHome({ goal, plan, today, hour, bowls, welcome, catchUp, notice, next, goals, onPick, corner, prompt, onStart, onStartNext, cheer = false }: Props) {
   const site = siteName(goal.link);
   const active = plan.status === "not-started" || plan.status === "started";
@@ -115,24 +115,27 @@ export function TodayHome({ goal, plan, today, hour, bowls, welcome, catchUp, no
   const cat = { ...catFor(plan.status, cheer), key: cheer ? "cheer" : plan.status };
   return (
     <section aria-labelledby={`goal-${goal.id}`} className="flex flex-col">
-      <Room bowls={bowls} cat={cat} corner={corner} />
-      <GoalTabs goals={goals} current={goal.id} onPick={onPick} />
-      <div className="clay relative mx-auto mt-5 w-full max-w-[430px] rounded-3xl bg-surface px-5 py-4">
-        <ScreenHeading id={`goal-${goal.id}`} className="font-display text-2xl font-bold leading-tight text-ink [text-wrap:balance]">{title(goal, plan)}</ScreenHeading>
-        <p className="mt-1 font-bold text-muted">{line}</p>
-        {catchUp && plan.status === "not-started" && <p className="mt-1 text-sm font-bold text-muted">{catchUp}</p>}
-      </div>
-      <div className="mx-auto mt-4 flex w-full max-w-[430px] flex-col gap-3">
-        {active && (
-          <Button size="lg" onClick={onStart} className="w-full">
-            {plan.status === "started" ? "Keep going" : "Start"}{site ? ` on ${site}` : ""} {site && <><span aria-hidden="true">↗</span><span className="sr-only">(opens in a new tab)</span></>}
-          </Button>
-        )}
-        {plan.status === "done" && next && <Button size="lg" onClick={onStartNext} className="w-full">Next: {next.title} →</Button>}
-        {plan.status === "complete" && <ButtonLink href="/goals/new" size="lg" className="w-full">Set the next goal</ButtonLink>}
-        {plan.status === "deadline-passed" && <ButtonLink href={`/goals/${goal.id}/edit`} size="lg" className="w-full">Pick a new date</ButtonLink>}
-        {plan.status === "paused" && <ButtonLink href="/goals" variant="secondary" className="self-start">Manage goals</ButtonLink>}
-        <Road goal={goal} plan={plan} />
+      <Room bowls={bowls} cat={cat} corner={corner}>
+        <GoalTabs goals={goals} current={goal.id} onPick={onPick} />
+        <div className="clay relative w-full rounded-3xl bg-surface px-5 py-4">
+          <ScreenHeading id={`goal-${goal.id}`} className="font-display text-2xl font-bold leading-tight text-ink [text-wrap:balance]">{title(goal, plan)}</ScreenHeading>
+          <p className="mt-1 font-bold text-muted">{line}</p>
+          {catchUp && plan.status === "not-started" && <p className="mt-1 text-sm font-bold text-muted">{catchUp}</p>}
+        </div>
+        <div className="flex w-full flex-col gap-3">
+          {active && (
+            <Button size="lg" onClick={onStart} className="w-full">
+              {plan.status === "started" ? "Keep going" : "Start"}{site ? ` on ${site}` : ""} {site && <><span aria-hidden="true">↗</span><span className="sr-only">(opens in a new tab)</span></>}
+            </Button>
+          )}
+          {plan.status === "done" && next && <Button size="lg" onClick={onStartNext} className="w-full">Next: {next.title} →</Button>}
+          {plan.status === "complete" && <ButtonLink href="/goals/new" size="lg" className="w-full">Set the next goal</ButtonLink>}
+          {plan.status === "deadline-passed" && <ButtonLink href={`/goals/${goal.id}/edit`} size="lg" className="w-full">Pick a new date</ButtonLink>}
+          {plan.status === "paused" && <ButtonLink href="/goals" variant="secondary" className="self-start">Manage goals</ButtonLink>}
+          <Road goal={goal} plan={plan} />
+        </div>
+      </Room>
+      <div className="mt-4 flex w-full flex-col gap-3">
         {prompt}
         {notice && (
           <Link href="/reminders" className="self-center text-sm font-bold text-muted underline decoration-2 underline-offset-4 hover:text-ink focus-visible:outline-3 focus-visible:outline-focus">

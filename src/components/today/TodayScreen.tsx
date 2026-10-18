@@ -10,11 +10,11 @@ import { sortByUrgency, type PlannedGoal } from "@/lib/quota";
 import { startGoal } from "@/lib/start";
 import { getFocusGoal, getVisitStart, setFocusGoal, useStore } from "@/lib/store";
 import { calendarNotice, catchUpLine, sessionIsToday } from "@/lib/returning";
-import { todayBowl, weekBowls } from "@/lib/scene";
+import { weekBowls } from "@/lib/scene";
 import { overallStreak } from "@/lib/streak";
 import type { AppData, Goal } from "@/lib/types";
 import { weekSummary, welcomeMessage } from "@/lib/welcome";
-import { milestoneLine } from "@/lib/session";
+import { bowlFill, milestoneLine } from "@/lib/session";
 import { RoomSkeleton } from "./Room";
 import { DoneToday } from "./DoneToday";
 import { FirstVisit } from "./FirstVisit";
@@ -103,11 +103,11 @@ export function TodayScreen() {
           goal={first.goal}
           total={first.plan.quota}
           done={first.plan.doneToday}
-          bowl={todayBowl(data.goals, data.entries, today)}
+          bowl={bowlFill(first.plan.doneToday, first.plan.quota)}
           firstTime={firstTime}
           onLog={(n) => log(first.goal, n, first.plan.doneToday + n >= first.plan.quota)}
           onOpen={() => first.goal.link && window.open(first.goal.link, "_blank", "noopener,noreferrer")}
-          onStop={endSession}
+          onStop={() => { endSession(); closeToast(); }}
         />
       ) : first.plan.status === "done" && justDone === first.goal.id ? (
         <DoneToday
@@ -118,8 +118,8 @@ export function TodayScreen() {
           streakDays={run}
           milestone={milestoneLine(first.goal, first.plan.doneTotal, first.plan.doneToday)}
           next={next}
-          onStartNext={() => { setJustDone(null); if (next) startGoal(next); }}
-          onContinue={() => setJustDone(null)}
+          onStartNext={() => { setJustDone(null); closeToast(); if (next) startGoal(next); }}
+          onContinue={() => { setJustDone(null); closeToast(); }}
         />
       ) : (
         <TodayHome
@@ -135,7 +135,8 @@ export function TodayScreen() {
           goals={planned.map((item) => ({ goal: item.goal, done: item.plan.status === "done" || item.plan.status === "complete" }))}
           onPick={(id) => { setFocusGoal(id); setPicked(id); }}
           corner={run > 0 ? <StreakChip days={run} /> : undefined}
-          prompt={showPrompt && !firstTime ? <NudgePrompt times={reminderTimes} onActed={() => setPromptPinned(true)} /> : null}
+          // Asked only once today's number is reached, never while there is still work to do
+          prompt={showPrompt && !firstTime && first.plan.status === "done" ? <NudgePrompt times={reminderTimes} onActed={() => setPromptPinned(true)} /> : null}
           onStart={() => startGoal(first.goal)}
           onStartNext={() => next && startGoal(next)}
           cheer={undoable !== null}

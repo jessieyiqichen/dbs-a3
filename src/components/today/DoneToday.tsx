@@ -62,7 +62,7 @@ export function DoneToday({ prompt, goal, doneToday, doneTotal, streakDays, mile
             <Button variant="ghost" onClick={onContinue}>Or stop here, today counts~</Button>
           </>
         ) : (
-          <Button size="lg" onClick={onContinue} className="w-full">Continue</Button>
+          <Button size="lg" onClick={onContinue} className="w-full">Back to Titi&apos;s room</Button>
         )}
       </div>
       {prompt && <div className="mt-6 w-full text-left">{prompt}</div>}
