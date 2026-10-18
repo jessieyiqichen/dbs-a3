@@ -19,7 +19,7 @@ Design, Build, Ship · Assignment 3 (Patterns & Flows).
 | Flow | What happens | Where |
 |---|---|---|
 | First visit | Titi asks one thing per screen, every answer is a tap: what you've been putting off, by when, how many (each choice shown as fish treats a day), then today's plan and the first task right away. Nothing to read, no empty screen, no sign-up. | `/` with nothing saved; the same walk is "+ Add" later |
-| Main task | Today is Titi's room: the painted window changes with the hour, this week's bowls stand on a shelf, Titi waits in her bed. Pick which goal is up now, tap Start (the page opens in a new tab), come back and tap the last fish you finished. Each log sends a fish into Titi's bowl; reaching today's number ends in a results screen whose three cards count up. | `/` |
+| Main task | Today puts the action first: a short painted window that changes with the hour, then which goal is up now, one sentence and the Start button, with Titi and this week's bowls below. Tap Start (the page opens in a new tab), come back and tap "I finished one" for each one done. Each log sends a fish into Titi's bowl; reaching today's number ends in a results screen whose three cards count up. | `/` |
 | Coming back | It remembers: your goals, the streak (one for the whole app, with a forgiven rest day a week), what you did this week. A warm line says why today's number is what it is. Reminders come two ways: a calendar file that works when Nudge is closed, and browser notifications that stop once you've started. | `/`, `/reminders` |
 
 ![Every state of every page](docs/states.png)
@@ -27,7 +27,7 @@ Design, Build, Ship · Assignment 3 (Patterns & Flows).
 ## Design decisions
 
 - **Encourage, don't remove the push.** The app still pushes people to finish, always by cheering them on. Nudges get firmer through the day but never shame; a missed deadline leads with progress ("10 of 100, nice work!") and then the next step.
-- **Fish treats go to Titi, numbers go to the goal.** The streak, the week of bowls and the session bowl are shared by every goal; the daily number, Titi's road (a by-date goal) and Titi's diary (a daily goal) belong to one goal. Today shows this as three layers: hers, yours (the goal tabs), the goal's.
+- **Fish treats go to Titi, numbers go to the goal.** The streak and the week of bowls are shared by every goal; the daily number, the session bowl, Titi's road (a by-date goal) and Titi's diary (a daily goal) belong to one goal. Each symbol keeps one meaning: a fish is one task done, a bowl is one day, and Titi's road marks its quarters with signposts.
 - **Painted pieces are never stitched.** The window, the bowls and Titi each stand alone on plain interface, never laid over another painting; Titi keeps her drawn frame animations. (An earlier version composited everything into one room and looked pasted.)
 - **Clay, not outlines.** A warm light page where the few things you act on are saturated and chunky (a highlight on top, a solid lip underneath, pressing sinks it), everything else quiet.
 - **No full stops in the interface.** Encouraging lines end with "!", easygoing ones with "~"; errors and labels take no end punctuation. A test enforces it.
@@ -56,6 +56,6 @@ Data is saved only in this browser (localStorage). No accounts, database or APIs
 
 ## Credits
 
-- Titi, her bowls and the window paintings were generated with GPT from photos and prompts by the author, then cut out and assembled here (see [log.md](log.md) for every prompt and decision).
+- Titi, her bowls, the window paintings and the hillside on Titi's road were generated with GPT from photos and prompts by the author, then cut out and assembled here (see [log.md](log.md) for every prompt and decision).
 - Fonts: Fredoka and Nunito (Google Fonts).
 - Built by directing Claude Code; the decision log records what was asked, what was proposed and what was chosen, in Chinese.
