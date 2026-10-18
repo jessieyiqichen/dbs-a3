@@ -7,7 +7,7 @@ export function ArrowLink({ href, children, label, className = "" }: { href: str
     <Link
       href={href}
       aria-label={label}
-      className={`t-body inline-flex min-h-11 items-center gap-2 self-start font-extrabold text-muted underline decoration-2 underline-offset-4 hover:text-ink focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-focus ${className}`}
+      className={`t-body -mx-2 inline-flex min-h-11 items-center gap-2 self-start rounded-tile px-2 font-extrabold text-muted underline decoration-2 underline-offset-4 hover:text-ink focus-visible:outline-3 focus-visible:outline-offset-0 focus-visible:outline-focus ${className}`}
     >
       {children} <span aria-hidden="true">→</span>
     </Link>

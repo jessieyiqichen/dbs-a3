@@ -19,7 +19,7 @@ export function RadioGroup<T extends string>({ name, legend, options, value, onC
       {options.map((option) => (
         <label
           key={option.value}
-          className="clay flex min-h-12 cursor-pointer items-center gap-3 rounded-card bg-surface px-4 font-sans font-extrabold hover:bg-wash has-checked:bg-primary-soft has-checked:[--lip:var(--color-lip)] has-focus-visible:outline-3 has-focus-visible:outline-focus"
+          className="clay clay-press flex min-h-12 cursor-pointer items-center gap-3 rounded-card bg-surface px-4 font-sans font-extrabold hover:bg-wash has-checked:bg-primary-soft has-checked:[--lip:var(--color-lip)]"
         >
           <input
             type="radio"

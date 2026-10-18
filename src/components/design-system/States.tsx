@@ -9,7 +9,8 @@ import { ToastPanel } from "@/components/ui/Toast";
 import { Section, Specimen } from "./Section";
 
 const STATES = ["Rest", "Hover", "Focus", "Pressed", "Selected", "Disabled"] as const;
-const FOCUS = "outline-3 outline-offset-3 outline-focus";
+const FOCUS = "is-focused";
+const LINK_FOCUS = "-mx-2 rounded-tile px-2 outline-3 outline-offset-0 outline-focus";
 const NOT_USED = <span className="t-label text-muted">Not used</span>;
 
 function Fish({ earned = false }: { earned?: boolean }) {
@@ -72,7 +73,7 @@ const ROWS: { name: string; cells: ReactNode[] }[] = [
     cells: [
       <span key="r" className={`${link} text-muted`}>All time →</span>,
       <span key="h" className={`${link} text-ink`}>All time →</span>,
-      <span key="f" className={`${link} text-muted ${FOCUS}`}>All time →</span>,
+      <span key="f" className={`${link} inline-flex min-h-11 items-center text-muted ${LINK_FOCUS}`}>All time →</span>,
       <span key="p" className={`${link} text-ink`}>All time →</span>,
       NOT_USED,
       NOT_USED,
@@ -83,7 +84,7 @@ const ROWS: { name: string; cells: ReactNode[] }[] = [
     cells: [
       <span key="r" className={`${input} border-line inline-flex items-center`}>5</span>,
       NOT_USED,
-      <span key="f" className={`${input} border-ink inline-flex items-center outline-3 outline-offset-1 outline-focus`}>5</span>,
+      <span key="f" className={`${input} border-ink inline-flex items-center outline-3 outline-offset-0 outline-focus`}>5</span>,
       NOT_USED,
       NOT_USED,
       <span key="d" className={`${input} border-line inline-flex items-center opacity-50`}>5</span>,
@@ -112,7 +113,7 @@ export function ControlStates() {
           </tbody>
         </table>
       </div>
-      <p className="t-label mt-2 text-muted">Pressing sinks a clay control onto its lip. Selected is a state of choice: the current goal and an earned fish. Focus is always a 3px ink ring</p>
+      <p className="t-label mt-2 text-muted">Pressing sinks a clay control onto its lip. Selected is a state of choice: the current goal and an earned fish. Focus is one 3px ink ring in the control's own shape; on clay it wraps the lip too</p>
     </Section>
   );
 }

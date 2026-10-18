@@ -115,8 +115,29 @@ body {
 }
 /* Pressed: it sinks onto its lip. */
 .clay-press {
+  position: relative;
   transition: transform 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 120ms cubic-bezier(0.23, 1, 0.32, 1);
 }
+/* Focus on clay: one 3px ink ring that wraps the face and its lip together, 3px clear of both, in the control's own
+   shape (user, 2026-10-18: a plain outline stopped at the face and cut through the lip). .is-focused draws it at rest
+   for the design system page. */
+.clay-press:focus-visible,
+.clay-press:has(:focus-visible) {
+  outline: none;
+}
+.clay-press:focus-visible::after,
+.clay-press:has(:focus-visible)::after,
+.clay-press.is-focused::after {
+  content: "";
+  position: absolute;
+  inset: -6px -6px -11px -6px;
+  border: 3px solid var(--color-focus);
+  border-radius: inherit;
+  pointer-events: none;
+}
+/* the ring sits 6px out, so its corners grow by 6px to stay concentric */
+.rounded-tile.clay-press::after { border-radius: calc(var(--radius-tile) + 6px); }
+.rounded-card.clay-press::after { border-radius: calc(var(--radius-card) + 6px); }
 /* .is-pressed shows the pressed state at rest, for the design system page */
 .clay-press:active,
 .clay-press.is-pressed {
