@@ -1,8 +1,10 @@
 import type { Goal } from "./types";
 
-/** The line in Titi's speech bubble while you work through today's number. */
-export function sessionLine(done: number, total: number): string {
+/** The line in Titi's speech bubble while you work through today's number.
+ *  The very first time, before anything was ever logged, it says how (progressive onboarding: one tip, in place). */
+export function sessionLine(done: number, total: number, firstTime = false): string {
   const left = total - done;
+  if (done === 0 && firstTime) return "Tap the last fish you finished, or One more~";
   if (done === 0) return "Ready when you are~";
   if (left <= 0) return "Titi is so full~";
   if (left === 1) return "One more and Titi is full!";
@@ -35,4 +37,19 @@ export function doneStats(goal: Goal, { doneToday, doneTotal, streakDays }: { do
     { label: "Streak", value: streakDays, suffix: streakDays === 1 ? " day" : " days" },
     road,
   ];
+}
+
+const MILESTONES: [number, string][] = [
+  [0.75, "Three quarters of the road, almost there!"],
+  [0.5, "Halfway there!"],
+  [0.25, "A quarter of the road done, nice!"],
+];
+
+/** For a by-date goal: the milestone today crossed, if any (the highest one between yesterday's total and today's). */
+export function milestoneLine(goal: Goal, doneTotal: number, doneToday: number): string | null {
+  if (goal.type !== "by-date" || goal.target <= 0) return null;
+  const before = (doneTotal - doneToday) / goal.target;
+  const now = doneTotal / goal.target;
+  const hit = MILESTONES.find(([m]) => before < m && now >= m);
+  return hit ? hit[1] : null;
 }

@@ -1,4 +1,4 @@
-import { addDays, daysBetween } from "./dates";
+import { addDays, daysBetween, weekKey } from "./dates";
 import { overallStreak } from "./streak";
 import type { Entry, Goal } from "./types";
 
@@ -34,4 +34,17 @@ export function welcomeMessage({ prevVisit, today, fromNudge, goals, entries }: 
       : "Welcome back! Fresh start today~";
   }
   return `Welcome back! It's been ${sinceActive} days, and that's okay~`;
+}
+
+/** On the first open of a new week: what last week added up to, for Titi. Null when it isn't the first open or nothing happened. */
+export function weekSummary(goals: Goal[], entries: Entry[], today: string, prevVisit: string | null): string | null {
+  const monday = weekKey(today);
+  if (prevVisit === null || prevVisit >= monday) return null;
+  const from = addDays(monday, -7);
+  const ids = new Set(goals.map((g) => g.id));
+  const last = entries.filter((e) => ids.has(e.goalId) && e.date >= from && e.date < monday && e.amount > 0);
+  const fish = last.reduce((sum, e) => sum + e.amount, 0);
+  if (fish === 0) return null;
+  const days = new Set(last.map((e) => e.date)).size;
+  return `Last week: ${fish} fish for Titi over ${days === 1 ? "1 day" : `${days} days`}!`;
 }

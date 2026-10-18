@@ -29,6 +29,8 @@ interface Props {
   goals: { goal: Goal; done: boolean }[];
   onPick: (id: string) => void;
   corner?: React.ReactNode;
+  /** Asked once something useful was done: set up nudges. */
+  prompt?: React.ReactNode;
   onStart: () => void;
   onStartNext: () => void;
   /** True right after a log: Titi hops. */
@@ -106,7 +108,7 @@ function shortName(goal: Goal): string {
 }
 
 /** Today: Titi's room with this week's bowls on the sill, one sentence in Titi's bubble, and one button. */
-export function TodayHome({ goal, plan, today, hour, bowls, welcome, catchUp, notice, next, goals, onPick, corner, onStart, onStartNext, cheer = false }: Props) {
+export function TodayHome({ goal, plan, today, hour, bowls, welcome, catchUp, notice, next, goals, onPick, corner, prompt, onStart, onStartNext, cheer = false }: Props) {
   const site = siteName(goal.link);
   const active = plan.status === "not-started" || plan.status === "started";
   const line = plan.status === "done" ? "Titi is so full! See you tomorrow~" : (welcome ?? nudgeLine(goal, plan, today, hour));
@@ -131,6 +133,7 @@ export function TodayHome({ goal, plan, today, hour, bowls, welcome, catchUp, no
         {plan.status === "deadline-passed" && <ButtonLink href={`/goals/${goal.id}/edit`} size="lg" className="w-full">Pick a new date</ButtonLink>}
         {plan.status === "paused" && <ButtonLink href="/goals" variant="secondary" className="self-start">Manage goals</ButtonLink>}
         <Road goal={goal} plan={plan} />
+        {prompt}
         {notice && (
           <Link href="/reminders" className="self-center text-sm font-bold text-muted underline decoration-2 underline-offset-4 hover:text-ink focus-visible:outline-3 focus-visible:outline-focus">
             {notice}

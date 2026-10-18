@@ -19,6 +19,8 @@ interface Props {
   done: number;
   /** Titi's bowl for today, shared by every goal. */
   bowl: BowlFill;
+  /** Nothing was ever logged: Titi says how, once. */
+  firstTime?: boolean;
   onLog: (amount: number) => void;
   onOpen: () => void;
   onStop: () => void;
@@ -53,7 +55,7 @@ function MoreForm({ total, onLog }: { total: number; onLog: (n: number) => void 
 
 /** Working through today's number, like a lesson: a bar on top, Titi cheering, fish flying into the bowl as you log.
  *  One tap on a fish logs up to it; "One more" logs one; the session ends on its own when today is done. */
-export function Session({ goal, total, done, bowl, onLog, onOpen, onStop }: Props) {
+export function Session({ goal, total, done, bowl, firstTime = false, onLog, onOpen, onStop }: Props) {
   const id = useId();
   const [flight, setFlight] = useState<{ key: number; amount: number } | null>(null);
   const [typing, setTyping] = useState(false);
@@ -80,7 +82,7 @@ export function Session({ goal, total, done, bowl, onLog, onOpen, onStop }: Prop
       <div className="mt-4 flex items-end gap-2">
         <CatArt key={flight?.key ?? 0} mood="idle" effect={flight ? "hop" : undefined} className="w-36 shrink-0" />
         <div className="clay mb-8 rounded-2xl rounded-bl-sm bg-surface px-4 py-3">
-          <ScreenHeading key={done} id={`${id}-title`} className="font-display text-xl font-semibold leading-snug text-ink">{sessionLine(done, total)}</ScreenHeading>
+          <ScreenHeading key={done} id={`${id}-title`} className="font-display text-xl font-semibold leading-snug text-ink">{sessionLine(done, total, firstTime)}</ScreenHeading>
         </div>
       </div>
       <div className="mt-2 self-center">

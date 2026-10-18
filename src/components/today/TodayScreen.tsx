@@ -13,7 +13,9 @@ import { calendarNotice, catchUpLine, sessionIsToday } from "@/lib/returning";
 import { todayBowl, weekBowls } from "@/lib/scene";
 import { overallStreak } from "@/lib/streak";
 import type { AppData, Goal } from "@/lib/types";
-import { welcomeMessage } from "@/lib/welcome";
+import { weekSummary, welcomeMessage } from "@/lib/welcome";
+import { milestoneLine } from "@/lib/session";
+import { RoomSkeleton } from "./Room";
 import { DoneToday } from "./DoneToday";
 import { FirstVisit } from "./FirstVisit";
 import { NudgePrompt } from "./NudgePrompt";
@@ -53,7 +55,7 @@ export function TodayScreen() {
     if (window.location.search) window.history.replaceState(null, "", window.location.pathname);
   }, [ready]);
 
-  if (state === null) return <p className="pt-6 text-muted">Loading your goals…</p>;
+  if (state === null) return <RoomSkeleton />;
   if (state.kind === "corrupt") return <StorageNotice state={state} />;
 
   const { data } = state;
@@ -85,7 +87,8 @@ export function TodayScreen() {
   const [first, ...rest] = planned;
   const asking = data.session?.goalId === first.goal.id && sessionIsToday(data.session, today) && ACTIVE.has(first.plan.status);
   const visit = getVisitStart();
-  const welcome = welcomeMessage({ ...visit, today, goals: data.goals, entries: data.entries });
+  const welcome = weekSummary(data.goals, data.entries, today, visit.prevVisit) ?? welcomeMessage({ ...visit, today, goals: data.goals, entries: data.entries });
+  const firstTime = data.entries.length === 0;
   const { nudgesSetUp, nudgePromptDismissed, reminderTimes } = data.settings;
   const showPrompt = !nudgePromptDismissed && (promptPinned || !nudgesSetUp);
   const next = rest.find((item) => ACTIVE.has(item.plan.status))?.goal ?? null;
@@ -101,6 +104,7 @@ export function TodayScreen() {
           total={first.plan.quota}
           done={first.plan.doneToday}
           bowl={todayBowl(data.goals, data.entries, today)}
+          firstTime={firstTime}
           onLog={(n) => log(first.goal, n, first.plan.doneToday + n >= first.plan.quota)}
           onOpen={() => first.goal.link && window.open(first.goal.link, "_blank", "noopener,noreferrer")}
           onStop={endSession}
@@ -112,6 +116,7 @@ export function TodayScreen() {
           doneToday={first.plan.doneToday}
           doneTotal={first.plan.doneTotal}
           streakDays={run}
+          milestone={milestoneLine(first.goal, first.plan.doneTotal, first.plan.doneToday)}
           next={next}
           onStartNext={() => { setJustDone(null); if (next) startGoal(next); }}
           onContinue={() => setJustDone(null)}
@@ -130,6 +135,7 @@ export function TodayScreen() {
           goals={planned.map((item) => ({ goal: item.goal, done: item.plan.status === "done" || item.plan.status === "complete" }))}
           onPick={(id) => { setFocusGoal(id); setPicked(id); }}
           corner={run > 0 ? <StreakChip days={run} /> : undefined}
+          prompt={showPrompt && !firstTime ? <NudgePrompt times={reminderTimes} onActed={() => setPromptPinned(true)} /> : null}
           onStart={() => startGoal(first.goal)}
           onStartNext={() => next && startGoal(next)}
           cheer={undoable !== null}

@@ -15,6 +15,8 @@ interface Props {
   doneToday: number;
   doneTotal: number;
   streakDays: number;
+  /** "Halfway there!" when today crossed a quarter of the road. */
+  milestone?: string | null;
   next: Goal | null;
   onStartNext: () => void;
   /** Back to Titi's room. */
@@ -41,7 +43,7 @@ function StatCard({ stat, index }: { stat: DoneStat; index: number }) {
 
 /** The reward when today's number is reached, like a lesson-complete screen: Titi jumps for joy, confetti falls once,
  *  three cards pop in with today's fish, the streak and the road so far, then one button on to what's next. */
-export function DoneToday({ prompt, goal, doneToday, doneTotal, streakDays, next, onStartNext, onContinue }: Props) {
+export function DoneToday({ prompt, goal, doneToday, doneTotal, streakDays, milestone = null, next, onStartNext, onContinue }: Props) {
   const stats = doneStats(goal, { doneToday, doneTotal, streakDays });
   return (
     <section aria-labelledby="done-title" className="relative flex flex-col items-center pt-2 text-center">
@@ -51,7 +53,8 @@ export function DoneToday({ prompt, goal, doneToday, doneTotal, streakDays, next
       <ul aria-label="Today's results" className="mt-5 flex w-full gap-3">
         {stats.map((stat, i) => <StatCard key={stat.label} stat={stat} index={i} />)}
       </ul>
-      <p className="mt-5 font-bold text-muted">Titi is so full! See you tomorrow~</p>
+      {milestone && <p className="card-in mt-5 font-display text-xl font-semibold text-ink" style={{ ["--delay" as string]: "0.8s" }}>{milestone}</p>}
+      <p className={`${milestone ? "mt-1" : "mt-5"} font-bold text-muted`}>Titi is so full! See you tomorrow~</p>
       <div className="mt-8 flex w-full flex-col items-center gap-3">
         {next ? (
           <>

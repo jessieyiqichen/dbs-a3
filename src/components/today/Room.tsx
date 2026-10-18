@@ -79,3 +79,17 @@ export function Room({ bowls, cat, corner }: Props) {
     </div>
   );
 }
+
+/** While the saved data loads (a moment): the room's shapes, quiet, so nothing jumps when it arrives. */
+export function RoomSkeleton() {
+  const block = "animate-pulse rounded-3xl bg-wash motion-reduce:animate-none";
+  return (
+    <div aria-busy="true" aria-label="Loading your goals" className="flex flex-col gap-4 pt-2">
+      <div className={`${block} aspect-[1040/457] w-full`} />
+      <div className={`${block} mx-auto h-40 w-44 rounded-full`} />
+      <div className={`${block} h-20 w-full rounded-2xl`} />
+      <div className={`${block} mx-auto h-20 w-full max-w-[430px]`} />
+      <div className={`${block} mx-auto h-14 w-full max-w-[430px] rounded-2xl`} />
+    </div>
+  );
+}

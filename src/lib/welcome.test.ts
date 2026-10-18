@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { welcomeMessage } from "./welcome";
+import { weekSummary, welcomeMessage } from "./welcome";
 import type { Entry, Goal } from "./types";
 
 const goal: Goal = {
@@ -41,5 +41,18 @@ describe("welcomeMessage", () => {
     const entries: Entry[] = [...on("2026-10-15"), { id: "x", goalId: "g2", date: "2026-10-16", amount: 2, at: "" }];
     const msg = welcomeMessage({ prevVisit: "2026-10-16", today: TODAY, fromNudge: false, goals: [goal, other], entries });
     expect(msg).toBe("Welcome back · 2 days in a row!");
+  });
+});
+
+describe("weekSummary: the first open of a new week", () => {
+  // 2026-10-19 is a Monday; Oct 12 to 18 is last week
+  it("adds up last week's fish and days on the first open", () => {
+    const entries = [...on("2026-10-13", "2026-10-15"), { id: "x", goalId: "g1", date: "2026-10-15", amount: 4, at: "" }];
+    expect(weekSummary([goal], entries, "2026-10-19", "2026-10-18")).toBe("Last week: 26 fish for Titi over 2 days!");
+  });
+  it("says nothing on later opens the same week, or when last week was empty", () => {
+    expect(weekSummary([goal], on("2026-10-13"), "2026-10-20", "2026-10-19")).toBeNull();
+    expect(weekSummary([goal], [], "2026-10-19", "2026-10-18")).toBeNull();
+    expect(weekSummary([goal], on("2026-10-13"), "2026-10-19", null)).toBeNull();
   });
 });
