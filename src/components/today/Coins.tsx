@@ -41,9 +41,12 @@ export function Coins({ total, done, label, onPick, showCount = true }: Props) {
     );
   }
 
-  // Clay tiles: an earned one sits on a honey lip, one still to go on a plain lip.
-  const cell = "clay flex h-12 w-12 items-center justify-center rounded-xl px-1";
-  const tile = (earned: boolean) => `${cell} ${earned ? "bg-reward-soft [--lip:var(--color-reward)]" : "bg-surface"}`;
+  // Clay tiles only where a fish can be tapped: an earned one sits on a honey lip, one still to go on a plain lip.
+  // Where the fish only show a number (the plan step), they lie flat, so nothing looks pressable that isn't
+  // (user, 2026-10-18).
+  const cell = "flex h-12 w-12 items-center justify-center rounded-xl px-1";
+  const tile = (earned: boolean) => `clay ${cell} ${earned ? "bg-reward-soft [--lip:var(--color-reward)]" : "bg-surface"}`;
+  const flat = (earned: boolean) => `${cell} ${earned ? "bg-reward-soft" : "bg-wash"}`;
   const fish = Array.from({ length: total }, (_, i) => i + 1);
   const grid = { gridTemplateColumns: `repeat(${perRow(total)}, 3rem)` };
 
@@ -51,7 +54,7 @@ export function Coins({ total, done, label, onPick, showCount = true }: Props) {
     return (
       <div>
         <div role="img" aria-label={`${label}: ${done} of ${total} done`} className="grid gap-x-3 gap-y-3" style={grid}>
-          {fish.map((n) => <span key={n} className={tile(n <= done)}><Fish earned={n <= done} /></span>)}
+          {fish.map((n) => <span key={n} className={flat(n <= done)}><Fish earned={n <= done} /></span>)}
         </div>
         {count}
       </div>
