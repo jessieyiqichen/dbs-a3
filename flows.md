@@ -75,7 +75,7 @@ One streak for the whole app, like Duolingo's: a day counts when any goal got at
 ```mermaid
 flowchart TD
     GL([Goals]) --> C["A card per goal: title, one line, a small road bar"]
-    C -->|tap| PR["Progress: Titi says the big number and the pace\nchart · days in a row · Edit goal · Take a break · Remove goal"]
+    C -->|tap| PR["Progress: Titi says the big number and the pace\nTiti's road or Titi's diary · days in a row · Edit goal · Take a break · Remove goal"]
     PR -->|Edit goal| E["Edit form: errors beside the field, cleared as you fix them"]
     E -->|Save changes| PR
     PR -->|Take a break| BR["3 days · 1 week · 2 weeks · Never mind"] --> PR
@@ -95,7 +95,7 @@ Removing one goal uses Undo; replacing everything from a backup uses a real conf
 | `/` | Today (first visit, the room, the session, the results) | `AppShell`, `Nav` (Today · Goals; hidden until the first goal exists), `Button`, `Toast`, `CatArt`, `Coins` |
 | `/goals` | Your goals, backup | `GoalCard`, `BackupSection` |
 | `/goals/new` | Add a goal (the Titi walk) | `GoalWizard`, `SetupFrame`, `Choices`, `OwnAnswer`, `PlanStep` |
-| `/goals/[id]` | Progress | `CumulativeChart`, `DailyBars`, `GoalActions` |
+| `/goals/[id]` | Progress | `Road` (by-date goal), `Diary` (daily goal), `GoalActions` |
 | `/goals/[id]/edit` | Edit goal | `GoalSetup`, `Field`, `RadioGroup` |
 | `/reminders` | Reminder times, calendar file, notifications | `TimesForm`, `CalendarCard`, `NotificationsCard` |
 

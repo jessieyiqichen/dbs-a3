@@ -4,7 +4,7 @@ A goal pusher for students in recruiting season. The tasks that matter but you k
 
 Design, Build, Ship · Assignment 3 (Patterns & Flows).
 
-- **Live:** _added at deploy_
+- **Live:** [dbs-a3.vercel.app](https://dbs-a3.vercel.app)
 - **Flows:** [flows.md](flows.md) (first visit, the main task, coming back, managing goals)
 - **Every state:** [docs/states.png](docs/states.png)
 - **Onboarding research:** [research.md](research.md) (Beeminder, Duolingo, Finch)
@@ -27,7 +27,7 @@ Design, Build, Ship · Assignment 3 (Patterns & Flows).
 ## Design decisions
 
 - **Encourage, don't remove the push.** The app still pushes people to finish, always by cheering them on. Nudges get firmer through the day but never shame; a missed deadline leads with progress ("10 of 100, nice work!") and then the next step.
-- **Fish treats go to Titi, numbers go to the goal.** The streak, the week of bowls and the session bowl are shared by every goal; the daily number, the road and the charts belong to one goal. Today shows this as three layers: hers, yours (the goal tabs), the goal's.
+- **Fish treats go to Titi, numbers go to the goal.** The streak, the week of bowls and the session bowl are shared by every goal; the daily number, Titi's road (a by-date goal) and Titi's diary (a daily goal) belong to one goal. Today shows this as three layers: hers, yours (the goal tabs), the goal's.
 - **Painted pieces are never stitched.** The window, the bowls and Titi each stand alone on plain interface, never laid over another painting; Titi keeps her drawn frame animations. (An earlier version composited everything into one room and looked pasted.)
 - **Clay, not outlines.** A warm light page where the few things you act on are saturated and chunky (a highlight on top, a solid lip underneath, pressing sinks it), everything else quiet.
 - **No full stops in the interface.** Encouraging lines end with "!", easygoing ones with "~"; errors and labels take no end punctuation. A test enforces it.
@@ -48,7 +48,7 @@ Research behind these choices: [research.md](research.md), and a study of Duolin
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # vitest, 119 tests (quota, streak, nudges, copy rules, onboarding, undo)
+npm test           # vitest, 128 tests (quota, streak, nudges, copy rules, onboarding, undo)
 npm run build
 ```
 
