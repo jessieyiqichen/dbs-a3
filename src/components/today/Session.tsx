@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useId, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
 import { Field, TextInput } from "@/components/ui/Field";
@@ -23,7 +24,6 @@ interface Props {
   firstTime?: boolean;
   onLog: (amount: number) => void;
   onOpen: () => void;
-  onStop: () => void;
 }
 
 /** "Did more than N?": one labelled field; the typed number stays on an error and focus returns to it. */
@@ -56,7 +56,7 @@ function MoreForm({ total, onLog }: { total: number; onLog: (n: number) => void 
 /** Working through today's number, like a lesson: a bar on top, Titi cheering, fish flying into the bowl as you log.
  *  Tapping a fish logs up to it (user, 2026-10-18: fish that cannot be tapped felt wrong); "I finished one" logs one;
  *  "Did more than N?" covers a batch. The session ends on its own when today is done. */
-export function Session({ goal, total, done, bowl, firstTime = false, onLog, onOpen, onStop }: Props) {
+export function Session({ goal, total, done, bowl, firstTime = false, onLog, onOpen }: Props) {
   const id = useId();
   const [flight, setFlight] = useState<{ key: number; amount: number } | null>(null);
   const [typing, setTyping] = useState(false);
@@ -71,9 +71,10 @@ export function Session({ goal, total, done, bowl, firstTime = false, onLog, onO
   return (
     <section aria-labelledby={`${id}-title`} className="flex flex-col pt-1">
       <div className="flex items-center gap-3">
-        <button type="button" onClick={onStop} aria-label="Stop for now" className="-ml-2 inline-flex size-11 items-center justify-center rounded-full font-display text-2xl text-muted hover:bg-wash focus-visible:outline-3 focus-visible:outline-focus">
-          ✕
-        </button>
+        {/* The same back link as every other page under Today; the session itself is kept, so Today says "Keep going" */}
+        <Link href="/" className="inline-flex min-h-11 shrink-0 items-center text-sm font-semibold text-muted underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus">
+          ← Today
+        </Link>
         <div role="progressbar" aria-label="Today" aria-valuemin={0} aria-valuemax={total} aria-valuenow={done} className="h-4 flex-1 overflow-hidden rounded-full bg-wash-strong shadow-[inset_0_2px_0_rgba(0,0,0,.06)]">
           <div className="bar-fill h-full rounded-full bg-primary shadow-[inset_0_3px_0_rgba(255,255,255,.35)]" style={{ transform: `scaleX(${Math.min(done / Math.max(total, 1), 1)})` }} />
         </div>

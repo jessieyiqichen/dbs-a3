@@ -5,7 +5,7 @@ import { GoalWizard } from "@/components/onboarding/GoalWizard";
 import { StorageNotice } from "@/components/ui/StorageNotice";
 import { useStore } from "@/lib/store";
 
-/** Adding a goal later is the same walk with Titi as the first visit; it ends on Today with the new goal started. */
+/** Adding a goal later is the same walk with Titi as the first visit; it ends in the session with the new goal started. */
 export function NewGoalScreen() {
   const router = useRouter();
   const state = useStore();
@@ -14,7 +14,7 @@ export function NewGoalScreen() {
   return (
     <>
       {!state.persistent && <StorageNotice state={state} />}
-      <GoalWizard onCancel={() => router.push("/goals")} onStarted={() => router.push("/")} />
+      <GoalWizard onCancel={() => router.push("/goals")} onStarted={() => router.push("/session")} />
     </>
   );
 }

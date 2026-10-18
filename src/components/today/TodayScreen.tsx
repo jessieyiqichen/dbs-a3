@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { StorageNotice } from "@/components/ui/StorageNotice";
 import { Toast } from "@/components/ui/Toast";
@@ -37,7 +38,19 @@ function pickFirst(items: PlannedGoal[], data: AppData, picked: string | null): 
   return index <= 0 ? items : [items[index], ...items.slice(0, index), ...items.slice(index + 1)];
 }
 
-export function TodayScreen() {
+/** Is the first goal's session live today, and is its celebration due? Shared by the page and the leave-session check. */
+function sessionState(data: AppData, picked: string | null, justDone: string | null, today: string) {
+  const planned = pickFirst(sortByUrgency(data.goals, data.entries, today), data, picked);
+  const first = planned[0];
+  const asking = data.session?.goalId === first.goal.id && sessionIsToday(data.session, today) && ACTIVE.has(first.plan.status);
+  const celebrating = first.plan.status === "done" && justDone === first.goal.id;
+  return { planned, asking, celebrating };
+}
+
+/** Today ("/") is Titi's room; the session ("/session") is its own page, so Back returns to the room and the session is
+ *  kept for the day. The two views share this component because they share the goal order, the toast and the undo. */
+export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
+  const router = useRouter();
   const state = useStore();
   const [undoable, setUndoable] = useState<Undoable | null>(null);
   const [promptPinned, setPromptPinned] = useState(false);
@@ -54,6 +67,15 @@ export function TodayScreen() {
     markVisited(toISODate(new Date()));
     if (window.location.search) window.history.replaceState(null, "", window.location.pathname);
   }, [ready]);
+
+  // /session with nothing in progress (opened directly, or the session is over) goes back to Today.
+  useEffect(() => {
+    if (view !== "session" || state?.kind !== "ready") return;
+    const { data } = state;
+    if (data.goals.length === 0) return router.replace("/");
+    const { asking, celebrating } = sessionState(data, picked, justDone, toISODate(new Date()));
+    if (!asking && !celebrating) router.replace("/");
+  }, [view, state, picked, justDone, router]);
 
   if (state === null) return <RoomSkeleton />;
   if (state.kind === "corrupt") return <StorageNotice state={state} />;
@@ -83,9 +105,12 @@ export function TodayScreen() {
     );
   }
 
-  const planned = pickFirst(sortByUrgency(data.goals, data.entries, today), data, picked);
+  const { planned, asking, celebrating } = sessionState(data, picked, justDone, today);
   const [first, ...rest] = planned;
-  const asking = data.session?.goalId === first.goal.id && sessionIsToday(data.session, today) && ACTIVE.has(first.plan.status);
+  const begin = (goal: Goal) => {
+    startGoal(goal);
+    router.push("/session");
+  };
   const visit = getVisitStart();
   const welcome = weekSummary(data.goals, data.entries, today, visit.prevVisit) ?? welcomeMessage({ ...visit, today, goals: data.goals, entries: data.entries });
   const firstTime = data.entries.length === 0;
@@ -98,29 +123,30 @@ export function TodayScreen() {
     <>
       {!state.persistent && <StorageNotice state={state} />}
 
-      {asking ? (
-        <Session
-          goal={first.goal}
-          total={first.plan.quota}
-          done={first.plan.doneToday}
-          bowl={bowlFill(first.plan.doneToday, first.plan.quota)}
-          firstTime={firstTime}
-          onLog={(n) => log(first.goal, n, first.plan.doneToday + n >= first.plan.quota)}
-          onOpen={() => first.goal.link && window.open(first.goal.link, "_blank", "noopener,noreferrer")}
-          onStop={() => { endSession(); closeToast(); }}
-        />
-      ) : first.plan.status === "done" && justDone === first.goal.id ? (
-        <DoneToday
-          prompt={showPrompt ? <NudgePrompt times={reminderTimes} onActed={() => setPromptPinned(true)} /> : null}
-          goal={first.goal}
-          doneToday={first.plan.doneToday}
-          doneTotal={first.plan.doneTotal}
-          streakDays={run}
-          milestone={milestoneLine(first.goal, first.plan.doneTotal, first.plan.doneToday)}
-          next={next}
-          onStartNext={() => { setJustDone(null); closeToast(); if (next) startGoal(next); }}
-          onContinue={() => { setJustDone(null); closeToast(); }}
-        />
+      {view === "session" ? (
+        asking ? (
+          <Session
+            goal={first.goal}
+            total={first.plan.quota}
+            done={first.plan.doneToday}
+            bowl={bowlFill(first.plan.doneToday, first.plan.quota)}
+            firstTime={firstTime}
+            onLog={(n) => log(first.goal, n, first.plan.doneToday + n >= first.plan.quota)}
+            onOpen={() => first.goal.link && window.open(first.goal.link, "_blank", "noopener,noreferrer")}
+          />
+        ) : celebrating ? (
+          <DoneToday
+            prompt={showPrompt ? <NudgePrompt times={reminderTimes} onActed={() => setPromptPinned(true)} /> : null}
+            goal={first.goal}
+            doneToday={first.plan.doneToday}
+            doneTotal={first.plan.doneTotal}
+            streakDays={run}
+            milestone={milestoneLine(first.goal, first.plan.doneTotal, first.plan.doneToday)}
+            next={next}
+            onStartNext={() => { setJustDone(null); closeToast(); if (next) startGoal(next); }}
+            onContinue={() => { setJustDone(null); closeToast(); router.push("/"); }}
+          />
+        ) : null /* nothing in progress: the effect above is sending you to Today */
       ) : (
         <TodayHome
           goal={first.goal}
@@ -137,14 +163,14 @@ export function TodayScreen() {
           corner={run > 0 ? <StreakChip days={run} /> : undefined}
           // Asked only once today's number is reached, never while there is still work to do
           prompt={showPrompt && !firstTime && first.plan.status === "done" ? <NudgePrompt times={reminderTimes} onActed={() => setPromptPinned(true)} /> : null}
-          onStart={() => startGoal(first.goal)}
-          onStartNext={() => next && startGoal(next)}
+          onStart={() => begin(first.goal)}
+          onStartNext={() => next && begin(next)}
           cheer={undoable !== null}
         />
       )}
 
       {/* On the home view the week's shelf holds the foot of a phone screen, so the toast floats above it */}
-      <Toast message={undoable?.message ?? null} onUndo={undo} onClose={closeToast} raised={!asking && !(first.plan.status === "done" && justDone === first.goal.id)} />
+      <Toast message={undoable?.message ?? null} onUndo={undo} onClose={closeToast} raised={view === "home"} />
     </>
   );
 }

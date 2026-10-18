@@ -6,13 +6,13 @@ import { useStore } from "@/lib/store";
 
 /** The core needs only: today's task, and your goals. Reminders are a setting, reached from Goals and the done screen. */
 const LINKS = [
-  { href: "/", label: "Today", also: [] as string[] },
+  { href: "/", label: "Today", also: ["/session"] },
   { href: "/goals", label: "Goals", also: ["/reminders"] },
 ];
 
 function isCurrent({ href, also }: (typeof LINKS)[number], pathname: string | null): boolean {
   if (pathname === null) return false;
-  if (href === "/") return pathname === "/";
+  if (href === "/") return pathname === "/" || also.includes(pathname);
   return [href, ...also].some((p) => pathname.startsWith(p));
 }
 
