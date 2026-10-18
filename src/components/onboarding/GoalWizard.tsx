@@ -35,7 +35,7 @@ function startAnswers(starterKey: string | null): Answers {
 
 function questionFor(step: Step, a: Answers, unit: string, firstVisit: boolean): string {
   const named = a.label.charAt(0).toUpperCase() + a.label.slice(1);
-  if (step === "what") return "Something else? Tell me what it is~";
+  if (step === "what") return "Something else? Tell me what it is";
   if (step === "often") return "How often do you want to do it?";
   if (step === "date") return `${named}, nice! When do you want to get there?`;
   if (step === "amount") return a.type === "daily" ? `How many ${unit} a day?` : `How many ${unit} by ${formatShortDate(a.deadline)}?`;

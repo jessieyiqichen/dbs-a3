@@ -13,7 +13,7 @@ function readPermission(): Permission {
 
 function upcoming(times: string[]): string {
   const plan = planNotifications(new Date(), times);
-  if (plan.length === 0) return "No more today, tomorrow I'll start again~";
+  if (plan.length === 0) return "No more today, tomorrow I'll start again";
   const list = plan.map((p) => p.at.toTimeString().slice(0, 5)).join(", ");
   return `Still to come today if you haven't started: ${list}`;
 }
@@ -39,9 +39,9 @@ export function NotificationsCard({ on, times }: { on: boolean; times: string[] 
   return (
     <section aria-labelledby="notify-title" className="flex flex-col gap-3 border-t-2 border-wash-strong pt-6">
       <h2 id="notify-title" className="font-display text-xl font-semibold text-ink">Notifications while Nudge is open</h2>
-      <p className="font-bold text-muted">With a Nudge tab open, I nudge you only until you start, with one last call at 22:30~</p>
+      <p className="font-bold text-muted">With a Nudge tab open, I nudge you only until you start, with one last call at 22:30</p>
 
-      {permission === "unsupported" && <p className="text-sm font-bold text-muted">This browser doesn&apos;t do notifications, the calendar file still works~</p>}
+      {permission === "unsupported" && <p className="text-sm font-bold text-muted">This browser doesn&apos;t do notifications, the calendar file still works</p>}
 
       {permission === "denied" && (
         <p className="text-sm font-bold text-ink">Blocked for this site: in your browser&apos;s site settings set Notifications to Allow, then reload</p>

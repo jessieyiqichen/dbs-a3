@@ -48,7 +48,7 @@ flowchart LR
 - **Fish treats go to Titi, numbers go to the goal.** The streak and the week of bowls are shared by every goal; the daily number, the session bowl, Titi's road (a by-date goal) and Titi's diary (a daily goal) belong to one goal. Each symbol keeps one meaning: a fish is one task done, a bowl is one day, and Titi's road marks its quarters with signposts.
 - **Painted pieces are never stitched.** The window, the bowls and Titi each stand alone on plain interface, never laid over another painting; Titi keeps her drawn frame animations. (An earlier version composited everything into one room and looked pasted.) The one exception is Titi's road, where the things that move with progress are drawn on the painted hillside, smaller as they go up the hill.
 - **Clay means pressable.** A warm light page where the few things you act on are chunky clay (a highlight on top, a solid lip underneath, pressing sinks it); everything you only read is flat, so a lip is a promise that something will happen when you tap.
-- **No full stops in the interface.** Encouraging lines end with "!", easygoing ones with "~"; errors and labels take no end punctuation. A test enforces it.
+- **No full stops in the interface.** Encouraging lines end with "!", easygoing ones with nothing at all; errors and labels take no end punctuation. A test enforces it.
 - **Undo beats confirm.** Removing a goal happens at once and Goals offers Undo; only replacing everything from a backup asks first.
 - **Simplicity.** Navigation is Today and Goals. Reminders are reached from Goals and from the done screen. Adding a goal is the same walk as the first visit, so there is one way to make a goal.
 
@@ -67,7 +67,7 @@ On 2026-10-18, after the deploy, a fresh agent (no access to the code or these d
 
 | What the tester found | Severity | What changed |
 |---|---|---|
-| "Nothing on the first screen says what Nudge does; I inferred it from the question and the job-search presets." | Medium | One line now sits under Titi's first question: "Pick one, and Nudge turns it into one small number a day, with Titi cheering you on~" |
+| "Nothing on the first screen says what Nudge does; I inferred it from the question and the job-search presets." | Medium | One line now sits under Titi's first question: "Pick one, and Nudge turns it into one small number a day, with Titi cheering you on" |
 | "The caption talks about a pace flag, but the only flag on the road is the deadline. I could not tell what 'a little ahead' referred to." (The pace marker is a dashed ring, and it is hidden when it would sit under Titi.) | Medium | The caption now names the dashed ring, and says "Titi is right on pace!" when the ring is hidden |
 | "Reminder times is only a small text link on Goals." | Medium | Kept as is, on purpose: the navigation holds only Today and Goals, and reminders are offered on the done screen at the moment they are useful |
 | "The amount buttons read as unnamed buttons." | Medium | Checked: each button's accessible name is its label and detail ("Steady, 150 connection requests"); axe reports no `button-name` issue, and Playwright finds them by name. No change |

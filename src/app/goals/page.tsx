@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Goals · Nudge" };
 export default function GoalsPage() {
   return (
     <AppShell>
-      <PageHeader title="Your goals" intro="Tap one to see how it's going~" back={null} />
+      <PageHeader title="Your goals" intro="Tap one to see how it's going" back={null} />
       <GoalsScreen />
     </AppShell>
   );

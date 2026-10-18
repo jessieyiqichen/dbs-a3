@@ -28,7 +28,7 @@ export function GoalsScreen() {
       {!state.persistent && <StorageNotice state={state} />}
       {data.goals.length === 0 ? (
         <div className="mt-8 flex flex-col gap-4">
-          <p className="text-lg font-bold text-ink">No goals yet, Titi is waiting~</p>
+          <p className="text-lg font-bold text-ink">No goals yet, Titi is waiting</p>
           <ButtonLink href="/goals/new" className="self-start">Add a goal</ButtonLink>
         </div>
       ) : (

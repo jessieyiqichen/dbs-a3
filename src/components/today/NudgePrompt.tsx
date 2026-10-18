@@ -31,9 +31,9 @@ export function NudgePrompt({ times, onActed }: Props) {
         <Button variant="ghost" onClick={() => updateSettings({ nudgePromptDismissed: true })}>{acted ? "Done" : "Not now"}</Button>
       </div>
       <div role="status" className="flex flex-col gap-1 text-sm text-ink">
-        {calendarUntil && <p>Open the downloaded file to add it, it covers until {formatShortDate(calendarUntil)}~</p>}
+        {calendarUntil && <p>Open the downloaded file to add it, it covers until {formatShortDate(calendarUntil)}</p>}
         {asked && permission === "granted" && <p>Notifications on!</p>}
-        {asked && permission === "denied" && <p>Blocked in this browser, try the calendar instead~</p>}
+        {asked && permission === "denied" && <p>Blocked in this browser, try the calendar instead</p>}
       </div>
     </section>
   );

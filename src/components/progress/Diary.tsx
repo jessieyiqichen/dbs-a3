@@ -5,7 +5,7 @@ import type { BowlDay } from "@/lib/scene";
 /** A daily goal as Titi's diary: the last weeks, one shelf each, a fish in every day this goal got something. */
 export function Diary({ weeks, target, unit }: { weeks: BowlDay[][]; target: number; unit: string }) {
   const any = weeks.some((w) => w.some((b) => b.fill !== "empty"));
-  if (!any) return <p className="px-1 py-4 text-center font-bold text-muted">No fish yet this week, one today starts it~</p>;
+  if (!any) return <p className="px-1 py-4 text-center font-bold text-muted">No fish yet this week, one today starts it</p>;
   return (
     <figure className="flex flex-col gap-3">
       {weeks.map((week) => (
@@ -16,7 +16,7 @@ export function Diary({ weeks, target, unit }: { weeks: BowlDay[][]; target: num
           </ol>
         </div>
       ))}
-      <figcaption className="text-center text-sm font-bold text-muted">A heaped bowl is a day with all {target} {unit}~</figcaption>
+      <figcaption className="text-center text-sm font-bold text-muted">A heaped bowl is a day with all {target} {unit}</figcaption>
     </figure>
   );
 }

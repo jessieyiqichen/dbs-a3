@@ -25,7 +25,7 @@ describe("buildIcs", () => {
 
   it("links back to the app and is honest that it can't tell if you're done", () => {
     expect(ics).toContain("URL:https://nudge.example/?from=nudge");
-    expect(ics).toContain("Already done today? Ignore this one~");
+    expect(ics).toContain("Already done today? Ignore this one");
   });
 
   it("uses CRLF line endings and keeps lines short", () => {

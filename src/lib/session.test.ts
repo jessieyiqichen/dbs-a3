@@ -6,14 +6,14 @@ const FULL_STOP = /\.(\s|$)/;
 
 describe("sessionLine: what Titi says while you work", () => {
   it("greets, counts, and gets excited near the end", () => {
-    expect(sessionLine(0, 5)).toBe("Ready when you are~");
+    expect(sessionLine(0, 5)).toBe("Ready when you are");
     expect(sessionLine(1, 5)).toBe("First one down!");
     expect(sessionLine(2, 5)).toBe("2 down, 3 to go!");
     expect(sessionLine(4, 5)).toBe("One more and Titi is full!");
   });
 
   it("tells a first-timer how to log, once, in place", () => {
-    expect(sessionLine(0, 5, true)).toBe("Tap a fish, or I finished one~");
+    expect(sessionLine(0, 5, true)).toBe("Tap a fish, or I finished one");
     expect(sessionLine(1, 5, true)).toBe("First one down!");
   });
 

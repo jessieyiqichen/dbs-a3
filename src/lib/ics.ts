@@ -35,7 +35,7 @@ function event(date: string, time: string, appUrl: string, stamp: string): strin
     `DTSTART:${compact(date)}T${time.replace(":", "")}00`,
     "DURATION:PT10M",
     `SUMMARY:${escapeText(`Nudge: ${line}`)}`,
-    `DESCRIPTION:${escapeText(`Open Nudge for today's number: ${link}\nAlready done today? Ignore this one~`)}`,
+    `DESCRIPTION:${escapeText(`Open Nudge for today's number: ${link}\nAlready done today? Ignore this one`)}`,
     `URL:${link}`,
     "BEGIN:VALARM",
     "ACTION:DISPLAY",

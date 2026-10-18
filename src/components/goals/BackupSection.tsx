@@ -46,7 +46,7 @@ export function BackupSection({ data }: { data: AppData }) {
         <span aria-hidden="true" className="text-muted transition-transform group-open:rotate-90">→</span>
       </summary>
       <div className="mt-3 flex flex-col gap-4">
-        <p className="text-sm font-bold text-muted">Your goals live only in this browser, so keep a copy now and then~</p>
+        <p className="text-sm font-bold text-muted">Your goals live only in this browser, so keep a copy now and then</p>
         <div className="flex flex-wrap gap-3">
           <Button variant="secondary" onClick={() => downloadText(JSON.stringify(data, null, 2), `nudge-backup-${toISODate(new Date())}.json`, "application/json")}>
             Download a copy

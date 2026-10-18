@@ -51,12 +51,12 @@ export function DoneToday({ prompt, goal, doneToday, doneTotal, streakDays, mile
         {stats.map((stat, i) => <StatCard key={stat.label} stat={stat} index={i} />)}
       </ul>
       {milestone && <p className="card-in mt-5 font-display text-xl font-semibold text-ink" style={{ ["--delay" as string]: "0.8s" }}>{milestone}</p>}
-      <p className={`${milestone ? "mt-1" : "mt-5"} font-bold text-muted`}>Titi is so full! See you tomorrow~</p>
+      <p className={`${milestone ? "mt-1" : "mt-5"} font-bold text-muted`}>Titi is so full! See you tomorrow</p>
       <div className="mt-8 flex w-full flex-col items-center gap-3">
         {next ? (
           <>
             <Button size="lg" onClick={onStartNext} className="w-full">Next: {next.title} →</Button>
-            <Button variant="ghost" onClick={onContinue}>Or stop here, today counts~</Button>
+            <Button variant="ghost" onClick={onContinue}>Or stop here, today counts</Button>
           </>
         ) : (
           <Button size="lg" onClick={onContinue} className="w-full">Back to Titi&apos;s room</Button>

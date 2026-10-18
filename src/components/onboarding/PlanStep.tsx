@@ -39,15 +39,15 @@ export function PlanStep({ goal, perDay, firstVisit = false, onBack, onStart }: 
       <div className="mt-5 self-center">
         <Coins total={perDay} done={0} label="Today" />
       </div>
-      <p className="mt-1 font-bold text-muted">Each one is a fish treat for Titi~</p>
+      <p className="mt-1 font-bold text-muted">Each one is a fish treat for Titi</p>
       <div className="mt-6 w-full rounded-2xl bg-surface px-4 py-3 text-left shadow-[0_2px_12px_rgba(61,59,51,.08)]">
         <p className="font-bold text-ink">{whole}</p>
-        <p className="text-sm font-bold text-muted">You can change this anytime in Goals~</p>
+        <p className="text-sm font-bold text-muted">You can change this anytime in Goals</p>
       </div>
       <Button size="lg" className="mt-8 w-full" onClick={onStart}>
         {firstVisit ? "Start my first one" : "Start the first one"}
       </Button>
-      <p className="mt-2 text-sm text-muted">Go do one, then come back and tell Titi how many~</p>
+      <p className="mt-2 text-sm text-muted">Go do one, then come back and tell Titi how many</p>
     </section>
   );
 }

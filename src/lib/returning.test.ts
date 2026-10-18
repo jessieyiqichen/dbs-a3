@@ -15,8 +15,8 @@ describe("sessionIsToday", () => {
 
 describe("catchUpLine: why today's number grew", () => {
   it("explains the spread when behind on a by-date goal", () => {
-    expect(catchUpLine(plan({}))).toBe("The rest is spread over 20 days, 7 today~");
-    expect(catchUpLine(plan({ daysLeft: 1 }))).toBe("The rest is due today, 7 to go~");
+    expect(catchUpLine(plan({}))).toBe("The rest is spread over 20 days, 7 today");
+    expect(catchUpLine(plan({ daysLeft: 1 }))).toBe("The rest is due today, 7 to go");
   });
   it("says nothing when on track or for a daily goal", () => {
     expect(catchUpLine(plan({ behindBy: 0 }))).toBeNull();
@@ -26,9 +26,9 @@ describe("catchUpLine: why today's number grew", () => {
 
 describe("calendarNotice: the calendar file runs out", () => {
   it("warns two days before, and after, until it is long gone", () => {
-    expect(calendarNotice("2026-10-20", "2026-10-18")).toBe("Your calendar nudges end Oct 20, grab a new file~");
+    expect(calendarNotice("2026-10-20", "2026-10-18")).toBe("Your calendar nudges end Oct 20, grab a new file");
     expect(calendarNotice("2026-10-20", "2026-10-17")).toBeNull();
-    expect(calendarNotice("2026-10-20", "2026-10-25")).toBe("Your calendar nudges ended Oct 20, grab a new file~");
+    expect(calendarNotice("2026-10-20", "2026-10-25")).toBe("Your calendar nudges ended Oct 20, grab a new file");
     expect(calendarNotice("2026-10-20", "2026-12-01")).toBeNull();
     expect(calendarNotice(null, "2026-10-18")).toBeNull();
   });

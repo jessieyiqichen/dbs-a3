@@ -46,7 +46,7 @@ flowchart TD
     F -->|today's number reached| D["Done for today! Three cards count up:\nfish today · streak · road"]
     D -->|Next goal| S
     D -->|Nudge you tomorrow? (calendar · notifications · not now)| D
-    D -->|Or stop here| T2["Today, done state: Titi is so full~"]
+    D -->|Or stop here| T2["Today, done state: Titi is so full"]
 ```
 
 The session is its own page: Start never opens a website; "Open LinkedIn ↗" in the session does, only when tapped. Leaving keeps the session, so Today says "Keep going". The nudge line changes through the day (gentle → firmer → one last call) and never shames. The bowl in the session belongs to the goal being worked on, so it always agrees with the bar; the week of bowls on Today is where every goal counts together. Leaving the session leaves its Undo toast behind, so it never covers the Today button.
@@ -56,14 +56,14 @@ The session is its own page: Start never opens a website; "Open LinkedIn ↗" in
 ```mermaid
 flowchart TD
     C([Open the app again]) --> K{What happened?}
-    K -->|from a reminder| N1["You came back! That's the hardest part~"]
+    K -->|from a reminder| N1["You came back! That's the hardest part"]
     K -->|yesterday counted| N2["Welcome back · 3 days in a row!"]
-    K -->|one day missed| N3["Welcome back · yesterday was a rest day~"]
-    K -->|several days missed, by-date goal| N4["Welcome back! It's been 6 days, and that's okay~\nThe rest is spread over 20 days, 7 today~"]
+    K -->|one day missed| N3["Welcome back · yesterday was a rest day"]
+    K -->|several days missed, by-date goal| N4["Welcome back! It's been 6 days, and that's okay\nThe rest is spread over 20 days, 7 today"]
     K -->|Start yesterday, never answered| N5["A session from another day is dropped: Today, not the question"]
     N1 & N2 & N3 & N4 & N5 --> T([Today, flow 2])
     T -.->|calendar file about to run out| CAL["Your calendar nudges end Oct 20, grab a new file~ → Reminders"]
-    T -.->|a goal is on a break| P["Paused until Oct 20, Titi is napping too~"]
+    T -.->|a goal is on a break| P["Paused until Oct 20, Titi is napping too"]
     T -.->|date passed| DP["10 of 100, nice work! The date passed, pick a new one and keep going!"]
 ```
 

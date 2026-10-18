@@ -4,9 +4,9 @@ import type { Goal } from "./types";
  *  The very first time, before anything was ever logged, it says how (progressive onboarding: one tip, in place). */
 export function sessionLine(done: number, total: number, firstTime = false): string {
   const left = total - done;
-  if (done === 0 && firstTime) return "Tap a fish, or I finished one~";
-  if (done === 0) return "Ready when you are~";
-  if (left <= 0) return "Titi is so full~";
+  if (done === 0 && firstTime) return "Tap a fish, or I finished one";
+  if (done === 0) return "Ready when you are";
+  if (left <= 0) return "Titi is so full";
   if (left === 1) return "One more and Titi is full!";
   if (done === 1) return "First one down!";
   return `${done} down, ${left} to go!`;

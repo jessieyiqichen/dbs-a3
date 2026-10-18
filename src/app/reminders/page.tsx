@@ -12,7 +12,7 @@ export default function RemindersPage() {
         title="Reminders"
         back="/goals"
         backLabel="← Back to goals"
-        intro="Two ways to find you: the calendar works when Nudge is closed, notifications know whether you've started~"
+        intro="Two ways to find you: the calendar works when Nudge is closed, notifications know whether you've started"
       />
       <RemindersScreen />
     </AppShell>

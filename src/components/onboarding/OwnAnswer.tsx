@@ -59,7 +59,7 @@ export function OwnAnswer({ id, label, hint, kind, min, initial = "", check, pre
       </Field>
       {line && <p aria-live="polite" className="font-bold text-muted">{line}</p>}
       <Button type="submit" size="lg" className="w-full">Continue</Button>
-      {onSkip && <Button variant="ghost" className="self-center" onClick={onSkip}>Skip, no page~</Button>}
+      {onSkip && <Button variant="ghost" className="self-center" onClick={onSkip}>Skip, no page</Button>}
     </form>
   );
 }

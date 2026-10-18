@@ -6,31 +6,31 @@ import type { Goal } from "./types";
 export type NudgeLevel = "gentle" | "firmer" | "last-call";
 
 /** A cheerleader's voice, after Duolingo: short, warm, never shaming, eight words at most, and never a full stop
- *  (house style: "!" when it cheers, "~" when it's easygoing). Lines rotate by day. */
+ *  (house style: "!" when it cheers, "" when it's easygoing). Lines rotate by day. */
 const NOT_STARTED: Record<NudgeLevel, string[]> = {
   gentle: [
     "Just one to start today!",
-    "One counts, let's go~",
+    "One counts, let's go",
     "Small start, big day!",
-    "Open it and do one~",
+    "Open it and do one",
   ],
   firmer: [
-    "Still time! Just one~",
+    "Still time! Just one",
     "One now keeps your streak going!",
     "You've got this, start with one!",
-    "Future you says thanks~",
+    "Future you says thanks",
   ],
   "last-call": [
     "There's still time for one!",
-    "One before bed? You've got it~",
+    "One before bed? You've got it",
     "Late, but one still counts!",
   ],
 };
 
 // The headline already says how many are done and left, so these only cheer.
-const STARTED = ["Nice! Keep it rolling~", "You're on a roll!", "Look at you go!"];
+const STARTED = ["Nice! Keep it rolling", "You're on a roll!", "Look at you go!"];
 
-const DONE = ["You showed up again!", "That's how big goals happen~", "Be proud of today!"];
+const DONE = ["You showed up again!", "That's how big goals happen", "Be proud of today!"];
 
 export function levelFor(hour: number): NudgeLevel {
   if (hour >= 19) return "last-call";
@@ -51,7 +51,7 @@ export function nudgeLine(goal: Goal, plan: TodayPlan, today: string, hour: numb
       return "The date passed, pick a new one and keep going!";
     case "paused": {
       const pause = goal.pauses.find((p) => p.from <= today && today <= p.to);
-      return pause ? `Paused until ${formatShortDate(pause.to)}, Titi is napping too~` : "Paused, Titi is napping too~";
+      return pause ? `Paused until ${formatShortDate(pause.to)}, Titi is napping too` : "Paused, Titi is napping too";
     }
     case "done":
       return pick(DONE, goal, today);

@@ -14,7 +14,7 @@ interface Props {
 
 function line(goal: Goal, plan: TodayPlan, today: string): string {
   const pause = goal.pauses.find((p) => p.from <= today && today <= p.to);
-  if (pause) return `Taking a break until ${formatShortDate(pause.to)}~`;
+  if (pause) return `Taking a break until ${formatShortDate(pause.to)}`;
   if (plan.status === "complete") return "Goal reached!";
   if (plan.status === "deadline-passed") return `${plan.doneTotal} of ${goal.target}, the date passed`;
   if (goal.type === "daily") return plan.status === "done" ? "Done for today!" : `${formatCount(goal.target, goal.unit)} a day`;

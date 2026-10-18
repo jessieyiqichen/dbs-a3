@@ -43,13 +43,13 @@ export function PickStep({ firstVisit = false, onPick }: { firstVisit?: boolean;
   return (
     <>
       {/* First-run check (2026-10-18): a newcomer could not tell what Nudge was for from the question alone; said once */}
-      {firstVisit && <p className="mb-4 text-sm font-bold text-muted">Pick one, and Nudge turns it into one small number a day, with Titi cheering you on~</p>}
+      {firstVisit && <p className="mb-4 text-sm font-bold text-muted">Pick one, and Nudge turns it into one small number a day, with Titi cheering you on</p>}
       <Choices
         label="Things to start"
         choices={[...STARTERS.map((s) => ({ key: s.key, label: s.label })), { key: "own", label: "Something else" }]}
         onPick={(k) => onPick(k === "own" ? null : k)}
       />
-      <p className="mt-6 text-sm text-muted">Saved on this device, no sign-up needed~</p>
+      <p className="mt-6 text-sm text-muted">Saved on this device, no sign-up needed</p>
     </>
   );
 }

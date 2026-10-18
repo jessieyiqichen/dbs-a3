@@ -22,7 +22,7 @@ export function RemindersScreen() {
         <h2 id="times-title" className="font-display text-xl font-semibold text-ink">When should I nudge you?</h2>
         <TimesForm
           saved={settings.reminderTimes}
-          onSaved={(times) => setSavedNote(`Saved ${times.join(", ")}! Using the calendar file? Download it again for the new times~`)}
+          onSaved={(times) => setSavedNote(`Saved ${times.join(", ")}! Using the calendar file? Download it again for the new times`)}
         />
         {savedNote && <p role="status" className="text-sm font-bold text-ink">{savedNote}</p>}
       </section>

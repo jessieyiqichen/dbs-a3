@@ -18,7 +18,7 @@ import { GoalActions } from "./GoalActions";
 function paceLine(goal: Goal, plan: TodayPlan, today: string): string {
   if (plan.status === "complete") return "Goal reached, Titi is proud!";
   if (plan.daysLeft === null) return "";
-  if (plan.behindBy > 0) return `${plan.behindBy} behind the steady pace, spread over ${plan.daysLeft} days, so today is ${formatCount(plan.quota, goal.unit)}~`;
+  if (plan.behindBy > 0) return `${plan.behindBy} behind the steady pace, spread over ${plan.daysLeft} days, so today is ${formatCount(plan.quota, goal.unit)}`;
   return `On pace! ${plan.daysLeft} days left until ${formatShortDate(goal.deadline ?? today).replace(" ", "\u00a0")}`;
 }
 
@@ -53,7 +53,7 @@ export function ProgressScreen({ id }: { id: string }) {
   if (!goal) {
     return (
       <div className="mt-8 flex flex-col gap-4">
-        <p className="text-lg font-bold text-ink">This goal isn&apos;t saved on this device, it may have been removed~</p>
+        <p className="text-lg font-bold text-ink">This goal isn&apos;t saved on this device, it may have been removed</p>
         <ButtonLink href="/goals" className="self-start">See your goals</ButtonLink>
       </div>
     );
@@ -76,7 +76,7 @@ export function ProgressScreen({ id }: { id: string }) {
       {/* Plain text, not a clay surface: chunky clay is kept for things you can tap */}
       <p className="px-1 font-display font-semibold text-ink lg:col-start-2 lg:row-start-2">
         {run.days === 1 ? "1 day in a row" : `${run.days} days in a row`}
-        {lastRest && <span className="font-sans text-sm font-bold text-muted"> · {formatShortDate(lastRest)} was a rest day~</span>}
+        {lastRest && <span className="font-sans text-sm font-bold text-muted"> · {formatShortDate(lastRest)} was a rest day</span>}
       </p>
 
       <div className="lg:col-start-2 lg:row-start-3">

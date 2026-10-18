@@ -1,4 +1,4 @@
-// House style (user, 2026-10-17): no full stops anywhere in the interface; encouraging lines end with "!" or "~".
+// House style (user, 2026-10-17): no full stops anywhere in the interface; encouraging lines end with "!" or "".
 import { describe, expect, it } from "vitest";
 import { calendarLine, nudgeLine } from "./nudges";
 import { welcomeMessage } from "./welcome";
@@ -56,10 +56,10 @@ function errors(): string[] {
 }
 
 describe("house style: no full stops", () => {
-  it("nudges end with ! or ~ and contain no full stop", () => {
+  it("nudges end with ! or a plain word and contain no full stop or tilde", () => {
     for (const line of nudges()) {
       expect(line, line).not.toMatch(FULL_STOP);
-      expect(line, line).toMatch(/[!~]$/);
+      expect(line, line).toMatch(/[!A-Za-z0-9]$/);
     }
   });
 
