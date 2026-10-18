@@ -49,7 +49,7 @@ export function ProgressScreen({ id }: { id: string }) {
     <div className="flex flex-col gap-7 pt-2">
       <div className="flex items-end gap-3">
         <CatArt mood={plan.status === "done" || plan.status === "complete" ? "celebrate" : "idle"} className="w-24 shrink-0" />
-        <div className="clay mb-6 flex-1 rounded-2xl rounded-bl-sm bg-surface px-4 py-3">
+        <div className="flat mb-6 flex-1 rounded-2xl rounded-bl-sm bg-surface px-4 py-3">
           <p className="font-display text-sm font-semibold text-muted">{goal.title}</p>
           <p className="font-display text-3xl font-bold leading-tight text-ink tabular-nums">
             {byDate ? `${plan.doneTotal} of ${goal.target}` : `${formatCount(goal.target, goal.unit)} a day`}

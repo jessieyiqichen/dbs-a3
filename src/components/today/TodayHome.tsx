@@ -197,7 +197,7 @@ export function TodayHome({
     <section aria-labelledby={`goal-${goal.id}`} className="flex flex-col">
       <Room bowls={bowls} cat={cat} corner={corner}>
         <GoalTabs goals={goals} current={goal.id} onPick={onPick} />
-        <div className="clay relative w-full rounded-3xl bg-surface px-5 py-4">
+        <div className="flat relative w-full rounded-3xl bg-surface px-5 py-4">
           <ScreenHeading
             id={`goal-${goal.id}`}
             className="font-display text-2xl font-bold leading-tight text-ink [text-wrap:balance]"

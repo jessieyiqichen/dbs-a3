@@ -113,7 +113,7 @@ export function Road({ goal, story }: { goal: Goal; story: RoadStory }) {
   const label = `${story.done} of ${goal.target} ${goal.unit}: ${Math.round(story.at * 100)}% of the road, ${story.ahead ? "ahead of" : "behind"} the steady pace`;
   const cat = 230 * cs;
   return (
-    <figure className="clay overflow-hidden rounded-3xl bg-surface">
+    <figure className="flat overflow-hidden rounded-3xl bg-surface">
       <div className="relative">
         {/* eslint-disable-next-line @next/next/no-img-element -- painted art, sized by the card */}
         <img src="/cat/road.webp" alt="" aria-hidden="true" width={W} height={H} className="block h-auto w-full" />

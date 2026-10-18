@@ -37,7 +37,7 @@ export function GoalActions({ goal, today }: { goal: Goal; today: string }) {
       </div>
       {pause && <p className="text-sm font-bold text-muted">Taking a break until {formatShortDate(pause.to)}, no nudges and nothing counts as behind~</p>}
       {pausing && !pause && (
-        <div className="clay flex flex-col gap-3 rounded-2xl bg-surface p-4">
+        <div className="flat flex flex-col gap-3 rounded-2xl bg-surface p-4">
           <p className="font-bold text-ink">How long? No nudges, and it won&apos;t count as falling behind~</p>
           <div className="flex flex-wrap gap-2">
             {PAUSE_OPTIONS.map((o) => (

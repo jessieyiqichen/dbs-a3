@@ -139,7 +139,7 @@ export function Session({
               effect={flight ? "hop" : undefined}
               className="w-36 shrink-0 lg:w-56"
             />
-            <div className="clay mb-8 rounded-2xl rounded-bl-sm bg-surface px-4 py-3">
+            <div className="flat mb-8 rounded-2xl rounded-bl-sm bg-surface px-4 py-3">
               <ScreenHeading
                 key={done}
                 id={`${id}-title`}

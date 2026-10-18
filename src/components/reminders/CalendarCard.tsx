@@ -10,7 +10,7 @@ export function CalendarCard({ times }: { times: string[] }) {
   const [until, setUntil] = useState<string | null>(null);
 
   return (
-    <section aria-labelledby="calendar-title" className="clay flex flex-col gap-3 rounded-3xl bg-surface p-5">
+    <section aria-labelledby="calendar-title" className="flat flex flex-col gap-3 rounded-3xl bg-surface p-5">
       <h2 id="calendar-title" className="font-display text-xl font-semibold text-ink">Add to my calendar</h2>
       <p className="font-bold text-muted">Works even when Nudge is closed: your calendar rings at {times.join(", ")} and brings you back here~</p>
       <p className="text-sm font-bold text-muted">A calendar can&apos;t tell whether you&apos;ve done it, so if you&apos;re done for the day, just ignore it~</p>

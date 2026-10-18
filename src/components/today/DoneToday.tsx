@@ -24,16 +24,16 @@ interface Props {
 }
 
 const CARD_TINT = [
-  "bg-reward-soft [--lip:var(--color-reward)] text-reward-deep",
-  "bg-primary-soft [--lip:var(--color-lip)] text-lip",
-  "bg-[#e4f1fb] [--lip:var(--color-sky-deep)] text-sky-deep",
+  "bg-reward-soft text-reward-deep",
+  "bg-primary-soft text-lip",
+  "bg-[#e4f1fb] text-sky-deep",
 ];
 
 /** One of the three result cards: it pops in after the one before it and its number counts up. */
 function StatCard({ stat, index }: { stat: DoneStat; index: number }) {
   const shown = useCountUp(stat.value, 350 + index * 150);
   return (
-    <li className={`card-in clay flex flex-1 flex-col items-center rounded-2xl px-2 py-3 ${CARD_TINT[index]}`} style={{ ["--delay" as string]: `${0.2 + index * 0.15}s` }}>
+    <li className={`card-in flat flex flex-1 flex-col items-center rounded-2xl px-2 py-3 ${CARD_TINT[index]}`} style={{ ["--delay" as string]: `${0.2 + index * 0.15}s` }}>
       <span className="text-xs font-extrabold text-muted">{stat.label}</span>
       <span aria-hidden="true" className="mt-1 font-display text-2xl font-semibold tabular-nums">{shown}{stat.suffix}</span>
       <span className="sr-only">{stat.value}{stat.suffix}</span>
