@@ -10,8 +10,8 @@ describe("starters", () => {
     expect(STARTERS.map((s) => s.type)).toEqual(["by-date", "daily", "daily", "daily"]);
   });
 
-  it("opens the right LinkedIn page for connections and coffee chats", () => {
+  it("opens LinkedIn only for connections; coffee chats assume no channel", () => {
     expect(STARTERS[0].link).toBe("https://www.linkedin.com/mynetwork/grow/");
-    expect(STARTERS[2]).toMatchObject({ verb: "Message", link: "https://www.linkedin.com/messaging/" });
+    expect(STARTERS[2]).toMatchObject({ verb: "Message", link: null });
   });
 });
