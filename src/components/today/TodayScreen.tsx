@@ -49,7 +49,9 @@ function pickFirst(
   data: AppData,
   picked: string | null,
 ): PlannedGoal[] {
-  const pinned = data.session?.goalId ?? picked ?? getFocusGoal();
+  // The tab you tapped wins; without one, the goal whose session is under way (user, 2026-10-19: with a session open,
+  // tapping another goal's tab did nothing)
+  const pinned = picked ?? data.session?.goalId ?? getFocusGoal();
   const index = items.findIndex(
     (item) =>
       item.goal.id === pinned &&
@@ -164,6 +166,7 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
   const begin = (goal: Goal) => {
     // Follow the goal being started, so its own done screen shows when it is finished
     setPicked(goal.id);
+    setFocusGoal(goal.id);
     startGoal(goal);
     router.push("/session");
   };
@@ -292,6 +295,10 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
             onStart={() => begin(first.goal)}
             onStartNext={() => next && begin(next)}
             cheer={undoable !== null}
+            inSession={
+              data.session?.goalId === first.goal.id &&
+              sessionIsToday(data.session, today)
+            }
             prompt={
               showPrompt ? (
                 <NudgePrompt

@@ -91,19 +91,20 @@ export function Room({ bowls, cat, corner, say = null, children }: Props) {
     <div className="flex flex-col gap-4 max-sm:pb-24 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-8 lg:gap-y-6">
       {/* Titi's scene: on a phone the window and Titi head the page as before. On a desktop it is the right five columns,
           exactly as tall as the task column (user, 2026-10-19: the two sides must line up): the window starts level with
-          the goal tabs and takes the spare height, Titi's mat ends level with the week's bowls. Two whole paintings, never
+          the goal tabs at one fixed size in every state (user, 2026-10-19: it grew and shrank with the left column), and
+          Titi with what she says comes straight under it, bigger, so her words are seen early. Two whole paintings, never
           stitched */}
       <div className="contents lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1 lg:flex lg:flex-col lg:gap-6 lg:self-stretch">
-        <Window time={time} corner={corner} className="lg:aspect-auto lg:min-h-48 lg:flex-1" />
+        <Window time={time} corner={corner} className="lg:aspect-[1040/620]" />
         {/* Coming back, Titi says hello in a bubble beside her, so the greeting is hers and not one more grey line
             (user, 2026-10-19: the welcome was too quiet) */}
-        <div className={`flex items-end justify-center ${say ? "gap-1" : ""}`}>
-          <div className={`relative flex flex-col items-center ${say ? "w-44 shrink-0 short:w-28 lg:w-60" : "mx-auto w-52 short:w-32 lg:w-72"}`}>
+        <div className={`flex items-end justify-center lg:mt-auto ${say ? "gap-1" : ""}`}>
+          <div className={`relative flex flex-col items-center ${say ? "w-44 shrink-0 short:w-28 lg:w-64" : "mx-auto w-52 short:w-32 lg:w-72"}`}>
             <span aria-hidden="true" className={`clay absolute bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-sun [--lip:#e9cf7e] ${say ? "h-10 w-40 short:h-6 short:w-24 lg:bottom-3 lg:h-11 lg:w-52" : "h-10 w-48 short:h-6 short:w-28 lg:bottom-3 lg:h-12 lg:w-60"}`} />
-            <CatArt key={cat.key} mood={cat.mood} effect={cat.effect} sun={false} className={`relative ${say ? "w-40 short:w-20 lg:w-48" : "w-40 short:w-20 lg:w-56"}`} />
+            <CatArt key={cat.key} mood={cat.mood} effect={cat.effect} sun={false} className={`relative ${say ? "w-40 short:w-20 lg:w-60" : "w-40 short:w-20 lg:w-56"}`} />
           </div>
           {say && (
-            <p className="flat badge-in mb-12 max-w-44 rounded-2xl rounded-bl-sm bg-surface px-4 py-3 font-display text-lg font-semibold leading-snug text-ink short:mb-8 short:text-base lg:mb-20 lg:max-w-56 lg:text-xl" style={{ ["--delay" as string]: "0.3s" }}>
+            <p className="flat badge-in mb-12 max-w-44 rounded-2xl rounded-bl-sm bg-surface px-4 py-3 font-display text-lg font-semibold leading-snug text-ink short:mb-8 short:text-base lg:mb-24 lg:max-w-60 lg:text-2xl" style={{ ["--delay" as string]: "0.3s" }}>
               {say}
             </p>
           )}

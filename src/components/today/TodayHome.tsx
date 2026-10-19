@@ -34,6 +34,8 @@ interface Props {
   corner?: React.ReactNode;
   onStart: () => void;
   onStartNext: () => void;
+  /** A session for this goal was opened today, even if nothing is logged yet: the button says "Keep going". */
+  inSession?: boolean;
   /** True right after a log: Titi hops. */
   cheer?: boolean;
   /** "Nudge you tomorrow?", once something has been logged and reminders are not set up yet. */
@@ -152,13 +154,26 @@ function GoalTabs({
     >
       {goals.map(({ goal, done }) => {
         const on = goal.id === current;
+        // The goal shown now is a flat pale label, not a button: tapping it would do nothing, and it must not look like
+        // the green main button (user, 2026-10-19). The other goals are buttons that switch to them.
+        if (on)
+          return (
+            <span
+              key={goal.id}
+              aria-current="true"
+              className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border-2 border-primary/50 bg-primary-soft px-4 font-display text-sm font-semibold text-ink"
+            >
+              {shortName(goal)}
+              {done && <span aria-hidden="true">✓</span>}
+              {done && <span className="sr-only">, done for today</span>}
+            </span>
+          );
         return (
           <button
             key={goal.id}
             type="button"
-            aria-pressed={on}
             onClick={() => onPick(goal.id)}
-            className={`${pill} ${on ? "bg-primary text-on-primary [--lip:var(--color-lip)]" : "bg-surface text-ink hover:bg-wash"}`}
+            className={`${pill} bg-surface text-ink hover:bg-wash`}
           >
             {shortName(goal)}
             {done && <span aria-hidden="true">✓</span>}
@@ -233,6 +248,7 @@ function MainAction({
   onStart,
   onStartNext,
   prompt,
+  inSession = false,
 }: {
   goal: Goal;
   plan: TodayPlan;
@@ -240,13 +256,15 @@ function MainAction({
   onStart: () => void;
   onStartNext: () => void;
   prompt?: React.ReactNode;
+  inSession?: boolean;
 }) {
   const active = plan.status === "not-started" || plan.status === "started";
   return (
     <div className="flex w-full flex-col gap-3">
       {active && (
         <Button size="lg" onClick={onStart} className="w-full">
-          {plan.status === "started" ? "Keep going" : "Start"}
+          {/* Back from the session without logging yet still says Keep going (user, 2026-10-19) */}
+          {plan.status === "started" || inSession ? "Keep going" : "Start"}
         </Button>
       )}
       {plan.status === "done" && next && (
@@ -301,6 +319,7 @@ export function TodayHome({
   onStartNext,
   cheer = false,
   prompt,
+  inSession = false,
 }: Props) {
   // Everything Titi says is in her bubble beside her: the welcome on the day's first open, otherwise the day's nudge,
   // and "so full" once today is done. The heading and the catch-up line stay under the tabs.
@@ -330,6 +349,7 @@ export function TodayHome({
           onStart={onStart}
           onStartNext={onStartNext}
           prompt={prompt}
+          inSession={inSession}
         />
         {notice && (
           <Link
