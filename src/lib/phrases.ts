@@ -38,9 +38,13 @@ export function goalSentence({ verb, unit, type, target, deadline }: SentencePar
 }
 
 /** One-tap amounts for "How many did you do?": about a quarter, half, three quarters, and all that's left. */
+/** Steps for "Did several at once?": the same small ones every time (2, 3, 5), at most three below what is left, then
+ *  all that is left, so the chips read as a pattern, not as arbitrary fractions. */
+const STEPS = [2, 3, 5];
+
 export function quickAmounts(left: number): number[] {
   if (left <= 0) return [1, 2, 5];
-  return [...new Set([0.25, 0.5, 0.75, 1].map((f) => Math.max(1, Math.round(left * f))))];
+  return [...STEPS.filter((n) => n < left), left];
 }
 
 /** The past of the verbs Nudge's goals use; anything else says "I did one". */

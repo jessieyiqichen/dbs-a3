@@ -44,12 +44,15 @@ describe("goalSentence while typing", () => {
 });
 
 describe("quickAmounts", () => {
-  it("offers a few amounts up to everything that's left", () => {
-    expect(quickAmounts(11)).toEqual([3, 6, 8, 11]);
+  it("offers the same small steps every time, then everything that's left (first-run check 2: +3 +4 All 5 looked arbitrary)", () => {
+    expect(quickAmounts(11)).toEqual([2, 3, 5, 11]);
+    expect(quickAmounts(5)).toEqual([2, 3, 5]);
+    expect(quickAmounts(30)).toEqual([2, 3, 5, 30]);
   });
 
   it("does not repeat amounts for small numbers", () => {
-    expect(quickAmounts(2)).toEqual([1, 2]);
+    expect(quickAmounts(3)).toEqual([2, 3]);
+    expect(quickAmounts(2)).toEqual([2]);
     expect(quickAmounts(1)).toEqual([1]);
   });
 

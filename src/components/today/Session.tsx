@@ -24,7 +24,13 @@ interface Props {
 }
 
 /** Any number typed: one labelled field; the typed number stays on an error and focus returns to it. */
-function MoreForm({ onLog }: { onLog: (n: number) => void }) {
+function MoreForm({
+  onLog,
+  label = "Or type a number",
+}: {
+  onLog: (n: number) => void;
+  label?: string;
+}) {
   const id = useId();
   const [text, setText] = useState("");
   const [error, setError] = useState<string | undefined>();
@@ -42,7 +48,7 @@ function MoreForm({ onLog }: { onLog: (n: number) => void }) {
   }
   return (
     <form onSubmit={submit} noValidate className="mt-4 flex items-end gap-3">
-      <Field id={id} label="Or type a number" error={error}>
+      <Field id={id} label={label} error={error}>
         {(control) => (
           <TextInput
             {...control}
@@ -95,12 +101,16 @@ function Batch({
   );
   return (
     <div ref={box} className="mt-4 flex flex-col gap-3">
-      <p
-        id={`${id}-several`}
-        className="font-display text-lg font-semibold text-ink"
-      >
-        How many did you do?
-      </p>
+      {/* With nothing to offer as a quick number (one left), the field asks the question itself, so "Or" never points
+          at choices that are not there (first-run check 2) */}
+      {quick.length > 0 && (
+        <p
+          id={`${id}-several`}
+          className="font-display text-lg font-semibold text-ink"
+        >
+          How many did you do?
+        </p>
+      )}
       {quick.length > 0 && (
         <div
           role="group"
@@ -119,7 +129,10 @@ function Batch({
           ))}
         </div>
       )}
-      <MoreForm onLog={log} />
+      <MoreForm
+        onLog={log}
+        label={quick.length > 0 ? "Or type a number" : "How many did you do?"}
+      />
     </div>
   );
 }

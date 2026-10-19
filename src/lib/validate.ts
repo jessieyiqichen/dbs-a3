@@ -8,9 +8,18 @@ export type Parsed<T> = { ok: true; value: T } | { ok: false; error: string };
 export const MAX_LOG = 1000;
 
 /** A count typed by the person, e.g. "8" in "Log several". */
+/** What is wrong with a count, if anything: not a whole number, or 0 (a whole number, but nothing to count; the first
+ *  version said "Enter a whole number" for 0 too, which was not true, first-run check 2). */
+export function countError(text: string, example: number): string | undefined {
+  const trimmed = text.trim();
+  if (!/^\d+$/.test(trimmed)) return `Enter a whole number, like ${example}`;
+  if (Number(trimmed) < 1) return `Enter a number above 0, like ${example}`;
+}
+
 export function parseCount(text: string): Parsed<number> {
   const trimmed = text.trim();
-  if (!/^\d+$/.test(trimmed) || Number(trimmed) < 1) return { ok: false, error: "Enter a whole number, like 5" };
+  const error = countError(trimmed, 5);
+  if (error) return { ok: false, error };
   const value = Number(trimmed);
   if (value > MAX_LOG) return { ok: false, error: "That's a lot! Enter a number up to 1,000" };
   return { ok: true, value };
@@ -66,7 +75,8 @@ function checkUnit(text: string): string | undefined {
 const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 
 function checkTarget(text: string, type: GoalType = "by-date"): string | undefined {
-  if (!/^\d+$/.test(text) || Number(text) < 1) return `Enter a whole number, like ${type === "daily" ? 3 : 100}`;
+  const error = countError(text, type === "daily" ? 3 : 100);
+  if (error) return error;
   if (Number(text) > MAX_TARGET) return "Enter a number up to 100,000";
 }
 

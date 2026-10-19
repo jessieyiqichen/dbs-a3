@@ -33,6 +33,7 @@ describe("resolveSetup: the one-screen first visit", () => {
   it("checks a typed number and a picked date, with examples that fit", () => {
     expect(resolveSetup({ ...FIRST_PICKS, tier: "own", ownAmount: "lots" }, today).errors.amount).toBe("Enter a whole number, like 150");
     expect(resolveSetup({ ...FIRST_PICKS, starter: "interview", tier: "own", ownAmount: "lots" }, today).errors.amount).toBe("Enter a whole number, like 3");
+    expect(resolveSetup({ ...FIRST_PICKS, starter: "interview", tier: "own", ownAmount: "0" }, today).errors.amount).toBe("Enter a number above 0, like 3");
     expect(resolveSetup({ ...FIRST_PICKS, when: "pick", pickedDate: "" }, today).errors.date).toBe("Pick the date you want to finish by");
     expect(resolveSetup({ ...FIRST_PICKS, when: "pick", pickedDate: "2026-10-18" }, today).errors.date).toBe("Pick a date after today");
   });

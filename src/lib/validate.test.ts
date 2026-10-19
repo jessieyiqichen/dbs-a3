@@ -7,9 +7,13 @@ describe("parseCount", () => {
   });
 
   it("asks for a number when empty or not a whole number", () => {
-    for (const text of ["", "abc", "2.5", "-3", "0"]) {
+    for (const text of ["", "abc", "2.5", "-3"]) {
       expect(parseCount(text)).toEqual({ ok: false, error: "Enter a whole number, like 5" });
     }
+  });
+
+  it("says what is wrong with 0: it is a whole number, but nothing to log (first-run check 2)", () => {
+    expect(parseCount("0")).toEqual({ ok: false, error: "Enter a number above 0, like 5" });
   });
 
   it("caps very large numbers", () => {
@@ -107,5 +111,13 @@ describe("dailyPreview", () => {
     const { dailyPreview } = await import("./validate");
     expect(dailyPreview("", "2026-12-01", "connections", "2026-10-17")).toBeNull();
     expect(dailyPreview("500", "2026-10-01", "connections", "2026-10-17")).toBeNull();
+  });
+});
+
+describe("a goal's number of 0", () => {
+  it("asks for a number above 0, with an example the size of the goal", async () => {
+    const { validateGoal } = await import("./validate");
+    const result = validateGoal({ verb: "Send", unit: "applications", type: "daily", target: "0", deadline: "", link: "" }, "2026-10-19");
+    expect(result.errors.target).toBe("Enter a number above 0, like 3");
   });
 });

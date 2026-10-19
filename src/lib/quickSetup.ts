@@ -2,7 +2,7 @@ import { daysBetween } from "./dates";
 import { amountTiers, dateOptions, perDayFor, splitAction, type DateOption } from "./onboarding";
 import { STARTERS, type Site } from "./starters";
 import type { GoalType } from "./types";
-import { MAX_TARGET, validateGoal, type GoalValues } from "./validate";
+import { countError, MAX_TARGET, validateGoal, type GoalValues } from "./validate";
 
 /** The one-screen first visit (user, 2026-10-18, after the teacher's "the page is the onboarding"): three rows of
  *  one-tap choices with sensible ones already picked, so today's number is on the first screen. */
@@ -62,7 +62,8 @@ function checkDate(date: string, today: string): string | undefined {
 
 /** A typed number, with an example the size of this goal's own middle choice. */
 function checkAmount(text: string, example: number): string | undefined {
-  if (!/^\d+$/.test(text.trim()) || Number(text) < 1) return `Enter a whole number, like ${example}`;
+  const error = countError(text, example);
+  if (error) return error;
   if (Number(text) > MAX_TARGET) return "Enter a number up to 100,000";
 }
 
