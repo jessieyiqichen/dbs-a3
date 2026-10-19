@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { backAfterDays, streakTip, weekSummary, welcomeMessage } from "./welcome";
+import { backAfterDays, greeting, streakTip, weekSummary, welcomeMessage } from "./welcome";
 import type { Entry, Goal } from "./types";
 
 const goal: Goal = {
@@ -44,16 +44,32 @@ describe("welcomeMessage", () => {
   });
 });
 
-describe("weekSummary: the first open of a new week", () => {
+describe("weekSummary: last week's fish, said once a week", () => {
   // 2026-10-19 is a Monday; Oct 12 to 18 is last week
-  it("adds up last week's fish and days on the first open", () => {
-    const entries = [...on("2026-10-13", "2026-10-15"), { id: "x", goalId: "g1", date: "2026-10-15", amount: 4, at: "" }];
-    expect(weekSummary([goal], entries, "2026-10-19", "2026-10-18")).toBe("Last week: 26 fish for Titi over 2 days!");
+  const lastWeek = [...on("2026-10-13", "2026-10-15"), { id: "x", goalId: "g1", date: "2026-10-15", amount: 4, at: "" }];
+  it("adds up last week's fish and days on the first open of the week", () => {
+    expect(weekSummary([goal], lastWeek, "2026-10-19", { prevVisit: "2026-10-18", seenFor: null })).toBe("Last week: 26 fish for Titi over 2 days!");
   });
-  it("says nothing on later opens the same week, or when last week was empty", () => {
-    expect(weekSummary([goal], on("2026-10-13"), "2026-10-20", "2026-10-19")).toBeNull();
-    expect(weekSummary([goal], [], "2026-10-19", "2026-10-18")).toBeNull();
-    expect(weekSummary([goal], on("2026-10-13"), "2026-10-19", null)).toBeNull();
+  it("says it once a week, not on a first-ever visit, and not when last week was empty", () => {
+    expect(weekSummary([goal], on("2026-10-13"), "2026-10-20", { prevVisit: "2026-10-19", seenFor: "2026-10-19" })).toBeNull();
+    expect(weekSummary([goal], [], "2026-10-19", { prevVisit: "2026-10-18", seenFor: null })).toBeNull();
+    expect(weekSummary([goal], on("2026-10-13"), "2026-10-19", { prevVisit: null, seenFor: null })).toBeNull();
+  });
+  it("still says it on a later open when the week's first open was spent on something else", () => {
+    expect(weekSummary([goal], on("2026-10-13"), "2026-10-19", { prevVisit: "2026-10-19", seenFor: "2026-10-12" })).toBe("Last week: 11 fish for Titi over 1 day!");
+  });
+});
+
+describe("greeting: what Titi says first", () => {
+  const base = { goals: [goal], entries: on("2026-10-13", "2026-10-18"), today: "2026-10-19" };
+  it("from a reminder on a Monday: \"You came back!\" first, and last week's summary is kept for the next normal visit", () => {
+    const nudged = greeting({ ...base, prevVisit: "2026-10-18", fromNudge: true, summarySeenFor: "2026-10-12" });
+    expect(nudged).toEqual({ text: "You came back! That's the hardest part", summaryFor: null });
+    // the nudge visit moved the last visit to today, but the summary was not said yet
+    const next = greeting({ ...base, prevVisit: "2026-10-19", fromNudge: false, summarySeenFor: "2026-10-12" });
+    expect(next).toEqual({ text: "Last week: 22 fish for Titi over 2 days!", summaryFor: "2026-10-19" });
+    const after = greeting({ ...base, prevVisit: "2026-10-19", fromNudge: false, summarySeenFor: "2026-10-19" });
+    expect(after).toEqual({ text: null, summaryFor: null });
   });
 });
 

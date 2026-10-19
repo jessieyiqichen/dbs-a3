@@ -16,12 +16,14 @@ const listeners = new Set<() => void>();
 export interface VisitStart {
   prevVisit: string | null;
   fromNudge: boolean;
+  /** The week whose summary had been said when this visit began, so marking it said keeps it on screen this visit. */
+  summarySeenFor: string | null;
 }
 let visitStart: VisitStart | null = null;
 
 export function getVisitStart(): VisitStart {
   read();
-  return visitStart ?? { prevVisit: null, fromNudge: false };
+  return visitStart ?? { prevVisit: null, fromNudge: false, summarySeenFor: null };
 }
 
 function read(): StoreState {
@@ -31,6 +33,7 @@ function read(): StoreState {
     visitStart = {
       prevVisit: result.ok ? result.data.lastVisit : null,
       fromNudge: new URLSearchParams(window.location.search).get("from") === "nudge",
+      summarySeenFor: result.ok ? result.data.settings.weekSummarySeenFor : null,
     };
   }
   if (result.ok) cache = { kind: "ready", data: result.data, persistent: true };

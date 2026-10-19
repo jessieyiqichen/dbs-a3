@@ -44,9 +44,16 @@ export function welcomeMessage({ prevVisit, today, fromNudge, goals, entries }: 
 }
 
 /** On the first open of a new week: what last week added up to, for Titi. Null when it isn't the first open or nothing happened. */
-export function weekSummary(goals: Goal[], entries: Entry[], today: string, prevVisit: string | null): string | null {
+export function weekSummary(
+  goals: Goal[],
+  entries: Entry[],
+  today: string,
+  { prevVisit, seenFor }: { prevVisit: string | null; seenFor: string | null },
+): string | null {
   const monday = weekKey(today);
-  if (prevVisit === null || prevVisit >= monday) return null;
+  // Once a week, remembered by the week it was said for (not by the last visit, which a reminder visit also moves), and
+  // never on a first-ever visit
+  if (prevVisit === null || seenFor === monday) return null;
   const from = addDays(monday, -7);
   const ids = new Set(goals.map((g) => g.id));
   const last = entries.filter((e) => ids.has(e.goalId) && e.date >= from && e.date < monday && e.amount > 0);
@@ -63,4 +70,22 @@ export function streakTip({ goals, entries, today, seen, days }: { goals: Goal[]
   const ids = new Set(goals.map((g) => g.id));
   const earlier = entries.some((e) => ids.has(e.goalId) && e.date < today);
   return earlier ? `Your streak lives here, ${days} ${days === 1 ? "day" : "days"}!` : null;
+}
+
+/** What Titi says first on Today. From a reminder it is always "You came back!", even on a Monday; last week's summary
+ *  then waits for the next normal visit (user, 2026-10-19). `summaryFor` is the week to mark as told, when the summary is
+ *  what is said. */
+export function greeting({
+  goals,
+  entries,
+  today,
+  prevVisit,
+  fromNudge,
+  summarySeenFor,
+}: WelcomeInput & { summarySeenFor: string | null }): { text: string | null; summaryFor: string | null } {
+  const input = { goals, entries, today, prevVisit, fromNudge };
+  if (fromNudge) return { text: welcomeMessage(input), summaryFor: null };
+  const summary = weekSummary(goals, entries, today, { prevVisit, seenFor: summarySeenFor });
+  if (summary) return { text: summary, summaryFor: weekKey(today) };
+  return { text: welcomeMessage(input), summaryFor: null };
 }

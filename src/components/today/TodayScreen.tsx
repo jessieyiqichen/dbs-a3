@@ -4,17 +4,28 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { StorageNotice } from "@/components/ui/StorageNotice";
 import { Toast } from "@/components/ui/Toast";
-import { addEntry, endSession, markVisited, removeEntry } from "@/lib/actions";
+import {
+  addEntry,
+  endSession,
+  markVisited,
+  removeEntry,
+  updateSettings,
+} from "@/lib/actions";
 import { toISODate } from "@/lib/dates";
 import { formatCount } from "@/lib/format";
 import { sortByUrgency, type PlannedGoal } from "@/lib/quota";
 import { startGoal } from "@/lib/start";
-import { getFocusGoal, getVisitStart, setFocusGoal, useStore } from "@/lib/store";
+import {
+  getFocusGoal,
+  getVisitStart,
+  setFocusGoal,
+  useStore,
+} from "@/lib/store";
 import { calendarNotice, catchUpLine, sessionIsToday } from "@/lib/returning";
 import { weekBowls } from "@/lib/scene";
 import { overallStreak } from "@/lib/streak";
 import type { AppData, Goal } from "@/lib/types";
-import { backAfterDays, streakTip, weekSummary, welcomeMessage } from "@/lib/welcome";
+import { backAfterDays, greeting, streakTip } from "@/lib/welcome";
 import { showNudgePrompt } from "@/lib/nudges";
 import { milestoneLine } from "@/lib/session";
 import { RoomSkeleton } from "./Room";
@@ -33,18 +44,44 @@ interface Undoable {
 const ACTIVE = new Set(["not-started", "started"]);
 
 /** The goal in a session goes first, then the one the person picked or just created, then the most urgent. */
-function pickFirst(items: PlannedGoal[], data: AppData, picked: string | null): PlannedGoal[] {
+function pickFirst(
+  items: PlannedGoal[],
+  data: AppData,
+  picked: string | null,
+): PlannedGoal[] {
   const pinned = data.session?.goalId ?? picked ?? getFocusGoal();
-  const index = items.findIndex((item) => item.goal.id === pinned && (data.session || picked === item.goal.id || ACTIVE.has(item.plan.status) || item.plan.status === "done"));
-  return index <= 0 ? items : [items[index], ...items.slice(0, index), ...items.slice(index + 1)];
+  const index = items.findIndex(
+    (item) =>
+      item.goal.id === pinned &&
+      (data.session ||
+        picked === item.goal.id ||
+        ACTIVE.has(item.plan.status) ||
+        item.plan.status === "done"),
+  );
+  return index <= 0
+    ? items
+    : [items[index], ...items.slice(0, index), ...items.slice(index + 1)];
 }
 
 /** Is the first goal's session live today, and is its celebration due? Shared by the page and the leave-session check. */
-function sessionState(data: AppData, picked: string | null, justDone: string | null, today: string) {
-  const planned = pickFirst(sortByUrgency(data.goals, data.entries, today), data, picked);
+function sessionState(
+  data: AppData,
+  picked: string | null,
+  justDone: string | null,
+  today: string,
+) {
+  const planned = pickFirst(
+    sortByUrgency(data.goals, data.entries, today),
+    data,
+    picked,
+  );
   const first = planned[0];
-  const asking = data.session?.goalId === first.goal.id && sessionIsToday(data.session, today) && ACTIVE.has(first.plan.status);
-  const celebrating = first.plan.status === "done" && justDone === first.goal.id;
+  const asking =
+    data.session?.goalId === first.goal.id &&
+    sessionIsToday(data.session, today) &&
+    ACTIVE.has(first.plan.status);
+  const celebrating =
+    first.plan.status === "done" && justDone === first.goal.id;
   return { planned, asking, celebrating };
 }
 
@@ -66,7 +103,8 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
   useEffect(() => {
     if (!ready) return;
     markVisited(toISODate(new Date()));
-    if (window.location.search) window.history.replaceState(null, "", window.location.pathname);
+    if (window.location.search)
+      window.history.replaceState(null, "", window.location.pathname);
   }, [ready]);
 
   // /session with nothing in progress (opened directly, or the session is over) goes back to Today.
@@ -74,7 +112,12 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
     if (view !== "session" || state?.kind !== "ready") return;
     const { data } = state;
     if (data.goals.length === 0) return router.replace("/");
-    const { asking, celebrating } = sessionState(data, picked, justDone, toISODate(new Date()));
+    const { asking, celebrating } = sessionState(
+      data,
+      picked,
+      justDone,
+      toISODate(new Date()),
+    );
     if (!asking && !celebrating) router.replace("/");
   }, [view, state, picked, justDone, router]);
 
@@ -92,7 +135,10 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
       setUndoable(null);
       return;
     }
-    setUndoable({ entryId: entry.id, message: `Added ${formatCount(amount, goal.unit)}` });
+    setUndoable({
+      entryId: entry.id,
+      message: `Added ${formatCount(amount, goal.unit)}`,
+    });
   };
   const undo = () => {
     if (undoable) removeEntry(undoable.entryId);
@@ -108,7 +154,12 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
     );
   }
 
-  const { planned, asking, celebrating } = sessionState(data, picked, justDone, today);
+  const { planned, asking, celebrating } = sessionState(
+    data,
+    picked,
+    justDone,
+    today,
+  );
   const [first, ...rest] = planned;
   const begin = (goal: Goal) => {
     // Follow the goal being started, so its own done screen shows when it is finished
@@ -117,12 +168,26 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
     router.push("/session");
   };
   const visit = getVisitStart();
-  const welcome = weekSummary(data.goals, data.entries, today, visit.prevVisit) ?? welcomeMessage({ ...visit, today, goals: data.goals, entries: data.entries });
-  const back = backAfterDays({ prevVisit: visit.prevVisit, today, goals: data.goals, entries: data.entries });
+  const hello = greeting({
+    ...visit,
+    today,
+    goals: data.goals,
+    entries: data.entries,
+  });
+  const welcome = hello.text;
+  const back = backAfterDays({
+    prevVisit: visit.prevVisit,
+    today,
+    goals: data.goals,
+    entries: data.entries,
+  });
   const firstTime = data.entries.length === 0;
   const { reminderTimes } = data.settings;
   const logged = data.entries.length > 0;
-  const showPrompt = showNudgePrompt(data.settings, today, { logged, pinned: promptPinned });
+  const showPrompt = showNudgePrompt(data.settings, today, {
+    logged,
+    pinned: promptPinned,
+  });
   const next = rest.find((item) => ACTIVE.has(item.plan.status))?.goal ?? null;
   const run = overallStreak(data.goals, data.entries, today).days;
 
@@ -137,49 +202,124 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
             total={first.plan.quota}
             done={first.plan.doneToday}
             firstTime={firstTime}
-            onLog={(n) => log(first.goal, n, first.plan.doneToday + n >= first.plan.quota)}
-            onOpen={() => first.goal.link && window.open(first.goal.link, "_blank", "noopener,noreferrer")}
+            onLog={(n) =>
+              log(first.goal, n, first.plan.doneToday + n >= first.plan.quota)
+            }
+            onOpen={() =>
+              first.goal.link &&
+              window.open(first.goal.link, "_blank", "noopener,noreferrer")
+            }
           />
         ) : celebrating ? (
           <DoneToday
-            prompt={showPrompt ? <NudgePrompt times={reminderTimes} today={today} onActed={() => setPromptPinned(true)} /> : null}
+            prompt={
+              showPrompt ? (
+                <NudgePrompt
+                  times={reminderTimes}
+                  today={today}
+                  onActed={() => setPromptPinned(true)}
+                />
+              ) : null
+            }
             goal={first.goal}
             doneToday={first.plan.doneToday}
             doneTotal={first.plan.doneTotal}
             streakDays={run}
-            milestone={milestoneLine(first.goal, first.plan.doneTotal, first.plan.doneToday)}
+            milestone={milestoneLine(
+              first.goal,
+              first.plan.doneTotal,
+              first.plan.doneToday,
+            )}
             next={next}
-            onStartNext={() => { setJustDone(null); closeToast(); if (next) { setPicked(next.id); startGoal(next); } }}
-            onContinue={() => { setJustDone(null); closeToast(); router.push("/"); }}
+            onStartNext={() => {
+              setJustDone(null);
+              closeToast();
+              if (next) {
+                setPicked(next.id);
+                startGoal(next);
+              }
+            }}
+            onContinue={() => {
+              setJustDone(null);
+              closeToast();
+              router.push("/");
+            }}
             bowls={weekBowls(data.goals, data.entries, today)}
             // The streak's own moment only on the day's first finished goal, so later ones are not slowed down
-            streakMoment={rest.every((item) => item.plan.status !== "done" && item.plan.status !== "complete")}
+            streakMoment={rest.every(
+              (item) =>
+                item.plan.status !== "done" && item.plan.status !== "complete",
+            )}
           />
         ) : null /* nothing in progress: the effect above is sending you to Today */
       ) : (
-        <TodayHome
-          goal={first.goal}
-          plan={first.plan}
-          today={today}
-          hour={now.getHours()}
-          bowls={weekBowls(data.goals, data.entries, today)}
-          welcome={welcome}
-          back={back}
-          catchUp={catchUpLine(first.plan)}
-          notice={calendarNotice(data.settings.calendarUntil, today)}
-          next={next}
-          goals={planned.map((item) => ({ goal: item.goal, done: item.plan.status === "done" || item.plan.status === "complete" }))}
-          onPick={(id) => { setFocusGoal(id); setPicked(id); }}
-          corner={run > 0 ? <StreakChip days={run} tip={streakTip({ goals: data.goals, entries: data.entries, today, seen: data.settings.streakTipSeen, days: run })} /> : undefined}
-          onStart={() => begin(first.goal)}
-          onStartNext={() => next && begin(next)}
-          cheer={undoable !== null}
-          prompt={showPrompt ? <NudgePrompt compact times={reminderTimes} today={today} onActed={() => setPromptPinned(true)} /> : null}
-        />
+        <>
+          {hello.summaryFor && <MarkSummarySaid week={hello.summaryFor} />}
+          <TodayHome
+            goal={first.goal}
+            plan={first.plan}
+            today={today}
+            hour={now.getHours()}
+            bowls={weekBowls(data.goals, data.entries, today)}
+            welcome={welcome}
+            back={back || visit.fromNudge}
+            catchUp={catchUpLine(first.plan)}
+            notice={calendarNotice(data.settings.calendarUntil, today)}
+            next={next}
+            goals={planned.map((item) => ({
+              goal: item.goal,
+              done:
+                item.plan.status === "done" || item.plan.status === "complete",
+            }))}
+            onPick={(id) => {
+              setFocusGoal(id);
+              setPicked(id);
+            }}
+            corner={
+              run > 0 ? (
+                <StreakChip
+                  days={run}
+                  tip={streakTip({
+                    goals: data.goals,
+                    entries: data.entries,
+                    today,
+                    seen: data.settings.streakTipSeen,
+                    days: run,
+                  })}
+                />
+              ) : undefined
+            }
+            onStart={() => begin(first.goal)}
+            onStartNext={() => next && begin(next)}
+            cheer={undoable !== null}
+            prompt={
+              showPrompt ? (
+                <NudgePrompt
+                  compact
+                  times={reminderTimes}
+                  today={today}
+                  onActed={() => setPromptPinned(true)}
+                />
+              ) : null
+            }
+          />
+        </>
       )}
 
       {/* On the home view the week's shelf holds the foot of a phone screen, so the toast floats above it */}
-      <Toast message={undoable?.message ?? null} onUndo={undo} onClose={closeToast} raised={view === "home"} />
+      <Toast
+        message={undoable?.message ?? null}
+        onUndo={undo}
+        onClose={closeToast}
+        raised={view === "home"}
+      />
     </>
   );
+}
+
+/** Marks this week's "Last week: ..." summary as said once it is on Today, so it is said once a week. The visit's own
+ *  snapshot keeps it on screen until the page is left. */
+function MarkSummarySaid({ week }: { week: string }) {
+  useEffect(() => updateSettings({ weekSummarySeenFor: week }), [week]);
+  return null;
 }
