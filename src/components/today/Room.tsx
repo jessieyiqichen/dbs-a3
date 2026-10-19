@@ -72,6 +72,8 @@ interface Props {
   bowls: BowlDay[];
   cat: { mood: CatMood; effect?: CatEffect; key?: string };
   corner?: ReactNode;
+  /** What Titi says when you come back ("Welcome back, yesterday counted!"), in a bubble beside her. */
+  say?: string | null;
   /** Today's goal and its one button, placed right under Titi. */
   children?: ReactNode;
 }
@@ -83,7 +85,7 @@ interface Props {
  *  From 1024px it is task first (reviewer's plan A, chosen by the user on 2026-10-19): a 12-column grid, the goal, its
  *  button and the week's bowls on the left seven columns, Titi's scene on the right five, every column top-aligned so
  *  nothing is stretched to match a neighbour. Below 1024px the page looks as before. */
-export function Room({ bowls, cat, corner, children }: Props) {
+export function Room({ bowls, cat, corner, say = null, children }: Props) {
   const time = timeOfDay(useHour());
   return (
     <div className="flex flex-col gap-4 max-sm:pb-24 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-8 lg:gap-y-6">
@@ -93,9 +95,18 @@ export function Room({ bowls, cat, corner, children }: Props) {
           stitched */}
       <div className="contents lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1 lg:flex lg:flex-col lg:gap-6 lg:self-stretch">
         <Window time={time} corner={corner} className="lg:aspect-auto lg:min-h-48 lg:flex-1" />
-        <div className="relative mx-auto flex w-52 flex-col items-center short:w-32 lg:w-72">
-          <span aria-hidden="true" className="clay absolute bottom-1 left-1/2 h-10 w-48 -translate-x-1/2 rounded-full bg-sun [--lip:#e9cf7e] short:h-6 short:w-28 lg:bottom-3 lg:h-12 lg:w-60" />
-          <CatArt key={cat.key} mood={cat.mood} effect={cat.effect} sun={false} className="relative w-40 short:w-20 lg:w-56" />
+        {/* Coming back, Titi says hello in a bubble beside her, so the greeting is hers and not one more grey line
+            (user, 2026-10-19: the welcome was too quiet) */}
+        <div className={`flex items-end justify-center ${say ? "gap-1" : ""}`}>
+          <div className={`relative flex flex-col items-center ${say ? "w-44 shrink-0 short:w-28 lg:w-60" : "mx-auto w-52 short:w-32 lg:w-72"}`}>
+            <span aria-hidden="true" className={`clay absolute bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-sun [--lip:#e9cf7e] ${say ? "h-10 w-40 short:h-6 short:w-24 lg:bottom-3 lg:h-11 lg:w-52" : "h-10 w-48 short:h-6 short:w-28 lg:bottom-3 lg:h-12 lg:w-60"}`} />
+            <CatArt key={cat.key} mood={cat.mood} effect={cat.effect} sun={false} className={`relative ${say ? "w-40 short:w-20 lg:w-48" : "w-40 short:w-20 lg:w-56"}`} />
+          </div>
+          {say && (
+            <p className="flat badge-in mb-12 max-w-44 rounded-2xl rounded-bl-sm bg-surface px-4 py-3 font-display text-lg font-semibold leading-snug text-ink short:mb-8 short:text-base lg:mb-20 lg:max-w-56 lg:text-xl" style={{ ["--delay" as string]: "0.3s" }}>
+              {say}
+            </p>
+          )}
         </div>
       </div>
       {/* The task: on a phone the goal, then the shelf fixed at the foot of the screen; on a desktop the left seven

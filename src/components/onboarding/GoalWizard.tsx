@@ -59,6 +59,8 @@ function Reveal({ children }: { children: ReactNode }) {
     </div>
   );
 }
+/** How many of today's fish the first screen draws before it says "+N". */
+const FISH_PREVIEW = 8;
 const OFTEN = [
   { value: "daily", label: "Every day" },
   { value: "by-date", label: "A total by a date" },
@@ -76,7 +78,10 @@ function Hello({ firstVisit }: { firstVisit: boolean }) {
   return (
     <div className="flex items-end gap-2">
       <div className="shrink-0 lg:hidden">
-        <CatArt mood={firstVisit ? "wave" : "idle"} className="w-24" />
+        <CatArt
+          mood={firstVisit ? "wave" : "idle"}
+          className={firstVisit ? "w-36" : "w-24"}
+        />
       </div>
       <div className="flat bubble-phone-only mb-6 rounded-2xl rounded-bl-sm bg-surface px-4 py-3 lg:mb-0 lg:bg-transparent lg:p-0">
         {firstVisit ? (
@@ -141,6 +146,32 @@ function Result({
         >
           {line}
         </p>
+        {/* Today's fish, still to earn: what you are about to fill, before you start (user, 2026-10-19). Not on a short
+            phone, where the bar would cover too much of the choices */}
+        {r.goal && r.perDay && (
+          <div
+            aria-hidden="true"
+            className="flex items-center gap-1 short:hidden"
+          >
+            {Array.from(
+              { length: Math.min(r.perDay, FISH_PREVIEW) },
+              (_, i) => (
+                // eslint-disable-next-line @next/next/no-img-element -- decorative preview of today's fish
+                <img
+                  key={i}
+                  src="/cat/fish-locked.png"
+                  alt=""
+                  className="w-8 lg:w-10"
+                />
+              ),
+            )}
+            {r.perDay > FISH_PREVIEW && (
+              <span className="font-display text-sm font-semibold text-muted">
+                +{r.perDay - FISH_PREVIEW}
+              </span>
+            )}
+          </div>
+        )}
         {whole && (
           <p className="hidden text-sm font-bold text-muted lg:block">
             {whole}, you can change it anytime in Goals
@@ -149,7 +180,7 @@ function Result({
         <Button size="lg" className="w-full lg:mt-2" onClick={onStart}>
           {firstVisit ? "Start my first one" : "Start the first one"}
         </Button>
-        <p className="hidden text-sm text-muted lg:block">
+        <p className="text-center text-xs text-muted lg:text-left lg:text-sm">
           Saved on this device, no sign-up needed
         </p>
       </div>
@@ -384,8 +415,8 @@ export function GoalWizard({ firstVisit = false, onCancel, onStarted }: Props) {
             does") */}
         {firstVisit && (
           <p className="-mt-3 font-bold text-muted lg:-mt-2 lg:text-lg">
-            Pick one, and Nudge turns it into one small number a day, with Titi
-            cheering you on
+            Pick one thing. Nudge breaks it into a few a day, and each one you
+            do is a fish for Titi
           </p>
         )}
         <Pills

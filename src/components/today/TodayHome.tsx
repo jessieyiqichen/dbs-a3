@@ -20,7 +20,8 @@ interface Props {
   bowls: BowlDay[];
   /** The welcome-back line, shown in Titi's bubble instead of the nudge. */
   welcome: string | null;
-  /** Back after days away: Titi stretches instead of sleeping. */
+  /** Back after days away, or here from a nudge: Titi is up and stretching instead of asleep, so the picture matches
+   *  "You came back!" (user, 2026-10-19). */
   back?: boolean;
   /** Why today's number grew after missed days. */
   catchUp: string | null;
@@ -68,12 +69,15 @@ function catFor(
   status: Status,
   cheer: boolean,
   back: boolean,
+  greets: boolean,
 ): { mood: CatMood; effect?: CatEffect } {
   if (cheer) return { mood: "idle", effect: "hop" };
   if (status === "complete") return { mood: "celebrate", effect: "party" };
   if (status === "done" || status === "paused") return { mood: "loaf" };
   if (status === "deadline-passed") return { mood: "stretch" };
-  if (status === "not-started") return back ? { mood: "stretch" } : { mood: "sleep", effect: "zzz" };
+  // Asleep only when she has nothing to say: back after days or from a reminder she stretches, and when she greets you
+  // ("Last week: ...", "Welcome back") she waves, so the picture matches her words (user, 2026-10-19)
+  if (status === "not-started") return back ? { mood: "stretch" } : greets ? { mood: "wave" } : { mood: "sleep", effect: "zzz" };
   if (status === "started") return { mood: "paw-tap" };
   return { mood: "idle" };
 }
@@ -174,7 +178,7 @@ function shortName(goal: Goal): string {
 
 /** The sentence for today, with Titi's line under it; on a desktop it is a size larger and today's number shows as fish
  *  treats under it, all top-aligned (nothing stretched to match Titi's column). */
-function SentenceCard({ goal, plan, line, catchUp }: { goal: Goal; plan: TodayPlan; line: string; catchUp: string | null }) {
+function SentenceCard({ goal, plan, line, catchUp }: { goal: Goal; plan: TodayPlan; line: string | null; catchUp: string | null }) {
   const active = plan.status === "not-started" || plan.status === "started";
   return (
     <div className="relative w-full px-1 pt-1">
@@ -184,7 +188,7 @@ function SentenceCard({ goal, plan, line, catchUp }: { goal: Goal; plan: TodayPl
       >
         {title(goal, plan)}
       </ScreenHeading>
-      <p className="mt-1 font-bold text-muted lg:mt-4 lg:text-lg">{line}</p>
+      {line && <p className="mt-1 font-bold text-muted lg:mt-4 lg:text-lg">{line}</p>}
       {catchUp && plan.status === "not-started" && (
         <p className="mt-1 text-sm font-bold text-muted">{catchUp}</p>
       )}
@@ -268,14 +272,16 @@ export function TodayHome({
   const line =
     plan.status === "done"
       ? "Titi is so full! See you tomorrow~"
-      : (welcome ?? nudgeLine(goal, plan, today, hour));
+      : welcome
+        ? null // said by Titi in her bubble
+        : nudgeLine(goal, plan, today, hour);
   const cat = {
-    ...catFor(plan.status, cheer, back),
+    ...catFor(plan.status, cheer, back, welcome !== null),
     key: cheer ? "cheer" : plan.status,
   };
   return (
     <section aria-labelledby={`goal-${goal.id}`} className="flex flex-col lg:pt-2">
-      <Room bowls={bowls} cat={cat} corner={corner}>
+      <Room bowls={bowls} cat={cat} corner={corner} say={plan.status === "done" ? null : welcome}>
         <GoalTabs goals={goals} current={goal.id} onPick={onPick} />
         <SentenceCard goal={goal} plan={plan} line={line} catchUp={catchUp} />
         <MainAction goal={goal} plan={plan} next={next} onStart={onStart} onStartNext={onStartNext} prompt={prompt} />
