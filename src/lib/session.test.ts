@@ -32,21 +32,22 @@ describe("bowlFill", () => {
   });
 });
 
-describe("doneStats: the three cards on the done screen", () => {
+describe("doneStats: the two cards on the done screen", () => {
   const byDate: Goal = { id: "g", verb: "Send", title: "Send connection requests", unit: "connection requests", type: "by-date", target: 150, deadline: "2026-11-17", link: null, startDate: "2026-10-10", pauses: [], createdAt: "" };
   const daily: Goal = { ...byDate, type: "daily", target: 3, deadline: null };
 
-  it("shows the road for a by-date goal as a percentage", () => {
+  it("leaves today's count to the line above the cards, and shows the road as how many of the whole", () => {
     expect(doneStats(byDate, { doneToday: 5, doneTotal: 56, streakDays: 4 })).toEqual([
-      { label: "Done today", value: 5, suffix: "" },
       { label: "Streak", value: 4, suffix: "", unit: { one: " day", many: " days" } },
-      { label: "Road to 150", value: 37, suffix: "%" },
+      { label: "So far", value: 56, suffix: " of 150" },
     ]);
   });
 
   it("shows the all-time total for a daily goal", () => {
-    expect(doneStats(daily, { doneToday: 3, doneTotal: 21, streakDays: 1 })[2]).toEqual({ label: "All time", value: 21, suffix: "" });
-    expect(doneStats(daily, { doneToday: 3, doneTotal: 21, streakDays: 1 })[1]).toEqual({ label: "Streak", value: 1, suffix: "", unit: { one: " day", many: " days" } });
+    expect(doneStats(daily, { doneToday: 3, doneTotal: 21, streakDays: 1 })).toEqual([
+      { label: "Streak", value: 1, suffix: "", unit: { one: " day", many: " days" } },
+      { label: "All time", value: 21, suffix: "" },
+    ]);
   });
 });
 

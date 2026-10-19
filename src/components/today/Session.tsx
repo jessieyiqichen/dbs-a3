@@ -126,7 +126,10 @@ function Batch({
 
 /** Everything to tap in a session, in the order of the work: open the site, then one button that says what you did
  *  ("I sent one", a fish on it) and logs one, and "Did several at once?" for a batch (user, 2026-10-18: one way to log
- *  one, and a faster way for several). The fish above only show how far today has come. */
+ *  one, and a faster way for several). The fish above only show how far today has come.
+ *  The green button is whichever comes next (reviewer, user 2026-10-19): before anything is done and the site is not
+ *  open yet, that is "Open LinkedIn"; once it has been opened, or one is logged, it is "I sent one". The order on the
+ *  page stays the same, only the emphasis moves. A goal with no site has "I sent one" as its only main button. */
 function LogPanel({
   goal,
   total,
@@ -141,7 +144,9 @@ function LogPanel({
   onOpen: () => void;
 }) {
   const [several, setSeveral] = useState(false);
+  const [opened, setOpened] = useState(false);
   const site = siteName(goal.link);
+  const openFirst = Boolean(site) && done === 0 && !opened;
   return (
     <div className="flex flex-col lg:col-span-7 lg:col-start-1 lg:row-start-2 lg:max-w-xl lg:self-start">
       <div className="mt-6 lg:mt-0">
@@ -149,16 +154,20 @@ function LogPanel({
       </div>
       {site && (
         <Button
-          variant="secondary"
+          variant={openFirst ? "primary" : "secondary"}
           size="lg"
           className="mt-6 w-full"
-          onClick={onOpen}
+          onClick={() => {
+            setOpened(true);
+            onOpen();
+          }}
         >
           Open {site} <span aria-hidden="true">↗</span>
           <span className="sr-only">(opens in a new tab)</span>
         </Button>
       )}
       <Button
+        variant={openFirst ? "secondary" : "primary"}
         size="lg"
         className={`${site ? "mt-3" : "mt-6"} w-full`}
         onClick={() => log(1)}

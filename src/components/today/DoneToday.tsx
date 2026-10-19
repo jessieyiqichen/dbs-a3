@@ -22,7 +22,7 @@ interface Props {
   milestone?: string | null;
   next: Goal | null;
   onStartNext: () => void;
-  /** Back to Titi's room. */
+  /** Back to Today. */
   onContinue: () => void;
   /** This week's bowls, for the streak moment. */
   bowls: BowlDay[];
@@ -30,23 +30,15 @@ interface Props {
   streakMoment?: boolean;
 }
 
-/** Each result is a badge with its own colour, a coloured strip with its name and an icon, like a lesson-complete
- *  screen. Badges are celebration, not controls: flat colour and a border, never the clay lip. */
-const BADGE = [
-  {
-    band: "bg-reward",
-    edge: "border-reward",
-    number: "text-reward-deep",
-    icon: "/cat/fish.png",
-  },
-  {
-    band: "bg-primary",
-    edge: "border-primary",
-    number: "text-lip",
-    icon: "/cat/bowl-full.png",
-  },
-  { band: "bg-sky", edge: "border-sky", number: "text-sky-deep", icon: null },
-];
+/** Each result is a badge like a lesson-complete screen: a honey strip with its name, an icon and the number. One colour
+ *  for all of them, the reward colour that progress uses everywhere (green is kept for things you press) (reviewer, user
+ *  2026-10-19: three colours read as three kinds of thing). The icon says which: a full bowl for days in a row, the flag
+ *  for the road, a fish for every one done. Badges are celebration, not controls: a border, never the clay lip. */
+const ICON: Record<string, string | null> = {
+  Streak: "/cat/bowl-full.png",
+  "So far": null,
+  "All time": "/cat/fish.png",
+};
 
 function Flag() {
   return (
@@ -68,7 +60,7 @@ function Flag() {
 /** One badge: it bounces in after the one before it and its number counts up. */
 function Badge({ stat, index }: { stat: DoneStat; index: number }) {
   const shown = useCountUp(stat.value, 500 + index * 220);
-  const look = BADGE[index];
+  const icon = ICON[stat.label] ?? null;
   const suffix = stat.unit
     ? shown === 1
       ? stat.unit.one
@@ -76,24 +68,22 @@ function Badge({ stat, index }: { stat: DoneStat; index: number }) {
     : stat.suffix;
   return (
     <li
-      className={`badge-in flex flex-1 flex-col overflow-hidden rounded-2xl border-2 bg-surface ${look.edge}`}
+      className="badge-in flex flex-1 flex-col overflow-hidden rounded-2xl border-2 border-reward bg-surface"
       style={{ ["--delay" as string]: `${0.35 + index * 0.22}s` }}
     >
-      <span
-        className={`px-1 py-1 text-center font-display text-sm font-semibold text-ink ${look.band}`}
-      >
+      <span className="bg-reward px-1 py-1 text-center font-display text-sm font-semibold text-ink">
         {stat.label}
       </span>
       <span className="flex items-center justify-center gap-1 whitespace-nowrap px-1 py-3">
-        {look.icon ? (
+        {icon ? (
           // eslint-disable-next-line @next/next/no-img-element -- a small decorative icon
-          <img src={look.icon} alt="" aria-hidden="true" className="w-6" />
+          <img src={icon} alt="" aria-hidden="true" className="w-6" />
         ) : (
           <Flag />
         )}
         <span
           aria-hidden="true"
-          className={`font-display text-xl font-bold tabular-nums ${look.number}`}
+          className="font-display text-xl font-bold tabular-nums text-reward-deep"
         >
           {shown}
           {suffix}
@@ -180,7 +170,7 @@ function Confetti() {
   );
 }
 
-/** What comes after: the next goal, or back to Titi's room, and the nudge question when it is due. */
+/** What comes after: the next goal, or back to Today, and the nudge question when it is due. */
 function Onward({
   next,
   onStartNext,
@@ -189,6 +179,8 @@ function Onward({
 }: Pick<Props, "next" | "onStartNext" | "onContinue" | "prompt">) {
   return (
     <>
+      {/* The question comes before the way out, so it is seen before you leave (reviewer, user 2026-10-19) */}
+      {prompt && <div className="mt-8 w-full text-left">{prompt}</div>}
       <div className="mt-8 flex w-full flex-col items-center gap-3">
         {next ? (
           <>
@@ -201,11 +193,10 @@ function Onward({
           </>
         ) : (
           <Button size="lg" onClick={onContinue} className="w-full">
-            Back to Titi&apos;s room
+            Back to Today
           </Button>
         )}
       </div>
-      {prompt && <div className="mt-6 w-full text-left">{prompt}</div>}
     </>
   );
 }
@@ -264,7 +255,8 @@ function StreakMoment({
 
 /** The reward when today's number is reached, like a lesson-complete screen: light rays and Titi jumping for joy, a
  *  shower of fish once, what you did in words, three badges that bounce in and count up. On the first finish of the
- *  day "Continue" leads to the streak's own moment; otherwise the next step is right here. */
+ *  day "See my streak" leads to the streak's own moment; otherwise the next step is right here. Buttons say where they
+ *  go: "See my streak", "Back to Today" (the navigation's name for it), not "Continue" or "Titi's room". */
 export function DoneToday({
   prompt,
   goal,
@@ -339,7 +331,7 @@ export function DoneToday({
             onClick={() => setStage("streak")}
             className="w-full"
           >
-            Continue
+            See my streak
           </Button>
         </div>
       ) : (

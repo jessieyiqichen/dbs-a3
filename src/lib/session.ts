@@ -30,16 +30,15 @@ export interface DoneStat {
 }
 
 /** The three numbers on the done screen: today's fish, the streak, and how far the whole goal has come. */
-export function doneStats(goal: Goal, { doneToday, doneTotal, streakDays }: { doneToday: number; doneTotal: number; streakDays: number }): DoneStat[] {
+/** The cards under "Done for today!". Today's count is already in the line above them, so the cards add what it does
+ *  not say: the streak, and how far the whole goal has come, in words ("56 of 150", not "Road to 150 37%") (reviewer,
+ *  user 2026-10-19). `doneToday` stays in the signature for the callers. */
+export function doneStats(goal: Goal, { doneTotal, streakDays }: { doneToday: number; doneTotal: number; streakDays: number }): DoneStat[] {
   const road =
     goal.type === "by-date"
-      ? { label: `Road to ${goal.target}`, value: Math.min(100, Math.round((doneTotal / Math.max(goal.target, 1)) * 100)), suffix: "%" }
+      ? { label: "So far", value: doneTotal, suffix: ` of ${goal.target}` }
       : { label: "All time", value: doneTotal, suffix: "" };
-  return [
-    { label: "Done today", value: doneToday, suffix: "" },
-    { label: "Streak", value: streakDays, suffix: "", unit: { one: " day", many: " days" } },
-    road,
-  ];
+  return [{ label: "Streak", value: streakDays, suffix: "", unit: { one: " day", many: " days" } }, road];
 }
 
 const MILESTONES: [number, string][] = [
