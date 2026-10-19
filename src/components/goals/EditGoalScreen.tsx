@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
+import { RemoveGoalButton } from "@/components/progress/GoalActions";
 import { CatArt } from "@/components/today/CatArt";
 import { ButtonLink } from "@/components/ui/Button";
 import { StorageNotice } from "@/components/ui/StorageNotice";
@@ -54,6 +55,7 @@ export function EditGoalScreen({
     <div>
       <GoalSetup
         header={header}
+        after={<RemoveGoalButton goalId={goal.id} />}
         aside={
           <div className="flex flex-col items-center gap-3">
             <CatArt mood="idle" className="w-60" />

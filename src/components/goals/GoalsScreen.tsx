@@ -19,7 +19,7 @@ import { GoalCard } from "./GoalCard";
 const HEADER = (
   <PageHeader
     title="Your goals"
-    intro="Tap one to see how it's going"
+    intro="Tap one to see progress, edit or remove"
     back={null}
   />
 );

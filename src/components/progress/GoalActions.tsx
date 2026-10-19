@@ -59,22 +59,27 @@ export function GoalActions({
             Take a break
           </Button>
         )}
-        {inline && (
-          <Button variant="ghost" className="ml-auto" onClick={remove}>
-            Remove goal
-          </Button>
-        )}
+        {/* In the same row as Edit and Take a break, a real button in the warning colour, so it is found where the other
+            things you can do with the goal are (user, 2026-10-19: removing a goal was too hard to find). Undo on Goals,
+            so no "are you sure" */}
+        <Button
+          variant="secondary"
+          className={`text-danger! ${inline ? "ml-auto" : ""}`}
+          onClick={remove}
+        >
+          Remove goal
+        </Button>
       </div>
       {pause && (
         <p className="text-sm font-bold text-muted">
           Taking a break until {formatShortDate(pause.to)}, no nudges and
-          nothing counts as behind~
+          nothing counts as behind
         </p>
       )}
       {pausing && !pause && (
         <div className="flex flex-col gap-3 px-1 py-2">
           <p className="font-bold text-ink">
-            How long? No nudges, and it won&apos;t count as falling behind~
+            How long? No nudges, and it won&apos;t count as falling behind
           </p>
           <div className="flex flex-wrap gap-2">
             {PAUSE_OPTIONS.map((o) => (
@@ -95,14 +100,31 @@ export function GoalActions({
           </div>
         </div>
       )}
-      {/* Kept apart from Edit and Take a break, at the bottom (of the side panel on a desktop), so it is hard to tap by mistake */}
-      {!inline && (
-        <div className="mt-6 border-t-2 border-wash-strong pt-4 lg:mt-auto">
-          <Button variant="ghost" onClick={remove}>
-            Remove goal
-          </Button>
-        </div>
-      )}
     </section>
+  );
+}
+
+/** Remove a goal from anywhere it can be changed (its progress page, and the bottom of Edit goal): right away, then Goals
+ *  offers Undo, so no "are you sure" (user, 2026-10-19: removing was hard to find). */
+export function RemoveGoalButton({
+  goalId,
+  className = "",
+}: {
+  goalId: string;
+  className?: string;
+}) {
+  const router = useRouter();
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      className={className}
+      onClick={() => {
+        stashRemoved(deleteGoal(goalId));
+        router.push("/goals");
+      }}
+    >
+      Remove goal
+    </Button>
   );
 }

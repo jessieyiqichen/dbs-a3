@@ -51,6 +51,8 @@ interface GoalSetupProps {
   submitHint?: string;
   onSubmit: (values: GoalValues) => void;
   footer?: ReactNode;
+  /** Under the button, apart from it (Remove goal on Edit goal); after Save in reading and tab order. */
+  after?: ReactNode;
   /** On a desktop: the page heading at the top of the form column. */
   header?: ReactNode;
   /** On a desktop: Titi and a short note in the right column, above the live sentence and the button. */
@@ -69,6 +71,7 @@ export function GoalSetup({
   submitHint,
   onSubmit,
   footer,
+  after,
   header,
   aside,
 }: GoalSetupProps) {
@@ -256,6 +259,11 @@ export function GoalSetup({
         <div className="flex flex-col gap-2 lg:hidden">
           {button}
           {submitHint && <p className="text-sm text-muted">{submitHint}</p>}
+          {after && (
+            <div className="mt-6 border-t-2 border-wash-strong pt-4">
+              {after}
+            </div>
+          )}
         </div>
         {footer}
       </div>
@@ -265,6 +273,11 @@ export function GoalSetup({
         <div className="mt-2 flex flex-col gap-2">
           {button}
           {submitHint && <p className="text-sm text-muted">{submitHint}</p>}
+          {after && (
+            <div className="mt-4 border-t-2 border-wash-strong pt-3">
+              {after}
+            </div>
+          )}
         </div>
       </div>
     </form>
