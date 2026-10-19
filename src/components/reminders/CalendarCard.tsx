@@ -33,8 +33,8 @@ export function CalendarCard({ times }: { times: string[] }) {
         Rings at {spoken(times)}, even when Nudge is closed
       </p>
       <p className="text-sm font-bold text-muted">
-        It can&apos;t see what you&apos;ve done, so ignore it once you&apos;re
-        finished
+        It covers the next {CALENDAR_DAYS} days and can&apos;t see what
+        you&apos;ve done, so ignore it once you&apos;re finished
       </p>
       <Button
         onClick={() => setUntil(addToCalendar(times))}

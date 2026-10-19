@@ -16,7 +16,7 @@ export function Diary({ weeks, target, unit }: { weeks: BowlDay[][]; target: num
           </ol>
         </div>
       ))}
-      <figcaption className="text-center text-sm font-bold text-muted lg:px-1 lg:text-left">A heaped bowl is a day with all {target} {unit}</figcaption>
+      <figcaption className="text-center text-sm font-bold text-muted lg:px-1 lg:text-left">A heaped bowl is a day with all {target} {unit}, and any fish keeps the streak</figcaption>
     </figure>
   );
 }

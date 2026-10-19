@@ -149,7 +149,8 @@ export function ProgressScreen({
           )}
           <span>
             {where} · {days}
-            {lastRest && ` · ${formatShortDate(lastRest)} was a rest day`}
+            {lastRest &&
+              ` · ${formatShortDate(lastRest)} was your free rest day, one a week`}
           </span>
         </p>
         <div className="mt-6">
@@ -206,7 +207,7 @@ export function ProgressScreen({
           {lastRest && (
             <span className="font-sans text-sm font-bold text-muted">
               {" "}
-              · {formatShortDate(lastRest)} was a rest day
+              · {formatShortDate(lastRest)} was your free rest day, one a week
             </span>
           )}
         </p>

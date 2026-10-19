@@ -7,7 +7,8 @@ import { CatArt } from "@/components/today/CatArt";
 import { ButtonLink } from "@/components/ui/Button";
 import { StorageNotice } from "@/components/ui/StorageNotice";
 import { updateGoal } from "@/lib/actions";
-import { useStore } from "@/lib/store";
+import { toISODate } from "@/lib/dates";
+import { stashNotice, useStore } from "@/lib/store";
 import { draftFromGoal, GoalSetup } from "./GoalSetup";
 
 /** Editing a goal. The page heading comes in as `header` so it can sit in the form's own grid on a desktop. */
@@ -68,7 +69,9 @@ export function EditGoalScreen({
         fields="full"
         submitLabel="Save changes"
         onSubmit={(values) => {
-          updateGoal(goal.id, values);
+          updateGoal(goal.id, values, toISODate(new Date()));
+          // Back on the progress page a toast says it took (first-run check 2: no confirmation after saving)
+          stashNotice("Saved changes");
           router.push(`/goals/${goal.id}`);
         }}
       />

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { ScreenHeading } from "@/components/ui/ScreenHeading";
 import { levelFor, nudgeLine, sleepTalk } from "@/lib/nudges";
-import { headline } from "@/lib/phrases";
+import { countOf, headline } from "@/lib/phrases";
 import type { TodayPlan } from "@/lib/quota";
 import type { BowlDay } from "@/lib/scene";
 import type { Goal } from "@/lib/types";
@@ -101,7 +101,7 @@ function Road({ goal, plan }: { goal: Goal; plan: TodayPlan }) {
         className={`${card} justify-center font-bold text-muted`}
       >
         {/* Says where it goes: Titi's diary of this goal (user, 2026-10-18: "N all time" did not say it opens a page) */}
-        Titi&apos;s diary, {plan.doneTotal} so far{" "}
+        Titi&apos;s diary, {countOf(plan.doneTotal, goal.unit)} so far{" "}
         <span aria-hidden="true">→</span>
       </Link>
     );

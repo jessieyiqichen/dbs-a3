@@ -86,13 +86,16 @@ export function GoalsScreen({ selected, fromToday = false }: Props) {
           ))}
         </ul>
       )}
-      <ButtonLink
-        href="/goals/new"
-        variant="secondary"
-        className="mt-5 self-start"
-      >
-        + Add a goal
-      </ButtonLink>
+      {/* With no goals the empty state already has "Add a goal"; a second add button looked like a bug (first-run check 2) */}
+      {data.goals.length > 0 && (
+        <ButtonLink
+          href="/goals/new"
+          variant="secondary"
+          className="mt-5 self-start"
+        >
+          + Add a goal
+        </ButtonLink>
+      )}
     </>
   );
   // Settings, apart from the goals and under them: when to nudge, and the backup, as two rows of one kind (user,

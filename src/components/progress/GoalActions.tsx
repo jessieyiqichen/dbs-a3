@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { deleteGoal, pauseGoal, resumeGoal } from "@/lib/actions";
 import { formatShortDate } from "@/lib/dates";
@@ -27,6 +27,16 @@ export function GoalActions({
 }) {
   const router = useRouter();
   const [pausing, setPausing] = useState(false);
+  // The break lengths open under the buttons, often below a phone screen, so they are brought into view and focus
+  // moves to the first one (first-run check 2: "Take a break" seemed to do nothing)
+  const options = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!pausing) return;
+    const box = options.current;
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    box?.scrollIntoView({ block: "nearest", behavior: still ? "auto" : "smooth" });
+    box?.querySelector<HTMLElement>("button")?.focus({ preventScroll: true });
+  }, [pausing]);
   const pause = goal.pauses.find((p) => p.from <= today && today <= p.to);
 
   function remove() {
@@ -77,7 +87,7 @@ export function GoalActions({
         </p>
       )}
       {pausing && !pause && (
-        <div className="flex flex-col gap-3 px-1 py-2">
+        <div ref={options} className="flex scroll-mb-6 flex-col gap-3 px-1 py-2">
           <p className="font-bold text-ink">
             How long? No nudges, and it won&apos;t count as falling behind
           </p>

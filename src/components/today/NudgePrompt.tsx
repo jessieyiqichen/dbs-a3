@@ -73,7 +73,7 @@ export function NudgePrompt({ times, onActed, today, compact = false }: Props) {
                 setCalendarUntil(addToCalendar(times));
               }}
             >
-              Add to calendar
+              Get calendar file
             </Button>
           )}
           <Button variant="ghost" className="whitespace-nowrap px-2" onClick={notNow}>
@@ -103,7 +103,7 @@ export function NudgePrompt({ times, onActed, today, compact = false }: Props) {
             setCalendarUntil(addToCalendar(times));
           }}
         >
-          Add to calendar
+          Get calendar file
         </Button>
         {permission !== "unsupported" &&
           !(asked && permission === "granted") && (

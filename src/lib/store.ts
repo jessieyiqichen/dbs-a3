@@ -106,6 +106,24 @@ export function useRemoved(): Removed | null {
   );
 }
 
+/** A one-line confirmation carried to the next page ("Saved changes" after Edit goal), shown there in a toast. */
+let notice: string | null = null;
+const noticeListeners = new Set<() => void>();
+export function stashNotice(text: string | null): void {
+  notice = text;
+  noticeListeners.forEach((l) => l());
+}
+export function useNotice(): string | null {
+  return useSyncExternalStore(
+    (l) => {
+      noticeListeners.add(l);
+      return () => noticeListeners.delete(l);
+    },
+    () => notice,
+    () => null,
+  );
+}
+
 /** The latest data, for timers that fire outside React. */
 export function currentData(): AppData | null {
   const state = read();
