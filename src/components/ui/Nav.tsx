@@ -20,7 +20,7 @@ function isCurrent({ href, also }: (typeof LINKS)[number], pathname: string | nu
 export function NavLinks({ pathname }: { pathname: string | null }) {
   return (
     <nav aria-label="Main">
-      <ul className="flex gap-1">
+      <ul className="flex gap-1 lg:gap-2">
         {LINKS.map((link) => {
           const { href, label } = link;
           const current = isCurrent(link, pathname);
@@ -30,7 +30,8 @@ export function NavLinks({ pathname }: { pathname: string | null }) {
                 href={href}
                 aria-current={current ? "page" : undefined}
                 className={
-                  "inline-flex min-h-11 items-center rounded-lg px-3 font-semibold focus-visible:outline-3 focus-visible:outline-focus " +
+                  // A size up on a desktop, so the navigation reads at the scale of the 48px headings under it (user, 2026-10-19)
+                  "inline-flex min-h-11 items-center rounded-lg px-3 font-semibold focus-visible:outline-3 focus-visible:outline-focus lg:min-h-12 lg:rounded-xl lg:px-5 lg:text-xl " +
                   (current ? "bg-wash text-ink underline decoration-2 underline-offset-4" : "text-muted hover:text-ink")
                 }
               >
