@@ -17,6 +17,13 @@ describe("roadStory: where Titi stands on the road", () => {
     expect(s.ahead).toBe(true);
   });
 
+  it("knows where Titi started today, so she can walk from there to where today's logs took her", () => {
+    const s = roadStory(road, [on("2026-10-13", 20), on("2026-10-17", 15), on("2026-10-17", 5)], "2026-10-17");
+    expect(s.from).toBeCloseTo(0.2, 2);
+    expect(s.at).toBeCloseTo(0.4, 2);
+    expect(roadStory(road, [on("2026-10-13", 20)], "2026-10-17").from).toBeCloseTo(0.2, 2);
+  });
+
   it("never goes past the end of the road", () => {
     expect(roadStory(road, [on("2026-10-13", 140)], "2026-10-17").at).toBe(1);
   });

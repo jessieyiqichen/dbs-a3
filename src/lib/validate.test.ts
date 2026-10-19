@@ -61,7 +61,7 @@ describe("validateGoal", () => {
     const result = validateGoal({ ...draft, verb: " ", target: "lots", deadline: "2026-10-17", link: "linkedin.com" }, today);
     expect(result.errors).toEqual({
       verb: 'Enter what you\'ll do, like "Send" or "Practice"',
-      target: "Enter a whole number, like 500",
+      target: "Enter a whole number, like 100",
       deadline: "Pick a date after today",
       link: "Paste a full link that starts with https://",
     });

@@ -8,6 +8,8 @@ export interface RoadStory {
   done: number;
   /** 0 to 1 along the road. */
   at: number;
+  /** Where she stood before today's logs, 0 to 1: she walks from here to `at` when the road opens. */
+  from: number;
   /** Where the even plan says you'd be by today, 0 to 1. */
   pace: number;
   ahead: boolean;
@@ -24,9 +26,11 @@ export function roadStory(goal: Goal, entries: Entry[], today: string): RoadStor
   const planned = yesterday < goal.startDate ? 0 : (plan.find((p) => p.date === yesterday)?.value ?? plan[plan.length - 1]?.value ?? 0);
   const target = Math.max(goal.target, 1);
   const at = Math.min(done / target, 1);
+  const todays = entries.filter((e) => e.goalId === goal.id && e.date === today).reduce((sum, e) => sum + e.amount, 0);
   return {
     done,
     at,
+    from: Math.min(Math.max(done - todays, 0) / target, at),
     pace: Math.min(planned / target, 1),
     ahead: done >= planned,
     milestones: MILESTONES.map((m) => ({ at: m, reached: at >= m })),

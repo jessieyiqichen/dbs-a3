@@ -26,7 +26,7 @@ export function GoalActions({ goal, today }: { goal: Goal; today: string }) {
   }
 
   return (
-    <section aria-label="This goal" className="flex flex-col gap-3">
+    <section aria-label="This goal" className="flex flex-col gap-3 lg:h-full">
       <div className="flex flex-wrap gap-3">
         <ButtonLink href={`/goals/${goal.id}/edit`} variant="secondary">Edit goal</ButtonLink>
         {pause ? (
@@ -47,8 +47,8 @@ export function GoalActions({ goal, today }: { goal: Goal; today: string }) {
           </div>
         </div>
       )}
-      {/* Kept apart from Edit and Take a break, at the bottom, so it is hard to tap by mistake */}
-      <div className="mt-6 border-t-2 border-wash-strong pt-4">
+      {/* Kept apart from Edit and Take a break, at the bottom (of the side panel on a desktop), so it is hard to tap by mistake */}
+      <div className="mt-6 border-t-2 border-wash-strong pt-4 lg:mt-auto">
         <Button variant="ghost" onClick={remove}>Remove goal</Button>
       </div>
     </section>

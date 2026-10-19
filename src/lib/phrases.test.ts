@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { goalSentence, headline, quickAmounts, singular } from "./phrases";
+import { didOne, goalSentence, headline, quickAmounts, singular } from "./phrases";
 
 describe("singular", () => {
   it("makes the counted noun singular", () => {
@@ -55,5 +55,20 @@ describe("quickAmounts", () => {
 
   it("offers small steps when nothing is left today", () => {
     expect(quickAmounts(0)).toEqual([1, 2, 5]);
+  });
+});
+
+describe("didOne: the one button that logs, in the task's own words", () => {
+  it("puts the goal's verb in the past", () => {
+    expect(didOne("Send")).toBe("I sent one");
+    expect(didOne("Message")).toBe("I messaged one");
+    expect(didOne("Practice")).toBe("I practiced one");
+    expect(didOne("Write")).toBe("I wrote one");
+    expect(didOne("Apply")).toBe("I applied to one");
+  });
+
+  it("falls back to plain words for a verb it does not know, or none", () => {
+    expect(didOne("Juggle")).toBe("I did one");
+    expect(didOne("")).toBe("I did one");
   });
 });

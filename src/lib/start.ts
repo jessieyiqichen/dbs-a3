@@ -20,7 +20,7 @@ export function hostOf(link: string | null): string | null {
   }
 }
 
-const SITE_NAMES: Record<string, string> = { "linkedin.com": "LinkedIn", "leetcode.com": "LeetCode", "github.com": "GitHub" };
+const SITE_NAMES: Record<string, string> = { "linkedin.com": "LinkedIn", "leetcode.com": "LeetCode", "github.com": "GitHub", "app.joinhandshake.com": "Handshake", "joinhandshake.com": "Handshake", "indeed.com": "Indeed" };
 
 /** "LinkedIn" for linkedin.com; otherwise the first part of the host, capitalized. */
 export function siteName(link: string | null): string | null {

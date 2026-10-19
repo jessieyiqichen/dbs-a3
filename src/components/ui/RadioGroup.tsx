@@ -15,11 +15,11 @@ interface RadioGroupProps<T extends string> {
 export function RadioGroup<T extends string>({ name, legend, options, value, onChange }: RadioGroupProps<T>) {
   return (
     <fieldset className="flex flex-col gap-2">
-      <legend className="t-body mb-2 font-extrabold text-ink">{legend}</legend>
+      <legend className="mb-2 font-semibold text-ink">{legend}</legend>
       {options.map((option) => (
         <label
           key={option.value}
-          className="clay clay-press flex min-h-12 cursor-pointer items-center gap-3 rounded-card bg-surface px-4 font-sans font-extrabold hover:bg-wash has-checked:bg-primary-soft has-checked:[--lip:var(--color-lip)]"
+          className="clay clay-press flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl bg-surface px-4 font-display font-semibold has-checked:bg-primary-soft has-checked:[--lip:var(--color-lip)]"
         >
           <input
             type="radio"

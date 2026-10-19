@@ -1,103 +1,209 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { CatArt } from "@/components/today/CatArt";
+import { Button } from "@/components/ui/Button";
+import { Field, TextInput } from "@/components/ui/Field";
+import { ScreenHeading } from "@/components/ui/ScreenHeading";
 import { addGoal } from "@/lib/actions";
-import { formatShortDate, toISODate } from "@/lib/dates";
-import { perDayFor, splitAction } from "@/lib/onboarding";
+import { addDays, formatShortDate, toISODate } from "@/lib/dates";
+import { countOf, headline } from "@/lib/phrases";
+import { FIRST_PICKS, resolveSetup, type Picks, type Resolved } from "@/lib/quickSetup";
 import { startGoal } from "@/lib/start";
 import { STARTERS } from "@/lib/starters";
-import { DEFAULT_UNIT, validateGoal, type GoalValues } from "@/lib/validate";
-import { PlanStep } from "./PlanStep";
-import { SetupFrame } from "./SetupFrame";
-import { AmountStep, DateStep, LinkStep, OftenStep, PickStep, WhatStep, type Answers } from "./Steps";
-
-type Step = "pick" | "what" | "often" | "date" | "amount" | "link" | "plan";
-
-const BLANK: Answers = { starterKey: null, label: "", verb: "", unit: "", type: "daily", deadline: "", amount: 0, link: "" };
-
-/** Only the questions this person needs: your own goal asks what and how often; a daily goal skips the date. Everyone is
- *  asked which page they will work on (a preset may suggest one, kept or cleared here; user, 2026-10-18). */
-function pathFor(a: Answers, picked: boolean): Step[] {
-  const own = picked && a.starterKey === null;
-  const date: Step[] = a.type === "by-date" ? ["date"] : [];
-  return ["pick", ...(own ? (["what", "often"] as Step[]) : []), ...date, "amount", "link", "plan"];
-}
-
-function goalFrom(a: Answers, today: string): GoalValues | null {
-  const { verb, unit } = a.starterKey ? a : splitAction(a.label);
-  return validateGoal({ verb, unit, type: a.type, target: String(a.amount), deadline: a.deadline, link: a.link }, today).value;
-}
-
-function startAnswers(starterKey: string | null): Answers {
-  const s = STARTERS.find((x) => x.key === starterKey);
-  return s ? { ...BLANK, starterKey: s.key, label: s.label, verb: s.verb, unit: s.unit, type: s.type, link: s.link ?? "" } : BLANK;
-}
-
-function questionFor(step: Step, a: Answers, unit: string, firstVisit: boolean): string {
-  const named = a.label.charAt(0).toUpperCase() + a.label.slice(1);
-  if (step === "what") return "Something else? Tell me what it is";
-  if (step === "often") return "How often do you want to do it?";
-  if (step === "date") return `${named}, nice! When do you want to get there?`;
-  if (step === "amount") return a.type === "daily" ? `How many ${unit} a day?` : `How many ${unit} by ${formatShortDate(a.deadline)}?`;
-  if (step === "link") return "Is there a page you'll work on?";
-  return firstVisit ? "Hi, I'm Titi! What have you been putting off?" : "What else have you been putting off?";
-}
+import { Pills } from "./Pills";
 
 interface Props {
-  /** The very first visit: Titi introduces herself and the last step says "my first one". */
+  /** The very first visit: Titi waves and introduces herself, and the button says "my first one". */
   firstVisit?: boolean;
-  /** Back from the first question (adding a goal later). */
+  /** Back to Goals (adding a goal later). */
   onCancel?: () => void;
   /** After the goal is saved and started. */
   onStarted?: () => void;
 }
 
-/** Titi asks one thing per screen, every answer is a tap, and the last screen starts the first task. Used on the
- *  first visit and whenever a goal is added, so a goal is always made the same way. */
+type Set = (p: Partial<Picks>) => void;
+
+const WHAT = [
+  ...STARTERS.map((s) => ({ value: s.key, label: s.label })),
+  { value: "own", label: "Something else", hint: "Type your goal in the field below" },
+];
+
+/** On a phone the result bar is pinned over the foot of the screen; its height is kept here so the page can leave room
+ *  for it and a field scrolled into view stops above it (reviewer, 2026-10-18: an error sat under the bar). */
+const BAR_VAR = "--setup-bar";
+const ROOM = "scroll-mb-[calc(var(--setup-bar,10rem)+1rem)] lg:scroll-mb-4";
+
+function scrollToField(el: Element | null) {
+  const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  el?.scrollIntoView({ block: "nearest", behavior: still ? "auto" : "smooth" });
+}
+
+/** A field that appears after a choice (My own, Pick a date, Something else): it scrolls itself into view above the
+ *  bar, while focus stays on the choice, so arrowing through the choices never pulls the keyboard out of them. */
+function Reveal({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => scrollToField(ref.current), []);
+  return (
+    <div ref={ref} data-field className={ROOM}>
+      {children}
+    </div>
+  );
+}
+const OFTEN = [
+  { value: "daily", label: "Every day" },
+  { value: "by-date", label: "A total by a date" },
+];
+
+/** Titi's question. The first visit does not move focus, so it starts at the skip link as usual. */
+function Hello({ firstVisit }: { firstVisit: boolean }) {
+  const heading = "font-display text-xl font-semibold leading-snug text-ink";
+  const question = firstVisit ? "Hi, I'm Titi! What have you been putting off?" : "What else have you been putting off?";
+  return (
+    <div className="flex items-end gap-2">
+      <CatArt mood={firstVisit ? "wave" : "idle"} className="w-24 shrink-0" />
+      <div className="flat mb-6 rounded-2xl rounded-bl-sm bg-surface px-4 py-3">
+        {firstVisit ? (
+          <h1 id="setup-title" className={heading}>{question}</h1>
+        ) : (
+          <ScreenHeading id="setup-title" className={heading}>{question}</ScreenHeading>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** Today's number in one sentence and the one button, updating with every tap. On a phone it stays pinned to the foot
+ *  of the screen, so the number and Start are on the first screen whatever is picked above; on a desktop it is the
+ *  right-hand column, with the whole goal and the no-sign-up note under it. */
+function Result({ r, firstVisit, onStart }: { r: Resolved; firstVisit: boolean; onStart: () => void }) {
+  const bar = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = bar.current;
+    if (!el) return;
+    const root = document.documentElement;
+    const watch = new ResizeObserver(() => root.style.setProperty(BAR_VAR, `${el.offsetHeight}px`));
+    watch.observe(el);
+    return () => {
+      watch.disconnect();
+      root.style.removeProperty(BAR_VAR);
+    };
+  }, []);
+  const line = r.goal && r.perDay ? `${headline(r.verb, r.perDay, r.unit)} today` : "Tell Titi a little more to see today's number";
+  const whole = r.goal ? `${countOf(r.goal.target, r.goal.unit)} ${r.goal.deadline ? `by ${formatShortDate(r.goal.deadline)}` : "every day"}` : null;
+  return (
+    <div ref={bar} className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-hairline bg-page/95 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-sm lg:sticky lg:top-6 lg:inset-auto lg:z-auto lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+      <div className="mx-auto flex max-w-xl flex-col gap-2 lg:gap-3">
+        <p aria-live="polite" className="font-display text-2xl font-bold leading-tight text-ink [text-wrap:balance] lg:text-3xl">{line}</p>
+        {whole && <p className="hidden text-sm font-bold text-muted lg:block">{whole}, you can change it anytime in Goals</p>}
+        <Button size="lg" className="w-full lg:mt-2" onClick={onStart}>{firstVisit ? "Start my first one" : "Start the first one"}</Button>
+        <p className="hidden text-sm text-muted lg:block">Saved on this device, no sign-up needed</p>
+      </div>
+    </div>
+  );
+}
+
+/** Where job applications are made: a few recruiting sites, or none; the session's "Open" button goes there. */
+function Where({ r, set }: { r: Resolved; set: Set }) {
+  const options = r.sites.map((x) => ({ value: x.key, label: x.label }));
+  return <Pills name="site" legend="Where do you apply?" options={options} value={r.site} onChange={(v) => set({ site: v })} />;
+}
+
+/** The goal's own words and how often, when it is something else. */
+function OwnGoal({ picks, set, error }: { picks: Picks; set: Set; error?: string }) {
+  return (
+    <div className="flex flex-col gap-4">
+      <Reveal>
+        <Field id="setup-what" label="What will you do?" hint='Like "Send cold emails" or "Practice LeetCode problems"' error={error}>
+          {(c) => <TextInput {...c} value={picks.ownText} autoComplete="off" onChange={(e) => set({ ownText: e.target.value })} />}
+        </Field>
+      </Reveal>
+      <Pills name="often" legend="How often?" options={OFTEN} value={picks.ownType} onChange={(v) => set({ ownType: v as Picks["ownType"] })} />
+    </div>
+  );
+}
+
+/** Finish by: two weeks, a month, Thanksgiving, or a date you pick. */
+function When({ picks, r, set, today, error }: { picks: Picks; r: Resolved; set: Set; today: string; error?: string }) {
+  const options = [...r.dates.map((d) => ({ value: d.key, label: d.label, detail: formatShortDate(d.date) })), { value: "pick", label: "Pick a date", hint: "Pick the date in the field below" }];
+  return (
+    <div className="flex flex-col gap-3">
+      <Pills name="when" legend="By when?" options={options} value={picks.when} onChange={(v) => set({ when: v })} />
+      {picks.when === "pick" && (
+        <Reveal>
+          <Field id="setup-date" label="Finish by" error={error}>
+            {(c) => <TextInput {...c} type="date" min={addDays(today, 1)} value={picks.pickedDate} onChange={(e) => set({ pickedDate: e.target.value })} className="w-48" />}
+          </Field>
+        </Reveal>
+      )}
+    </div>
+  );
+}
+
+/** How many: three suggestions, a by-date total showing its day's number too, or a number of your own. */
+function HowMany({ picks, r, set, error }: { picks: Picks; r: Resolved; set: Set; error?: string }) {
+  const daily = r.type === "daily";
+  const tiers = r.tiers.map((t, i) => ({ value: String(i), label: `${t.label}, ${t.amount}`, detail: daily ? undefined : `${t.perDay} a day` }));
+  return (
+    <div className="flex flex-col gap-3">
+      <Pills
+        name="tier"
+        legend={daily ? `How many ${r.unit || "times"} a day?` : `How many ${r.unit || "times"} in total?`}
+        options={[...tiers, { value: "own", label: "My own", hint: "Type your number in the field below" }]}
+        value={String(picks.tier)}
+        onChange={(v) => set({ tier: v === "own" ? "own" : Number(v) })}
+      />
+      {picks.tier === "own" && (
+        <Reveal>
+          <Field id="setup-amount" label={daily ? "How many each day?" : "How many in total?"} error={error}>
+            {(c) => <TextInput {...c} inputMode="numeric" autoComplete="off" value={picks.ownAmount} onChange={(e) => set({ ownAmount: e.target.value })} className="w-32" />}
+          </Field>
+        </Reveal>
+      )}
+    </div>
+  );
+}
+
+/** The first visit, and adding a goal later, on one screen (user, 2026-10-18, after the teacher's "the page is the
+ *  onboarding"): Titi asks, three rows of one-tap answers come already picked, and today's number is right there with
+ *  the button to start. On a desktop the answers sit on the left and today's number stays in view on the right. */
 export function GoalWizard({ firstVisit = false, onCancel, onStarted }: Props) {
   const today = toISODate(new Date());
-  const [step, setStep] = useState<Step>("pick");
-  const [answers, setAnswers] = useState<Answers>(BLANK);
-  const [typing, setTyping] = useState(false);
-  const [moved, setMoved] = useState(false);
-  const path = pathFor(answers, step !== "pick");
-  const index = path.indexOf(step);
-  const unit = (answers.starterKey ? answers.unit : splitAction(answers.label).unit) || DEFAULT_UNIT;
-
-  const go = (next: Answers, to: Step) => {
-    setAnswers(next);
-    setStep(to);
-    setTyping(false);
-    setMoved(true);
+  const [picks, setPicks] = useState<Picks>(FIRST_PICKS);
+  const [tried, setTried] = useState(false);
+  const r = resolveSetup(picks, today);
+  const errors = tried ? r.errors : {};
+  const set: Set = (p) => setPicks((prev) => ({ ...prev, ...p }));
+  const start = () => {
+    if (!r.goal) {
+      setTried(true);
+      const first = r.errors.what ? "setup-what" : r.errors.date ? "setup-date" : "setup-amount";
+      requestAnimationFrame(() => {
+        const field = document.getElementById(first);
+        field?.focus({ preventScroll: true });
+        scrollToField(field?.closest("[data-field]") ?? field);
+      });
+      return;
+    }
+    startGoal(addGoal(r.goal, today));
+    onStarted?.();
   };
-  const answer = (change: Partial<Answers>) => {
-    const next = { ...answers, ...change };
-    const p = pathFor(next, true);
-    go(next, p[p.indexOf(step) + 1]);
-  };
-  const back = () => go(answers, path[index - 1]);
-
-  const goal = step === "plan" ? goalFrom(answers, today) : null;
-  if (goal) {
-    const perDay = perDayFor(goal.type, goal.target, answers.deadline, today);
-    const start = () => {
-      startGoal(addGoal(goal, today));
-      onStarted?.();
-    };
-    return <PlanStep goal={goal} perDay={perDay} firstVisit={firstVisit} onBack={back} onStart={start} />;
-  }
-
-  const shared = { answers, today, typing, onType: () => setTyping(true), onAnswer: answer };
-  const question = questionFor(step, answers, unit, firstVisit);
-  const onBack = index > 0 ? back : onCancel;
   return (
-    <SetupFrame step={index} steps={path.length} question={question} headingId={`setup-${step}`} moveFocus={moved} onBack={onBack}>
-      {step === "pick" && <PickStep firstVisit={firstVisit} onPick={(key) => go(startAnswers(key), pathFor(startAnswers(key), true)[1])} />}
-      {step === "what" && <WhatStep {...shared} />}
-      {step === "often" && <OftenStep {...shared} />}
-      {step === "date" && <DateStep {...shared} />}
-      {step === "amount" && <AmountStep {...shared} question={question} unit={unit} />}
-      {step === "link" && <LinkStep {...shared} />}
-    </SetupFrame>
+    <section aria-labelledby="setup-title" className="flex flex-col pb-[calc(var(--setup-bar,10rem)+1.5rem)] pt-1 lg:grid lg:pb-0 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start lg:gap-x-16">
+      <div className="flex flex-col gap-6">
+        {onCancel && (
+          <button type="button" onClick={onCancel} className="-ml-1 min-h-11 self-start px-1 text-sm font-semibold text-muted underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus">
+            ← Goals
+          </button>
+        )}
+        <Hello firstVisit={firstVisit} />
+        <Pills name="what" legend="What have you been putting off?" hideLegend options={WHAT} value={picks.starter} onChange={(v) => set({ starter: v })} />
+        {picks.starter === "own" && <OwnGoal picks={picks} set={set} error={errors.what} />}
+        {r.sites.length > 0 && <Where r={r} set={set} />}
+        {r.type === "by-date" && <When picks={picks} r={r} set={set} today={today} error={errors.date} />}
+        <HowMany picks={picks} r={r} set={set} error={errors.amount} />
+      </div>
+      <Result r={r} firstVisit={firstVisit} onStart={start} />
+    </section>
   );
 }

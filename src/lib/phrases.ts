@@ -42,3 +42,12 @@ export function quickAmounts(left: number): number[] {
   if (left <= 0) return [1, 2, 5];
   return [...new Set([0.25, 0.5, 0.75, 1].map((f) => Math.max(1, Math.round(left * f))))];
 }
+
+/** The past of the verbs Nudge's goals use; anything else says "I did one". */
+const PAST: Record<string, string> = { send: "sent", message: "messaged", practice: "practiced", write: "wrote", apply: "applied to", make: "made", do: "did", read: "read", call: "called", email: "emailed", submit: "submitted" };
+
+/** "I sent one": the one button that logs, in the task's own words, so it is plain what tapping it means. */
+export function didOne(verb: string): string {
+  const past = PAST[verb.trim().toLowerCase()];
+  return `I ${past ?? "did"} one`;
+}

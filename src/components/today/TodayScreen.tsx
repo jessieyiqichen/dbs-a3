@@ -14,8 +14,8 @@ import { calendarNotice, catchUpLine, sessionIsToday } from "@/lib/returning";
 import { weekBowls } from "@/lib/scene";
 import { overallStreak } from "@/lib/streak";
 import type { AppData, Goal } from "@/lib/types";
-import { weekSummary, welcomeMessage } from "@/lib/welcome";
-import { bowlFill, milestoneLine } from "@/lib/session";
+import { backAfterDays, weekSummary, welcomeMessage } from "@/lib/welcome";
+import { milestoneLine } from "@/lib/session";
 import { RoomSkeleton } from "./Room";
 import { DoneToday } from "./DoneToday";
 import { FirstVisit } from "./FirstVisit";
@@ -110,11 +110,14 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
   const { planned, asking, celebrating } = sessionState(data, picked, justDone, today);
   const [first, ...rest] = planned;
   const begin = (goal: Goal) => {
+    // Follow the goal being started, so its own done screen shows when it is finished
+    setPicked(goal.id);
     startGoal(goal);
     router.push("/session");
   };
   const visit = getVisitStart();
   const welcome = weekSummary(data.goals, data.entries, today, visit.prevVisit) ?? welcomeMessage({ ...visit, today, goals: data.goals, entries: data.entries });
+  const back = backAfterDays({ prevVisit: visit.prevVisit, today, goals: data.goals, entries: data.entries });
   const firstTime = data.entries.length === 0;
   const { nudgesSetUp, nudgePromptDismissed, reminderTimes } = data.settings;
   const showPrompt = !nudgePromptDismissed && (promptPinned || !nudgesSetUp);
@@ -131,7 +134,6 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
             goal={first.goal}
             total={first.plan.quota}
             done={first.plan.doneToday}
-            bowl={bowlFill(first.plan.doneToday, first.plan.quota)}
             firstTime={firstTime}
             onLog={(n) => log(first.goal, n, first.plan.doneToday + n >= first.plan.quota)}
             onOpen={() => first.goal.link && window.open(first.goal.link, "_blank", "noopener,noreferrer")}
@@ -145,8 +147,11 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
             streakDays={run}
             milestone={milestoneLine(first.goal, first.plan.doneTotal, first.plan.doneToday)}
             next={next}
-            onStartNext={() => { setJustDone(null); closeToast(); if (next) startGoal(next); }}
+            onStartNext={() => { setJustDone(null); closeToast(); if (next) { setPicked(next.id); startGoal(next); } }}
             onContinue={() => { setJustDone(null); closeToast(); router.push("/"); }}
+            bowls={weekBowls(data.goals, data.entries, today)}
+            // The streak's own moment only on the day's first finished goal, so later ones are not slowed down
+            streakMoment={rest.every((item) => item.plan.status !== "done" && item.plan.status !== "complete")}
           />
         ) : null /* nothing in progress: the effect above is sending you to Today */
       ) : (
@@ -157,6 +162,7 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
           hour={now.getHours()}
           bowls={weekBowls(data.goals, data.entries, today)}
           welcome={welcome}
+          back={back}
           catchUp={catchUpLine(first.plan)}
           notice={calendarNotice(data.settings.calendarUntil, today)}
           next={next}

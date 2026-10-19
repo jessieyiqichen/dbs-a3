@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Add a goal · Nudge" };
 
 export default function NewGoalPage() {
   return (
-    <AppShell>
+    <AppShell width="wide">
       <NewGoalScreen />
     </AppShell>
   );

@@ -4,26 +4,25 @@ import type { ComponentProps, ReactNode } from "react";
 type Variant = "primary" | "secondary" | "ghost" | "danger" | "choice";
 type Size = "md" | "lg";
 
-/** Buttons are Nunito, extra bold, in a pill: Fredoka is kept for display text (design system, 2026-10-18). */
 const base =
-  "inline-flex items-center justify-center gap-2 font-sans font-extrabold " +
+  "inline-flex items-center justify-center gap-2 rounded-2xl font-display font-semibold " +
   "focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-focus " +
-  "disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none";
+  "disabled:cursor-not-allowed disabled:opacity-50";
 
 /** Clay buttons: the primary one is the only saturated block on the screen and sits on a deep green lip; white
- *  clay for secondary buttons; ghost is an underlined word; a choice is a whole row you tap to answer a question.
- *  Pressing sinks a clay button onto its lip. */
+ *  clay for secondary and choice buttons; ghost is an underlined word. Pressing sinks a clay button onto its lip. */
 const variants: Record<Variant, string> = {
-  primary: "clay clay-press rounded-full [--lip:var(--color-lip)] bg-primary text-on-primary hover:bg-primary-hover",
-  secondary: "clay clay-press rounded-full bg-surface text-ink hover:bg-wash",
-  ghost: "rounded-tile text-ink underline decoration-2 underline-offset-4 decoration-line hover:decoration-ink active:text-muted",
-  danger: "rounded-full border-2 border-danger bg-surface text-danger hover:bg-danger-wash active:bg-danger-wash",
-  choice: "clay clay-press rounded-card bg-surface text-ink hover:bg-wash",
+  primary: "clay clay-press [--lip:var(--color-lip)] bg-primary text-on-primary hover:bg-primary-hover",
+  secondary: "clay clay-press bg-surface text-ink hover:bg-wash",
+  ghost: "text-ink underline decoration-2 underline-offset-4 decoration-line hover:decoration-ink active:text-muted",
+  danger: "border-2 border-danger bg-surface text-danger hover:bg-danger-wash active:bg-danger-wash",
+  /** One of several options to pick from (first visit): white clay, the label left, an arrow right. */
+  choice: "clay clay-press bg-surface text-ink hover:bg-wash",
 };
 
 const sizes: Record<Size, string> = {
-  md: "min-h-11 px-5 text-base",
-  lg: "min-h-14 px-7 text-xl",
+  md: "min-h-11 px-4 text-base",
+  lg: "min-h-14 px-6 text-xl",
 };
 
 interface StyleProps {

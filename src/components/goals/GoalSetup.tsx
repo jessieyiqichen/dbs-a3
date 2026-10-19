@@ -111,7 +111,7 @@ export function GoalSetup({ initial, fields, submitLabel, submitHint, onSubmit, 
       )}
 
       {fields === "full" && (
-        <Field id="goal-link" label="Page to open when you start (optional)" hint="Like https://www.linkedin.com/mynetwork/" error={errors.link}>
+        <Field id="goal-link" label="Page you'll work on (optional)" hint="Like https://www.linkedin.com/mynetwork/" error={errors.link}>
           {(control) => <TextInput {...control} type="url" inputMode="url" value={draft.link} onChange={(e) => set("link")(e.target.value)} autoComplete="url" />}
         </Field>
       )}

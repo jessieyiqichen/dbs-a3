@@ -65,8 +65,8 @@ function checkUnit(text: string): string | undefined {
 
 const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 
-function checkTarget(text: string): string | undefined {
-  if (!/^\d+$/.test(text) || Number(text) < 1) return "Enter a whole number, like 500";
+function checkTarget(text: string, type: GoalType = "by-date"): string | undefined {
+  if (!/^\d+$/.test(text) || Number(text) < 1) return `Enter a whole number, like ${type === "daily" ? 3 : 100}`;
   if (Number(text) > MAX_TARGET) return "Enter a number up to 100,000";
 }
 
@@ -98,7 +98,7 @@ export function validateGoal(draft: GoalDraft, today: string): GoalValidation {
   const found: [GoalField, string | undefined][] = [
     ["verb", checkVerb(verb)],
     ["unit", checkUnit(unit)],
-    ["target", checkTarget(target)],
+    ["target", checkTarget(target, draft.type)],
     ["deadline", checkDeadline(draft.type, draft.deadline, today)],
     ["link", linkError(link)],
   ];

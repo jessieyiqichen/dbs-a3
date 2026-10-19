@@ -1,5 +1,6 @@
-import { addDays, eachDay } from "./dates";
-import { isPaused } from "./quota";
+import { addDays, eachDay, formatShortDate } from "./dates";
+import { formatCount } from "./format";
+import { isPaused, type TodayPlan } from "./quota";
 import { streak } from "./streak";
 import type { Entry, Goal } from "./types";
 
@@ -72,4 +73,17 @@ export function withoutPause(goal: Goal, today: string): Goal {
     return p.from === today ? [] : [{ ...p, to: yesterday }];
   });
   return { ...goal, pauses };
+}
+
+/** The sentence under the big number on Progress. It counts what was logged today, so it says the same as Titi's place
+ *  on the road: "behind" is the gap left after today's logs, and closing it today says so. */
+export function paceLine(goal: Goal, plan: TodayPlan, today: string): string {
+  if (plan.status === "complete") return "Goal reached, Titi is proud!";
+  if (plan.daysLeft === null) return "";
+  const until = formatShortDate(goal.deadline ?? today).replace(" ", "\u00a0");
+  const behind = plan.behindBy - plan.doneToday;
+  if (behind > 0 && plan.doneToday > 0) return `${behind} behind the steady pace, spread over ${plan.daysLeft} days`;
+  if (behind > 0) return `${behind} behind the steady pace, spread over ${plan.daysLeft} days, so today is ${formatCount(plan.quota, goal.unit)}`;
+  if (plan.behindBy > 0) return `Caught up today! ${plan.daysLeft} days left until ${until}`;
+  return `On pace! ${plan.daysLeft} days left until ${until}`;
 }

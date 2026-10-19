@@ -4,11 +4,12 @@ import Link from "next/link";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { ScreenHeading } from "@/components/ui/ScreenHeading";
 import { nudgeLine } from "@/lib/nudges";
-import { countOf, headline } from "@/lib/phrases";
+import { headline } from "@/lib/phrases";
 import type { TodayPlan } from "@/lib/quota";
 import type { BowlDay } from "@/lib/scene";
 import type { Goal } from "@/lib/types";
 import type { CatEffect, CatMood } from "./CatArt";
+import { Coins } from "./Coins";
 import { Room } from "./Room";
 
 interface Props {
@@ -19,6 +20,8 @@ interface Props {
   bowls: BowlDay[];
   /** The welcome-back line, shown in Titi's bubble instead of the nudge. */
   welcome: string | null;
+  /** Back after days away: Titi stretches instead of sleeping. */
+  back?: boolean;
   /** Why today's number grew after missed days. */
   catchUp: string | null;
   /** The calendar file is running out. */
@@ -56,16 +59,21 @@ function title(goal: Goal, plan: TodayPlan): string {
   }
 }
 
-/** Titi in every state: asleep before you start or while paused, sitting with you otherwise, jumping when the goal is reached. */
+/** Titi in every state, one pose per meaning (Fish Treat, TitiPoses): she hops after a log; stretches when you come back
+ *  after days away or the date passed (a fresh start); sleeps before you start; taps a paw when a session is under way
+ *  (Keep going); lies as a loaf when today is done or the goal is on a break; jumps when the goal is reached. */
 function catFor(
   status: Status,
   cheer: boolean,
+  back: boolean,
 ): { mood: CatMood; effect?: CatEffect } {
-  if (status === "not-started" || status === "paused")
-    return { mood: "sleep", effect: "zzz" };
+  if (cheer) return { mood: "idle", effect: "hop" };
   if (status === "complete") return { mood: "celebrate", effect: "party" };
-  if (status === "done") return { mood: "idle", effect: "party" };
-  return { mood: "idle", effect: cheer ? "hop" : undefined };
+  if (status === "done" || status === "paused") return { mood: "loaf" };
+  if (status === "deadline-passed") return { mood: "stretch" };
+  if (status === "not-started") return back ? { mood: "stretch" } : { mood: "sleep", effect: "zzz" };
+  if (status === "started") return { mood: "paw-tap" };
+  return { mood: "idle" };
 }
 
 /** The whole goal in one quiet line; it opens the goal's progress page. */
@@ -75,12 +83,12 @@ function Road({ goal, plan }: { goal: Goal; plan: TodayPlan }) {
   if (goal.type !== "by-date") {
     return (
       <Link
-        href={`/goals/${goal.id}`}
+        href={`/goals/${goal.id}?from=today`}
         className={`${card} justify-center font-bold text-muted`}
       >
-        {countOf(plan.doneTotal, goal.unit)} all time{" "}
+        {/* Says where it goes: Titi's diary of this goal (user, 2026-10-18: "N all time" did not say it opens a page) */}
+        Titi&apos;s diary, {plan.doneTotal} so far{" "}
         <span aria-hidden="true">→</span>
-        <span className="sr-only">, see progress</span>
       </Link>
     );
   }
@@ -90,9 +98,9 @@ function Road({ goal, plan }: { goal: Goal; plan: TodayPlan }) {
   );
   return (
     <Link
-      href={`/goals/${goal.id}`}
+      href={`/goals/${goal.id}?from=today`}
       className={card}
-      aria-label={`Road to ${goal.target}: ${plan.doneTotal} done, see progress`}
+      aria-label={`See Titi's road: ${plan.doneTotal} of ${goal.target} done`}
     >
       <span className="font-display font-semibold text-ink">
         Road to {goal.target}
@@ -128,7 +136,7 @@ function GoalTabs({
   return (
     <nav
       aria-label="Up now"
-      className="flex w-full gap-2 overflow-x-auto px-1 pb-2 pt-1 [scrollbar-width:none]"
+      className="flex w-full gap-2 overflow-x-auto px-1 pb-2 pt-1 [scrollbar-width:none] lg:flex-wrap lg:overflow-visible"
     >
       {goals.map(({ goal, done }) => {
         const on = goal.id === current;
@@ -162,6 +170,75 @@ function shortName(goal: Goal): string {
   return unit.charAt(0).toUpperCase() + unit.slice(1);
 }
 
+/** The sentence for today, with Titi's line under it. On a desktop the card takes the goal column's spare height, so the
+ *  goal side is as tall as Titi's room, and today's number shows as fish treats under the sentence. */
+function SentenceCard({ goal, plan, line, catchUp }: { goal: Goal; plan: TodayPlan; line: string; catchUp: string | null }) {
+  const active = plan.status === "not-started" || plan.status === "started";
+  return (
+    <div className="relative w-full px-1 pt-1 lg:flex lg:flex-1 lg:flex-col lg:justify-center">
+      <ScreenHeading
+        id={`goal-${goal.id}`}
+        className="font-display text-2xl font-bold leading-tight text-ink [text-wrap:balance] lg:text-4xl"
+      >
+        {title(goal, plan)}
+      </ScreenHeading>
+      <p className="mt-1 font-bold text-muted lg:mt-3 lg:text-lg">{line}</p>
+      {catchUp && plan.status === "not-started" && (
+        <p className="mt-1 text-sm font-bold text-muted">{catchUp}</p>
+      )}
+      {/* Desktop only: today's number as fish treats under the sentence, the same tiles the session uses */}
+      {(active || plan.status === "done") && (
+        <div className="mt-8 hidden lg:block">
+          <Coins total={plan.quota} done={Math.min(plan.doneToday, plan.quota)} label="Today" size="lg" />
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** The one button for today's state, then the whole goal's road in one quiet line. */
+function MainAction({ goal, plan, next, onStart, onStartNext }: { goal: Goal; plan: TodayPlan; next: Goal | null; onStart: () => void; onStartNext: () => void }) {
+  const active = plan.status === "not-started" || plan.status === "started";
+  return (
+    <div className="flex w-full flex-col gap-3">
+      {active && (
+        <Button size="lg" onClick={onStart} className="w-full">
+          {plan.status === "started" ? "Keep going" : "Start"}
+        </Button>
+      )}
+      {plan.status === "done" && next && (
+        <Button size="lg" onClick={onStartNext} className="w-full">
+          Next: {next.title} →
+        </Button>
+      )}
+      {plan.status === "complete" && (
+        <ButtonLink href="/goals/new" size="lg" className="w-full">
+          Set the next goal
+        </ButtonLink>
+      )}
+      {plan.status === "deadline-passed" && (
+        <ButtonLink
+          href={`/goals/${goal.id}/edit`}
+          size="lg"
+          className="w-full"
+        >
+          Pick a new date
+        </ButtonLink>
+      )}
+      {plan.status === "paused" && (
+        <ButtonLink
+          href="/goals"
+          variant="secondary"
+          className="self-start"
+        >
+          Manage goals
+        </ButtonLink>
+      )}
+      <Road goal={goal} plan={plan} />
+    </div>
+  );
+}
+
 /** Today: the window, Titi on her mat, which goal, one sentence and one button; this week's bowls on a shelf that stays at
  *  the foot of a phone screen while the room scrolls. */
 export function TodayHome({
@@ -171,6 +248,7 @@ export function TodayHome({
   hour,
   bowls,
   welcome,
+  back = false,
   catchUp,
   notice,
   next,
@@ -181,67 +259,20 @@ export function TodayHome({
   onStartNext,
   cheer = false,
 }: Props) {
-  const active = plan.status === "not-started" || plan.status === "started";
   const line =
     plan.status === "done"
       ? "Titi is so full! See you tomorrow~"
       : (welcome ?? nudgeLine(goal, plan, today, hour));
   const cat = {
-    ...catFor(plan.status, cheer),
+    ...catFor(plan.status, cheer, back),
     key: cheer ? "cheer" : plan.status,
   };
   return (
-    <section aria-labelledby={`goal-${goal.id}`} className="flex flex-col">
+    <section aria-labelledby={`goal-${goal.id}`} className="flex flex-col lg:my-auto">
       <Room bowls={bowls} cat={cat} corner={corner}>
         <GoalTabs goals={goals} current={goal.id} onPick={onPick} />
-        <div className="relative w-full px-1 pt-1">
-          <ScreenHeading
-            id={`goal-${goal.id}`}
-            className="font-display text-2xl font-bold leading-tight text-ink [text-wrap:balance]"
-          >
-            {title(goal, plan)}
-          </ScreenHeading>
-          <p className="mt-1 font-bold text-muted">{line}</p>
-          {catchUp && plan.status === "not-started" && (
-            <p className="mt-1 text-sm font-bold text-muted">{catchUp}</p>
-          )}
-        </div>
-        <div className="flex w-full flex-col gap-3">
-          {active && (
-            <Button size="lg" onClick={onStart} className="w-full">
-              {plan.status === "started" ? "Keep going" : "Start"}
-            </Button>
-          )}
-          {plan.status === "done" && next && (
-            <Button size="lg" onClick={onStartNext} className="w-full">
-              Next: {next.title} →
-            </Button>
-          )}
-          {plan.status === "complete" && (
-            <ButtonLink href="/goals/new" size="lg" className="w-full">
-              Set the next goal
-            </ButtonLink>
-          )}
-          {plan.status === "deadline-passed" && (
-            <ButtonLink
-              href={`/goals/${goal.id}/edit`}
-              size="lg"
-              className="w-full"
-            >
-              Pick a new date
-            </ButtonLink>
-          )}
-          {plan.status === "paused" && (
-            <ButtonLink
-              href="/goals"
-              variant="secondary"
-              className="self-start"
-            >
-              Manage goals
-            </ButtonLink>
-          )}
-          <Road goal={goal} plan={plan} />
-        </div>
+        <SentenceCard goal={goal} plan={plan} line={line} catchUp={catchUp} />
+        <MainAction goal={goal} plan={plan} next={next} onStart={onStart} onStartNext={onStartNext} />
         {notice && (
           <Link
             href="/reminders"

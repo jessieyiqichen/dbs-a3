@@ -23,20 +23,15 @@ export function Toast({ message, onUndo, onClose, raised = false }: ToastProps) 
 
   return (
     <div aria-live="polite" className={`pointer-events-none fixed inset-x-0 z-30 flex justify-center px-4 ${raised ? "bottom-28 sm:bottom-4" : "bottom-4"}`}>
-      {message && <ToastPanel message={message} onUndo={onUndo} />}
-    </div>
-  );
-}
-
-/** The toast itself, without its position: shown on its own on the design system page. */
-export function ToastPanel({ message, onUndo }: { message: string; onUndo?: () => void }) {
-  return (
-    <div className="t-body pointer-events-auto flex w-full max-w-md items-center justify-between gap-3 rounded-card bg-ink px-5 py-2 font-extrabold text-surface shadow-lg">
-      <span>{message}</span>
-      {onUndo && (
-        <Button variant="ghost" className="text-surface decoration-surface hover:decoration-reward" onClick={onUndo}>
-          Undo
-        </Button>
+      {message && (
+        <div className="pointer-events-auto flex w-full max-w-md items-center justify-between gap-3 rounded-2xl bg-ink px-4 py-2 font-bold text-surface shadow-lg">
+          <span>{message}</span>
+          {onUndo && (
+            <Button variant="ghost" className="text-surface decoration-surface hover:decoration-reward" onClick={onUndo}>
+              Undo
+            </Button>
+          )}
+        </div>
       )}
     </div>
   );

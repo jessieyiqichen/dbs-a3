@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cumulativeSeries, history, withPause, withoutPause } from "./progress";
+import { cumulativeSeries, history, paceLine, withPause, withoutPause } from "./progress";
 import type { Entry, Goal } from "./types";
 
 const goal: Goal = {
@@ -51,5 +51,23 @@ describe("pausing", () => {
     const before = JSON.stringify(goal);
     withPause(goal, 3, "2026-10-17");
     expect(JSON.stringify(goal)).toBe(before);
+  });
+});
+
+describe("paceLine: the sentence under the big number on Progress", () => {
+  const plan = { quota: 7, doneToday: 0, leftToday: 7, doneTotal: 2, daysLeft: 22, behindBy: 44, status: "not-started" as const };
+
+  it("says how far behind, and today's number, before anything is logged today", () => {
+    expect(paceLine(goal, plan, "2026-10-18")).toBe("44 behind the steady pace, spread over 22 days, so today is 7 connections");
+  });
+
+  it("counts what was logged today, so it agrees with Titi's place on the road", () => {
+    expect(paceLine(goal, { ...plan, doneToday: 30, status: "done" }, "2026-10-18")).toBe("14 behind the steady pace, spread over 22 days");
+    expect(paceLine(goal, { ...plan, doneToday: 44, status: "done" }, "2026-10-18")).toBe("Caught up today! 22 days left until Oct 19");
+  });
+
+  it("is on pace, or reached, otherwise", () => {
+    expect(paceLine(goal, { ...plan, behindBy: 0 }, "2026-10-18")).toBe("On pace! 22 days left until Oct 19");
+    expect(paceLine(goal, { ...plan, status: "complete" }, "2026-10-18")).toBe("Goal reached, Titi is proud!");
   });
 });

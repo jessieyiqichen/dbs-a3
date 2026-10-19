@@ -3,15 +3,24 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 
-/** Titi (art generated with GPT): asleep until you start, sitting with you while you work, celebrating when you're done. */
-export type CatMood = "sleep" | "idle" | "celebrate";
+/** Titi (art generated with GPT). Each pose means one thing (Fish Treat design system, TitiPoses):
+ *  sleep: today hasn't started · wave: hello, the first screen · stretch: back again, a fresh start
+ *  idle: with you while you work · paw-tap: a gentle poke to carry on · walk: on the way to a by-date goal
+ *  loaf: full, resting, paused · celebrate: done. */
+export type CatMood = "sleep" | "wave" | "stretch" | "idle" | "paw-tap" | "walk" | "loaf" | "celebrate";
 /** Small extras made in code on top of the drawn animation: z's while asleep, a hop with hearts after a log, more hearts when done. */
 export type CatEffect = "zzz" | "hop" | "party";
 
-/** Each mood is a drawn loop with a still frame for people who ask for less motion. Sizes are the files' own. */
-const ART: Record<CatMood, { moving: string; still: string; width: number; height: number }> = {
-  sleep: { moving: "/cat/sleep.png", still: "/cat/sleep.png", width: 300, height: 300 },
+/** Poses that stay with you are drawn loops, each with a still frame for people who ask for less motion; poses for rest
+ *  or a passing moment are one picture with a small motion made in code (`motion`). Sizes are the files' own. */
+const ART: Record<CatMood, { moving: string; still: string; width: number; height: number; motion?: string }> = {
+  sleep: { moving: "/cat/sleep.png", still: "/cat/sleep.png", width: 300, height: 300, motion: "cat-breathe" },
+  wave: { moving: "/cat/wave.webp", still: "/cat/wave.png", width: 444, height: 444 },
+  stretch: { moving: "/cat/stretch.webp", still: "/cat/stretch.webp", width: 600, height: 600, motion: "cat-stretch" },
   idle: { moving: "/cat/idle.webp", still: "/cat/idle.png", width: 300, height: 300 },
+  "paw-tap": { moving: "/cat/paw-tap.webp", still: "/cat/paw-tap.png", width: 444, height: 444 },
+  walk: { moving: "/cat/walk.webp", still: "/cat/walk.png", width: 444, height: 444 },
+  loaf: { moving: "/cat/loaf.webp", still: "/cat/loaf.webp", width: 600, height: 600, motion: "cat-breathe" },
   celebrate: { moving: "/cat/celebrate.webp", still: "/cat/celebrate.png", width: 300, height: 388 },
 };
 
@@ -76,7 +85,7 @@ export function CatArt({ mood, effect, className = "", sun = true }: CatProps) {
   return (
     <div className={`relative ${className}`}>
       {sun && <span aria-hidden="true" className="absolute inset-x-[6%] bottom-0 aspect-square rounded-full bg-sun" />}
-      <picture className={`relative block ${effect === "hop" ? "cat-hop" : mood === "sleep" ? "cat-breathe" : ""}`}>
+      <picture className={`relative block ${effect === "hop" ? "cat-hop" : (art.motion ?? "")}`}>
         <source media="(prefers-reduced-motion: reduce)" srcSet={art.still} />
         <Image src={art.moving} alt="" width={art.width} height={art.height} unoptimized priority className="h-auto w-full" />
       </picture>

@@ -2,23 +2,23 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ProgressScreen } from "@/components/progress/ProgressScreen";
 import { AppShell } from "@/components/ui/AppShell";
-import { PageHeader } from "@/components/ui/PageHeader";
 
 export const metadata: Metadata = { title: "Progress · Nudge" };
 
-type Params = PageProps<"/goals/[id]">["params"];
+type Props = PageProps<"/goals/[id]">;
 
-async function Progress({ params }: { params: Params }) {
+/** Goals live in the browser, so only the id (and where you came from) is read here; the screen does the rest. */
+async function Progress({ params, searchParams }: Pick<Props, "params" | "searchParams">) {
   const { id } = await params;
-  return <ProgressScreen id={id} />;
+  const { from } = await searchParams;
+  return <ProgressScreen id={id} fromToday={from === "today"} />;
 }
 
-export default function ProgressPage({ params }: PageProps<"/goals/[id]">) {
+export default function ProgressPage({ params, searchParams }: Props) {
   return (
     <AppShell width="medium">
-      <PageHeader title="Progress" back="/goals" backLabel="← Back to goals" />
       <Suspense fallback={<p className="pt-6 text-muted">Loading your progress…</p>}>
-        <Progress params={params} />
+        <Progress params={params} searchParams={searchParams} />
       </Suspense>
     </AppShell>
   );

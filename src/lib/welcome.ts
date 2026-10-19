@@ -18,6 +18,13 @@ function lastActiveDay(goals: Goal[], entries: Entry[], today: string): string {
   return days.length > 0 ? days.reduce((a, b) => (a > b ? a : b)) : firstStart;
 }
 
+/** Back after days away: three or more days since anything was logged, and a visit before today (Titi stretches). The
+ *  same count as the "It's been N days" line, so the picture and the words agree. */
+export function backAfterDays({ prevVisit, today, goals, entries }: Omit<WelcomeInput, "fromNudge">): boolean {
+  if (prevVisit === null || prevVisit >= today) return false;
+  return daysBetween(lastActiveDay(goals, entries, today), today) >= 3;
+}
+
 /** The line shown at the top when someone comes back. Null when there is nothing to say. */
 export function welcomeMessage({ prevVisit, today, fromNudge, goals, entries }: WelcomeInput): string | null {
   if (fromNudge) return "You came back! That's the hardest part";

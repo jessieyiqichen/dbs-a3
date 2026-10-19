@@ -35,12 +35,12 @@ function Window({ time, corner }: { time: TimeOfDay; corner?: ReactNode }) {
 }
 
 /** One bowl on a shelf; labelled by weekday letter on Today, by day of the month in the diary. */
-export function ShelfBowl({ bowl, label = "letter" }: { bowl: BowlDay; label?: "letter" | "day" }) {
+export function ShelfBowl({ bowl, label = "letter", pop = false }: { bowl: BowlDay; label?: "letter" | "day"; pop?: boolean }) {
   const { letter, name } = weekdayLetter(bowl.date);
   const text = label === "letter" ? letter : String(Number(bowl.date.slice(8)));
   const said = bowl.future ? "not yet" : bowl.before ? "before you started" : bowl.fill === "full" ? "all done" : bowl.fill === "some" ? "some done" : "nothing yet";
   return (
-    <li className="relative flex flex-1 flex-col items-center">
+    <li className={`relative flex flex-1 flex-col items-center ${pop ? "badge-in" : ""}`} style={pop ? { ["--delay" as string]: "0.6s" } : undefined}>
       {/* Only the bowl fades for a day not yet come or before the goal existed; the day label keeps its contrast */}
       {/* eslint-disable-next-line @next/next/no-img-element -- painted art */}
       <img src={BOWL[bowl.fill]} alt="" aria-hidden="true" className={`relative w-full max-w-11 drop-shadow-[0_3px_2px_rgba(90,60,20,.25)] ${bowl.future || bowl.before ? "opacity-45" : ""}`} />

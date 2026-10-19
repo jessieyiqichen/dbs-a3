@@ -18,6 +18,8 @@ interface Props {
   onPick?: (reached: number) => void;
   /** Off when the number is already shown nearby (the session's bar). */
   showCount?: boolean;
+  /** "lg" makes the tiles bigger from 1024px (the session on a desktop); below that both sizes are the same. */
+  size?: "md" | "lg";
 }
 
 function Fish({ earned }: { earned: boolean }) {
@@ -25,35 +27,46 @@ function Fish({ earned }: { earned: boolean }) {
   return <img src={earned ? "/cat/fish.png" : "/cat/fish-locked.png"} alt="" aria-hidden="true" className="w-full" />;
 }
 
-/** Today's number as fish treats you can see fill up, with the count beside them so it never rests on colour alone. */
-export function Coins({ total, done, label, onPick, showCount = true }: Props) {
-  const count = showCount ? <p aria-hidden="true" className="mt-2 font-display text-lg font-semibold tabular-nums text-muted">{done} / {total}</p> : null;
-
-  if (total > MAX_FISH) {
-    const pct = Math.min(100, Math.round((done / Math.max(total, 1)) * 100));
-    return (
-      <div>
-        <div role="img" aria-label={`${label}: ${done} of ${total} done`} className="h-5 overflow-hidden rounded-full bg-reward-soft">
-          <div className="h-full rounded-full bg-reward" style={{ width: `${pct}%` }} />
-        </div>
-        {count}
+/** Beyond a dozen, a honey bar says today's number more clearly than fish. */
+function FishBar({ total, done, label, count }: { total: number; done: number; label: string; count: React.ReactNode }) {
+  const pct = Math.min(100, Math.round((done / Math.max(total, 1)) * 100));
+  return (
+    <div>
+      <div role="img" aria-label={`${label}: ${done} of ${total} done`} className="h-5 overflow-hidden rounded-full bg-reward-soft">
+        <div className="h-full rounded-full bg-reward" style={{ width: `${pct}%` }} />
       </div>
-    );
-  }
+      {count}
+    </div>
+  );
+}
+
+/** The tile and grid classes. "lg" tiles grow from 1024px (3rem to 4.5rem, the grid columns follow); below that both sizes match. */
+function layout(total: number, big: boolean) {
+  const cell = `flex h-12 w-12 items-center justify-center rounded-xl px-1 ${big ? "lg:h-[4.5rem] lg:w-[4.5rem] lg:rounded-2xl lg:px-2" : ""}`;
+  return {
+    tile: (earned: boolean) => `clay ${cell} ${earned ? "bg-reward-soft [--lip:var(--color-reward)]" : "bg-surface"}`,
+    // Display-only fish have no box at all (user, 2026-10-18): a box reads as a tile you could press
+    flat: (earned: boolean) => `${cell} ${earned ? "" : "opacity-80"}`,
+    grid: { gridTemplateColumns: `repeat(${perRow(total)}, ${big ? "var(--fish-cell)" : "3rem"})` },
+    gridClass: `grid gap-x-3 gap-y-3 ${big ? "[--fish-cell:3rem] lg:gap-x-4 lg:gap-y-4 lg:[--fish-cell:4.5rem]" : ""}`,
+  };
+}
+
+/** Today's number as fish treats you can see fill up, with the count beside them so it never rests on colour alone. */
+export function Coins({ total, done, label, onPick, showCount = true, size = "md" }: Props) {
+  const count = showCount ? <p aria-hidden="true" className="mt-3 font-display text-lg font-semibold tabular-nums text-muted">{done} of {total} done</p> : null;
+
+  if (total > MAX_FISH) return <FishBar total={total} done={done} label={label} count={count} />;
 
   // Clay tiles only where a fish can be tapped: an earned one sits on a honey lip, one still to go on a plain lip.
-  // Where the fish only show a number (the plan step), they stand bare, so nothing looks pressable that isn't.
-  const cell = "flex h-12 w-12 items-center justify-center rounded-xl px-1";
-  const tile = (earned: boolean) => `clay ${cell} ${earned ? "bg-reward-soft [--lip:var(--color-reward)]" : "bg-surface"}`;
-  // Display-only fish have no box at all (user, 2026-10-18): a box reads as a tile you could press
-  const flat = (earned: boolean) => `${cell} ${earned ? "" : "opacity-80"}`;
+  // Where the fish only show a number (the plan step, Today on a desktop), they stand bare, so nothing looks pressable that isn't.
+  const { tile, flat, grid, gridClass } = layout(total, size === "lg");
   const fish = Array.from({ length: total }, (_, i) => i + 1);
-  const grid = { gridTemplateColumns: `repeat(${perRow(total)}, 3rem)` };
 
   if (!onPick) {
     return (
       <div>
-        <div role="img" aria-label={`${label}: ${done} of ${total} done`} className="grid gap-x-3 gap-y-3" style={grid}>
+        <div role="img" aria-label={`${label}: ${done} of ${total} done`} className={gridClass} style={grid}>
           {fish.map((n) => <span key={n} className={flat(n <= done)}><Fish earned={n <= done} /></span>)}
         </div>
         {count}
@@ -63,7 +76,7 @@ export function Coins({ total, done, label, onPick, showCount = true }: Props) {
 
   return (
     <div>
-      <div role="group" aria-label={label} className="grid gap-x-3 gap-y-3" style={grid}>
+      <div role="group" aria-label={label} className={gridClass} style={grid}>
         {fish.map((n) =>
           n <= done ? (
             <span key={n} className={tile(true)}><Fish earned /></span>
@@ -73,7 +86,8 @@ export function Coins({ total, done, label, onPick, showCount = true }: Props) {
               type="button"
               onClick={() => onPick(n)}
               aria-label={`I'm at ${n}`}
-              className={`${tile(false)} clay-press hover:bg-wash focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus`}
+              // The next fish to tap wears a honey outline, so it is clear where to start (user, 2026-10-18)
+              className={`${tile(false)} clay-press hover:bg-wash ${n === done + 1 ? "outline-3 outline-offset-3 outline-reward" : ""}`}
             >
               <Fish earned={false} />
             </button>

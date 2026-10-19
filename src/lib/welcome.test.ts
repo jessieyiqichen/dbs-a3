@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { weekSummary, welcomeMessage } from "./welcome";
+import { backAfterDays, weekSummary, welcomeMessage } from "./welcome";
 import type { Entry, Goal } from "./types";
 
 const goal: Goal = {
@@ -54,5 +54,15 @@ describe("weekSummary: the first open of a new week", () => {
     expect(weekSummary([goal], on("2026-10-13"), "2026-10-20", "2026-10-19")).toBeNull();
     expect(weekSummary([goal], [], "2026-10-19", "2026-10-18")).toBeNull();
     expect(weekSummary([goal], on("2026-10-13"), "2026-10-19", null)).toBeNull();
+  });
+});
+
+describe("backAfterDays", () => {
+  it("is true after three or more days with nothing logged", () => {
+    expect(backAfterDays({ prevVisit: "2026-10-11", today: TODAY, goals: [goal], entries: on("2026-10-11") })).toBe(true);
+  });
+  it("is false the day after something was logged, and on a first visit", () => {
+    expect(backAfterDays({ prevVisit: "2026-10-16", today: TODAY, goals: [goal], entries: on("2026-10-16") })).toBe(false);
+    expect(backAfterDays({ prevVisit: null, today: TODAY, goals: [goal], entries: [] })).toBe(false);
   });
 });

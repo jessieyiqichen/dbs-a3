@@ -15,3 +15,12 @@ describe("starters", () => {
     expect(STARTERS[2]).toMatchObject({ verb: "Message", link: "https://www.linkedin.com/messaging/" });
   });
 });
+
+describe("siteName: the name on the Open button", () => {
+  it("names the recruiting sites people know", async () => {
+    const { siteName } = await import("./start");
+    expect(siteName("https://www.linkedin.com/jobs/")).toBe("LinkedIn");
+    expect(siteName("https://app.joinhandshake.com/")).toBe("Handshake");
+    expect(siteName("https://www.indeed.com/")).toBe("Indeed");
+  });
+});
