@@ -1,4 +1,4 @@
-import type { AppData, Entry, Goal } from "./types";
+import type { AppData, Entry, Goal, GoalPast } from "./types";
 
 export const STORAGE_KEY = "nudge:v1";
 export const DEFAULT_REMINDER_TIMES = ["10:00", "15:00", "20:00"];
@@ -27,6 +27,17 @@ export function emptyData(): AppData {
 const isString = (v: unknown): v is string => typeof v === "string";
 const isNullableString = (v: unknown) => v === null || isString(v);
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null;
+
+/** A kept record of a goal's past number (see Goal.history); anything malformed is dropped, not trusted. */
+function isGoalPast(v: unknown): v is GoalPast {
+  return (
+    isRecord(v) &&
+    isString(v.to) && /^\d{4}-\d{2}-\d{2}$/.test(v.to) &&
+    typeof v.target === "number" && Number.isInteger(v.target) && v.target > 0 &&
+    (v.type === "daily" || v.type === "by-date") &&
+    (v.deadline === null || isString(v.deadline))
+  );
+}
 
 function isGoal(v: unknown): v is Omit<Goal, "verb"> & { verb?: unknown } {
   return (
@@ -70,7 +81,11 @@ export function parseData(text: string): AppData | null {
   return {
     version: 1,
     // Goals saved before verbs existed get an empty verb.
-    goals: goals.map((g) => ({ ...g, verb: isString(g.verb) ? g.verb : "" })),
+    goals: goals.map((g) => {
+      const { history, ...rest } = g as typeof g & { history?: unknown };
+      const kept = Array.isArray(history) ? history.filter(isGoalPast) : [];
+      return { ...rest, verb: isString(g.verb) ? g.verb : "", ...(kept.length > 0 ? { history: kept } : {}) };
+    }),
     entries,
     // Settings added after the first release default to false.
     settings: {

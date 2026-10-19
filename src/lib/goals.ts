@@ -1,4 +1,6 @@
+import { addDays } from "./dates";
 import type { AppData, Entry, Goal } from "./types";
+import type { GoalValues } from "./validate";
 
 /** A removed goal with everything that belonged to it, kept aside so Undo can put it back. */
 export interface Removed {
@@ -27,4 +29,23 @@ export function putBack(data: AppData, removed: Removed): AppData {
   const goals = [...data.goals];
   goals.splice(Math.min(removed.index, goals.length), 0, removed.goal);
   return { ...data, goals, entries: [...data.entries, ...removed.entries] };
+}
+
+/** The goal after an edit made today. When the number, the type or the date changes and the goal has days behind it,
+ *  the old values are kept as applying up to yesterday, so the diary and the week's bowls judge each past day by the
+ *  number it had then. A second edit the same day keeps the first record. */
+export function withEdit(goal: Goal, values: GoalValues, today: string): Goal {
+  const yesterday = addDays(today, -1);
+  const changed = values.target !== goal.target || values.type !== goal.type || values.deadline !== goal.deadline;
+  const history = goal.history ?? [];
+  const recorded = history.some((h) => h.to === yesterday);
+  const keep = changed && goal.startDate <= yesterday && !recorded;
+  const next = keep ? [...history, { to: yesterday, target: goal.target, type: goal.type, deadline: goal.deadline }] : history;
+  return { ...goal, ...values, ...(next.length > 0 ? { history: next } : {}) };
+}
+
+/** The goal as it was on a given day: the first kept record that still applied that day, or the goal as it is now. */
+export function goalOn(goal: Goal, date: string): Goal {
+  const past = (goal.history ?? []).find((h) => date <= h.to);
+  return past ? { ...goal, target: past.target, type: past.type, deadline: past.deadline } : goal;
 }

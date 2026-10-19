@@ -46,3 +46,14 @@ describe("diaryWeeks: the last weeks as rows of bowls, for one goal", () => {
     expect(weeks[0].every((b) => b.fill === "empty")).toBe(true);
   });
 });
+
+describe("diaryWeeks after the number was raised", () => {
+  it("keeps a day heaped that reached the number it had then", () => {
+    const goal = { id: "d", verb: "Send", title: "Send applications", unit: "applications", type: "daily" as const, target: 3, deadline: null, link: null, startDate: "2026-10-12", pauses: [], createdAt: "", history: [{ to: "2026-10-18", target: 2, type: "daily" as const, deadline: null }] };
+    const two = (date: string) => ({ id: date, goalId: "d", date, amount: 2, at: "" });
+    const weeks = diaryWeeks(goal, [two("2026-10-14"), two("2026-10-19")], "2026-10-19", 2);
+    const day = (d: string) => weeks.flat().find((b) => b.date === d)?.fill;
+    expect(day("2026-10-14")).toBe("full"); // 2 of the 2 it was then
+    expect(day("2026-10-19")).toBe("some"); // 2 of the 3 it is now
+  });
+});

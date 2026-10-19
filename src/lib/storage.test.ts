@@ -60,3 +60,13 @@ describe("storage: older saved data", () => {
     expect(parseData(JSON.stringify({ ...emptyData(), goals: [goal] }))?.goals[0].verb).toBe("");
   });
 });
+
+describe("storage: a goal's kept history", () => {
+  const goal = { id: "g", verb: "Send", title: "Send applications", unit: "applications", type: "daily", target: 3, deadline: null, link: null, startDate: "2026-10-12", pauses: [], createdAt: "" };
+  it("keeps valid records of past numbers and drops anything malformed", () => {
+    const good = { to: "2026-10-18", target: 2, type: "daily", deadline: null };
+    const data = { ...emptyData(), goals: [{ ...goal, history: [good, { to: "soon", target: -1 }] }] };
+    expect(parseData(JSON.stringify(data))?.goals[0].history).toEqual([good]);
+    expect(parseData(JSON.stringify({ ...emptyData(), goals: [goal] }))?.goals[0].history).toBeUndefined();
+  });
+});

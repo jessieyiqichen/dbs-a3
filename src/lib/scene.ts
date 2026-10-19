@@ -1,4 +1,5 @@
 import { addDays, weekKey } from "./dates";
+import { goalOn } from "./goals";
 import { planToday } from "./quota";
 import type { BowlFill } from "./session";
 import type { Entry, Goal } from "./types";
@@ -49,7 +50,7 @@ export function weekBowls(goals: Goal[], entries: Entry[], today: string): BowlD
     const future = date > today;
     const active = goals.filter((g) => g.startDate <= date);
     const before = !future && active.length === 0;
-    const plans = active.map((g) => planToday(g, entries, date));
+    const plans = active.map((g) => planToday(goalOn(g, date), entries, date));
     const logged = entries.some((e) => e.date === date && e.amount > 0 && active.some((g) => g.id === e.goalId));
     const allDone = plans.length > 0 && plans.every((p) => p.status === "done" || p.status === "complete");
     return { date, fill: future || !logged ? "empty" : allDone ? "full" : "some", today: date === today, future, before };

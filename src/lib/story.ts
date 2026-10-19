@@ -1,6 +1,7 @@
 import { addDays, weekKey } from "./dates";
 import { cumulativeSeries } from "./progress";
 import type { BowlDay } from "./scene";
+import { goalOn } from "./goals";
 import type { Entry, Goal } from "./types";
 
 /** A by-date goal told as a road: how far Titi has walked, where the even pace would be, and the milestones. */
@@ -46,7 +47,8 @@ export function diaryWeeks(goal: Goal, entries: Entry[], today: string, weeks: n
     Array.from({ length: 7 }, (_, i) => addDays(monday, i)).map((date) => {
       const amount = totals.get(date) ?? 0;
       const future = date > today;
-      return { date, fill: future || amount === 0 ? "empty" : amount >= goal.target ? "full" : "some", today: date === today, future, before: date < goal.startDate };
+      // Judged by the number the goal had that day, so raising it later does not undo finished days
+      return { date, fill: future || amount === 0 ? "empty" : amount >= goalOn(goal, date).target ? "full" : "some", today: date === today, future, before: date < goal.startDate };
     }),
   );
 }

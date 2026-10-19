@@ -43,3 +43,11 @@ describe("weekLabel: the week's bowls in words", () => {
     expect(weekLabel(Array(7).fill(day("empty")))).toBe("Titi's week, 0 of 7 days");
   });
 });
+
+describe("weekBowls after the number was raised", () => {
+  it("judges each past day by the number it had then", () => {
+    const goal = { id: "d", verb: "Send", title: "Send applications", unit: "applications", type: "daily" as const, target: 3, deadline: null, link: null, startDate: "2026-10-12", pauses: [], createdAt: "", history: [{ to: "2026-10-20", target: 2, type: "daily" as const, deadline: null }] };
+    const bowls = weekBowls([goal], [{ id: "a", goalId: "d", date: "2026-10-20", amount: 2, at: "" }], "2026-10-21");
+    expect(bowls.find((b) => b.date === "2026-10-20")?.fill).toBe("full");
+  });
+});

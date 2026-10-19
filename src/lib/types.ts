@@ -6,6 +6,14 @@ export interface Pause {
   to: string;
 }
 
+export interface GoalPast {
+  /** The last day these values applied. */
+  to: string;
+  target: number;
+  type: GoalType;
+  deadline: string | null;
+}
+
 export interface Goal {
   id: string;
   /** Capitalized action, e.g. "Send"; empty for goals saved before verbs existed. */
@@ -23,6 +31,9 @@ export interface Goal {
   startDate: string;
   pauses: Pause[];
   createdAt: string;
+  /** What the goal was before an edit changed its number, type or date, and the last day that applied, so past days
+   *  keep the number they were done against (user, 2026-10-19: raising the number rewrote finished days). Oldest first. */
+  history?: GoalPast[];
 }
 
 export interface Entry {

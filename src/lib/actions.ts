@@ -1,7 +1,7 @@
 "use client";
 
 import { updateData } from "./store";
-import { putBack, takeOut, type Removed } from "./goals";
+import { putBack, takeOut, withEdit, type Removed } from "./goals";
 import { withPause, withoutPause } from "./progress";
 import type { AppData, Entry, Goal, Settings } from "./types";
 import type { GoalValues } from "./validate";
@@ -31,8 +31,8 @@ export function addGoal(values: GoalValues, today: string): Goal {
   return goal;
 }
 
-export function updateGoal(id: string, values: GoalValues): void {
-  updateData((data) => ({ ...data, goals: data.goals.map((g) => (g.id === id ? { ...g, ...values } : g)) }));
+export function updateGoal(id: string, values: GoalValues, today: string): void {
+  updateData((data) => ({ ...data, goals: data.goals.map((g) => (g.id === id ? withEdit(g, values, today) : g)) }));
 }
 
 function changeGoal(id: string, change: (goal: Goal) => Goal): void {
