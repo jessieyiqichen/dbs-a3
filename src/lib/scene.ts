@@ -55,3 +55,10 @@ export function weekBowls(goals: Goal[], entries: Entry[], today: string): BowlD
     return { date, fill: future || !logged ? "empty" : allDone ? "full" : "some", today: date === today, future, before };
   });
 }
+
+/** The week's bowls in words, "Titi's week, 3 of 7 days": the days this week with at least one done, out of seven, so
+ *  the week has a score you can beat (reviewer, user 2026-10-19, after Week 3's "Your week: 5 of 7 days"). */
+export function weekLabel(bowls: BowlDay[]): string {
+  const done = bowls.filter((b) => !b.future && b.fill !== "empty").length;
+  return `Titi's week, ${done} of ${bowls.length} days`;
+}

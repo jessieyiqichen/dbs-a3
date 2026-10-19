@@ -35,6 +35,8 @@ interface Props {
   onStartNext: () => void;
   /** True right after a log: Titi hops. */
   cheer?: boolean;
+  /** "Nudge you tomorrow?", once something has been logged and reminders are not set up yet. */
+  prompt?: React.ReactNode;
 }
 
 type Status = TodayPlan["status"];
@@ -197,7 +199,7 @@ function SentenceCard({ goal, plan, line, catchUp }: { goal: Goal; plan: TodayPl
 }
 
 /** The one button for today's state, then the whole goal's road in one quiet line. */
-function MainAction({ goal, plan, next, onStart, onStartNext }: { goal: Goal; plan: TodayPlan; next: Goal | null; onStart: () => void; onStartNext: () => void }) {
+function MainAction({ goal, plan, next, onStart, onStartNext, prompt }: { goal: Goal; plan: TodayPlan; next: Goal | null; onStart: () => void; onStartNext: () => void; prompt?: React.ReactNode }) {
   const active = plan.status === "not-started" || plan.status === "started";
   return (
     <div className="flex w-full flex-col gap-3">
@@ -234,6 +236,9 @@ function MainAction({ goal, plan, next, onStart, onStartNext }: { goal: Goal; pl
           Manage goals
         </ButtonLink>
       )}
+      {/* Asked here, right under the button, as soon as one is logged: someone who does 2 of 5 and leaves is asked too
+          (reviewer, user 2026-10-19), not only on the second celebration screen */}
+      {prompt}
       <Road goal={goal} plan={plan} />
     </div>
   );
@@ -258,6 +263,7 @@ export function TodayHome({
   onStart,
   onStartNext,
   cheer = false,
+  prompt,
 }: Props) {
   const line =
     plan.status === "done"
@@ -272,7 +278,7 @@ export function TodayHome({
       <Room bowls={bowls} cat={cat} corner={corner}>
         <GoalTabs goals={goals} current={goal.id} onPick={onPick} />
         <SentenceCard goal={goal} plan={plan} line={line} catchUp={catchUp} />
-        <MainAction goal={goal} plan={plan} next={next} onStart={onStart} onStartNext={onStartNext} />
+        <MainAction goal={goal} plan={plan} next={next} onStart={onStart} onStartNext={onStartNext} prompt={prompt} />
         {notice && (
           <Link
             href="/reminders"

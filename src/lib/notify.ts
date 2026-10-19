@@ -2,6 +2,9 @@ import { levelFor, type NudgeLevel } from "./nudges";
 
 export const LAST_CALL = "22:30";
 export const MAX_NOTIFICATIONS = 4;
+/** Where a nudge leads: Today, marked as coming from a nudge, so Titi greets you and Start is one tap away. The calendar
+ *  file's link uses the same address. */
+export const NUDGE_PATH = "/?from=nudge";
 
 export interface PlannedNotification {
   at: Date;

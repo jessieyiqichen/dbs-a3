@@ -18,7 +18,7 @@ export function emptyData(): AppData {
     version: 1,
     goals: [],
     entries: [],
-    settings: { reminderTimes: DEFAULT_REMINDER_TIMES, notificationsOn: false, nudgesSetUp: false, nudgePromptDismissed: false, calendarUntil: null },
+    settings: { reminderTimes: DEFAULT_REMINDER_TIMES, notificationsOn: false, nudgesSetUp: false, nudgePromptSnoozedOn: null, streakTipSeen: false, calendarUntil: null },
     lastVisit: null,
     session: null,
   };
@@ -77,7 +77,9 @@ export function parseData(text: string): AppData | null {
       reminderTimes: settings.reminderTimes,
       notificationsOn: settings.notificationsOn,
       nudgesSetUp: settings.nudgesSetUp === true,
-      nudgePromptDismissed: settings.nudgePromptDismissed === true,
+      // A date or nothing; the old forever "Not now" flag is dropped, so the prompt asks again
+      nudgePromptSnoozedOn: isString(settings.nudgePromptSnoozedOn) && /^\d{4}-\d{2}-\d{2}$/.test(settings.nudgePromptSnoozedOn) ? settings.nudgePromptSnoozedOn : null,
+      streakTipSeen: settings.streakTipSeen === true,
       calendarUntil: isString(settings.calendarUntil) ? settings.calendarUntil : null,
     },
     lastVisit,

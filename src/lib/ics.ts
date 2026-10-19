@@ -1,4 +1,5 @@
 import { addDays } from "./dates";
+import { NUDGE_PATH } from "./notify";
 import { calendarLine } from "./nudges";
 
 export const CALENDAR_DAYS = 14;
@@ -27,7 +28,7 @@ const compact = (iso: string) => iso.replace(/-/g, "");
 function event(date: string, time: string, appUrl: string, stamp: string): string[] {
   const hour = Number(time.slice(0, 2));
   const line = calendarLine(date, hour);
-  const link = `${appUrl}/?from=nudge`;
+  const link = `${appUrl}${NUDGE_PATH}`;
   return [
     "BEGIN:VEVENT",
     `UID:${compact(date)}-${time.replace(":", "")}@nudge`,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calendarLine, levelFor, nudgeLine } from "./nudges";
+import { calendarLine, levelFor, nudgeLine, showNudgePrompt } from "./nudges";
 import { planToday } from "./quota";
 import type { Entry, Goal } from "./types";
 
@@ -72,5 +72,26 @@ describe("length", () => {
       expect(words(nudgeLine(goal, p, d, h))).toBeLessThanOrEqual(8);
       expect(words(calendarLine(d, h))).toBeLessThanOrEqual(8);
     }
+  });
+});
+
+describe("showNudgePrompt: when to ask \"Nudge you tomorrow?\"", () => {
+  const today = "2026-10-19";
+  const fresh = { nudgesSetUp: false, nudgePromptSnoozedOn: null };
+
+  it("asks once something has been logged and reminders are not set up yet", () => {
+    expect(showNudgePrompt(fresh, today, { logged: false, pinned: false })).toBe(false);
+    expect(showNudgePrompt(fresh, today, { logged: true, pinned: false })).toBe(true);
+  });
+
+  it("\"Not now\" hides it for the rest of the day only, and it comes back tomorrow", () => {
+    expect(showNudgePrompt({ ...fresh, nudgePromptSnoozedOn: today }, today, { logged: true, pinned: false })).toBe(false);
+    expect(showNudgePrompt({ ...fresh, nudgePromptSnoozedOn: "2026-10-18" }, today, { logged: true, pinned: false })).toBe(true);
+  });
+
+  it("stops asking once reminders are set up, but stays open to show what just happened", () => {
+    const setUp = { ...fresh, nudgesSetUp: true };
+    expect(showNudgePrompt(setUp, today, { logged: true, pinned: false })).toBe(false);
+    expect(showNudgePrompt(setUp, today, { logged: true, pinned: true })).toBe(true);
   });
 });

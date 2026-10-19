@@ -38,8 +38,11 @@ export interface Settings {
   notificationsOn: boolean;
   /** True once a calendar file was downloaded or notifications were turned on. */
   nudgesSetUp: boolean;
-  /** True after "Not now" on the set-up-nudges prompt. */
-  nudgePromptDismissed: boolean;
+  /** The day "Not now" was tapped on the set-up-nudges prompt: it stays hidden that day and asks again the next
+   *  (user, 2026-10-19: "Not now" is not "never"). */
+  nudgePromptSnoozedOn: string | null;
+  /** True once Titi has pointed at the streak chip (shown once, on the second day). */
+  streakTipSeen: boolean;
   /** The last day the downloaded calendar file covers, so Today can say when to grab a new one. */
   calendarUntil: string | null;
 }

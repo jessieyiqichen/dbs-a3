@@ -55,3 +55,12 @@ export function weekSummary(goals: Goal[], entries: Entry[], today: string, prev
   const days = new Set(last.map((e) => e.date)).size;
   return `Last week: ${fish} fish for Titi over ${days === 1 ? "1 day" : `${days} days`}!`;
 }
+
+/** Titi's one-time pointer at the streak chip, on the first visit after a day with something done (never on the first
+ *  day), like Week 3's "second week: your streak is here" (reviewer, user 2026-10-19). Null once seen or with no run. */
+export function streakTip({ goals, entries, today, seen, days }: { goals: Goal[]; entries: Entry[]; today: string; seen: boolean; days: number }): string | null {
+  if (seen || days < 1) return null;
+  const ids = new Set(goals.map((g) => g.id));
+  const earlier = entries.some((e) => ids.has(e.goalId) && e.date < today);
+  return earlier ? `Your streak lives here, ${days} ${days === 1 ? "day" : "days"}!` : null;
+}

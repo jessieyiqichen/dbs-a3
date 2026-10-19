@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { timeOfDay, weekBowls, weekdayLetter } from "./scene";
+import { timeOfDay, weekBowls, weekdayLetter, weekLabel, type BowlDay } from "./scene";
 import type { Entry, Goal } from "./types";
 
 const goal: Goal = { id: "g1", verb: "Send", title: "Send applications", unit: "applications", type: "daily", target: 2, deadline: null, link: null, startDate: "2026-10-05", pauses: [], createdAt: "" };
@@ -29,5 +29,17 @@ describe("weekBowls: the seven bowls on the sill, Monday to Sunday", () => {
   it("names the days by their first letter, with the full name for screen readers", () => {
     expect(weekdayLetter("2026-10-12")).toEqual({ letter: "M", name: "Monday" });
     expect(weekdayLetter("2026-10-18")).toEqual({ letter: "S", name: "Sunday" });
+  });
+});
+
+describe("weekLabel: the week's bowls in words", () => {
+  const day = (fill: BowlDay["fill"], extra: Partial<BowlDay> = {}): BowlDay => ({ date: "2026-10-19", fill, today: false, future: false, before: false, ...extra });
+  it("counts the days this week with at least one done, out of seven", () => {
+    const week = [day("full"), day("some"), day("empty"), day("full", { today: true }), day("empty", { future: true }), day("empty", { future: true }), day("empty", { future: true })];
+    expect(weekLabel(week)).toBe("Titi's week, 3 of 7 days");
+  });
+  it("says one day in the singular, and an empty week plainly", () => {
+    expect(weekLabel([day("some"), ...Array(6).fill(day("empty"))])).toBe("Titi's week, 1 of 7 days");
+    expect(weekLabel(Array(7).fill(day("empty")))).toBe("Titi's week, 0 of 7 days");
   });
 });

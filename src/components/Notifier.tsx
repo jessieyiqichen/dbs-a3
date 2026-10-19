@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { toISODate } from "@/lib/dates";
-import { planNotifications } from "@/lib/notify";
+import { NUDGE_PATH, planNotifications } from "@/lib/notify";
 import { nudgeLine } from "@/lib/nudges";
 import { sortByUrgency } from "@/lib/quota";
 import { currentData, useStore } from "@/lib/store";
@@ -15,9 +15,12 @@ function fire(hour: number) {
   const waiting = sortByUrgency(data.goals, data.entries, today).find((g) => g.plan.status === "not-started");
   if (!waiting) return;
   const notification = new Notification("Nudge", { body: nudgeLine(waiting.goal, waiting.plan, today, hour), tag: "nudge" });
+  // Opens Today as a nudge visit (a fresh load, so the visit is read as coming from the nudge), not just the tab as it
+  // was (reviewer, user 2026-10-19: the reward should lead straight back to the task)
   notification.onclick = () => {
     window.focus();
     notification.close();
+    window.location.assign(NUDGE_PATH);
   };
 }
 

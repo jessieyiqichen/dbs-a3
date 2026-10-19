@@ -42,8 +42,17 @@ describe("storage: older saved data", () => {
   it("fills in settings added later", () => {
     const old = { ...emptyData(), settings: { reminderTimes: ["10:00"], notificationsOn: false } };
     const parsed = parseData(JSON.stringify(old));
-    expect(parsed?.settings).toEqual({ reminderTimes: ["10:00"], notificationsOn: false, nudgesSetUp: false, nudgePromptDismissed: false, calendarUntil: null });
+    expect(parsed?.settings).toEqual({ reminderTimes: ["10:00"], notificationsOn: false, nudgesSetUp: false, nudgePromptSnoozedOn: null, streakTipSeen: false, calendarUntil: null });
     expect(parsed?.session).toBeNull();
+  });
+
+  it("keeps a snooze date, drops anything else, and lets an old forever-\"Not now\" ask again", () => {
+    const snoozed = { ...emptyData(), settings: { ...emptyData().settings, nudgePromptSnoozedOn: "2026-10-19" } };
+    expect(parseData(JSON.stringify(snoozed))?.settings.nudgePromptSnoozedOn).toBe("2026-10-19");
+    const junk = { ...emptyData(), settings: { ...emptyData().settings, nudgePromptSnoozedOn: "soon" } };
+    expect(parseData(JSON.stringify(junk))?.settings.nudgePromptSnoozedOn).toBeNull();
+    const old = { ...emptyData(), settings: { reminderTimes: ["10:00"], notificationsOn: false, nudgePromptDismissed: true } };
+    expect(parseData(JSON.stringify(old))?.settings.nudgePromptSnoozedOn).toBeNull();
   });
 
   it("gives older goals an empty verb", () => {

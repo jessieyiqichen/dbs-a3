@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { backAfterDays, weekSummary, welcomeMessage } from "./welcome";
+import { backAfterDays, streakTip, weekSummary, welcomeMessage } from "./welcome";
 import type { Entry, Goal } from "./types";
 
 const goal: Goal = {
@@ -64,5 +64,19 @@ describe("backAfterDays", () => {
   it("is false the day after something was logged, and on a first visit", () => {
     expect(backAfterDays({ prevVisit: "2026-10-16", today: TODAY, goals: [goal], entries: on("2026-10-16") })).toBe(false);
     expect(backAfterDays({ prevVisit: null, today: TODAY, goals: [goal], entries: [] })).toBe(false);
+  });
+});
+
+describe("streakTip: Titi points at the streak once, on the second day", () => {
+  it("never on the first day, when there is no earlier day to count", () => {
+    expect(streakTip({ goals: [goal], entries: on(TODAY), today: TODAY, seen: false, days: 1 })).toBeNull();
+  });
+  it("points at the streak once there is an earlier day and the run is alive", () => {
+    expect(streakTip({ goals: [goal], entries: on("2026-10-16"), today: TODAY, seen: false, days: 1 })).toBe("Your streak lives here, 1 day!");
+    expect(streakTip({ goals: [goal], entries: on("2026-10-16", TODAY), today: TODAY, seen: false, days: 2 })).toBe("Your streak lives here, 2 days!");
+  });
+  it("only once, and not when the run is broken", () => {
+    expect(streakTip({ goals: [goal], entries: on("2026-10-16"), today: TODAY, seen: true, days: 1 })).toBeNull();
+    expect(streakTip({ goals: [goal], entries: on("2026-10-10"), today: TODAY, seen: false, days: 0 })).toBeNull();
   });
 });

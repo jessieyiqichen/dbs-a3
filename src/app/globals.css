@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* A short phone (an iPhone SE is 667px tall): Today's window and Titi shrink so the button and the reminder card stay
+   above the week's bowls fixed at the foot (reviewer, user 2026-10-19: at 667px the button sat under the bowls). */
+@custom-variant short (@media (max-width: 639px) and (max-height: 740px));
+
 /* Cozy Cat, clay edition (user, 2026-10-17: "playful like Duolingo, warm like Headspace"). A warm light page; the
    few objects you act on (buttons, fish, bowls) are saturated and chunky, everything else stays quiet.
    Contrast (checked): ink 13.4:1 and muted 5.7:1 on the page; ink on green 6.4:1 (7.3:1 on hover), on honey 7.0:1,

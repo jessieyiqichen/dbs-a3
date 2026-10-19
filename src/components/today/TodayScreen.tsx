@@ -14,7 +14,8 @@ import { calendarNotice, catchUpLine, sessionIsToday } from "@/lib/returning";
 import { weekBowls } from "@/lib/scene";
 import { overallStreak } from "@/lib/streak";
 import type { AppData, Goal } from "@/lib/types";
-import { backAfterDays, weekSummary, welcomeMessage } from "@/lib/welcome";
+import { backAfterDays, streakTip, weekSummary, welcomeMessage } from "@/lib/welcome";
+import { showNudgePrompt } from "@/lib/nudges";
 import { milestoneLine } from "@/lib/session";
 import { RoomSkeleton } from "./Room";
 import { DoneToday } from "./DoneToday";
@@ -119,8 +120,9 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
   const welcome = weekSummary(data.goals, data.entries, today, visit.prevVisit) ?? welcomeMessage({ ...visit, today, goals: data.goals, entries: data.entries });
   const back = backAfterDays({ prevVisit: visit.prevVisit, today, goals: data.goals, entries: data.entries });
   const firstTime = data.entries.length === 0;
-  const { nudgesSetUp, nudgePromptDismissed, reminderTimes } = data.settings;
-  const showPrompt = !nudgePromptDismissed && (promptPinned || !nudgesSetUp);
+  const { reminderTimes } = data.settings;
+  const logged = data.entries.length > 0;
+  const showPrompt = showNudgePrompt(data.settings, today, { logged, pinned: promptPinned });
   const next = rest.find((item) => ACTIVE.has(item.plan.status))?.goal ?? null;
   const run = overallStreak(data.goals, data.entries, today).days;
 
@@ -140,7 +142,7 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
           />
         ) : celebrating ? (
           <DoneToday
-            prompt={showPrompt ? <NudgePrompt times={reminderTimes} onActed={() => setPromptPinned(true)} /> : null}
+            prompt={showPrompt ? <NudgePrompt times={reminderTimes} today={today} onActed={() => setPromptPinned(true)} /> : null}
             goal={first.goal}
             doneToday={first.plan.doneToday}
             doneTotal={first.plan.doneTotal}
@@ -168,10 +170,11 @@ export function TodayScreen({ view = "home" }: { view?: "home" | "session" }) {
           next={next}
           goals={planned.map((item) => ({ goal: item.goal, done: item.plan.status === "done" || item.plan.status === "complete" }))}
           onPick={(id) => { setFocusGoal(id); setPicked(id); }}
-          corner={run > 0 ? <StreakChip days={run} /> : undefined}
+          corner={run > 0 ? <StreakChip days={run} tip={streakTip({ goals: data.goals, entries: data.entries, today, seen: data.settings.streakTipSeen, days: run })} /> : undefined}
           onStart={() => begin(first.goal)}
           onStartNext={() => next && begin(next)}
           cheer={undoable !== null}
+          prompt={showPrompt ? <NudgePrompt compact times={reminderTimes} today={today} onActed={() => setPromptPinned(true)} /> : null}
         />
       )}
 

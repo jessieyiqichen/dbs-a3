@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { formatShortDate } from "@/lib/dates";
-import { timeOfDay, weekdayLetter, type BowlDay, type TimeOfDay } from "@/lib/scene";
+import { timeOfDay, weekdayLetter, weekLabel, type BowlDay, type TimeOfDay } from "@/lib/scene";
 import type { BowlFill } from "@/lib/session";
 import { CatArt, type CatEffect, type CatMood } from "./CatArt";
 
@@ -22,7 +22,7 @@ function useHour(): number {
 /** The window (art generated with GPT) as a short banner: the sky says what time it is, nothing is drawn over it. */
 function Window({ time, corner, className = "" }: { time: TimeOfDay; corner?: ReactNode; className?: string }) {
   return (
-    <div className={`relative aspect-[1040/457] w-full overflow-hidden rounded-3xl bg-wash ${className}`}>
+    <div className={`relative aspect-[1040/457] w-full overflow-hidden rounded-3xl bg-wash short:aspect-[1040/240] ${className}`}>
       {TIMES.map((t) => (
         // eslint-disable-next-line @next/next/no-img-element -- three paintings cross-fade; next/image would reload on each swap
         <img key={t} src={`/cat/window-${t}.webp`} alt="" aria-hidden="true" className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 motion-reduce:transition-none ${t === time ? "opacity-100" : "opacity-0"}`} />
@@ -53,13 +53,14 @@ export function ShelfBowl({ bowl, label = "letter", pop = false }: { bowl: BowlD
 
 /** This week as seven of Titi's bowls on a clay shelf: fish in the days that got something, heaped when the day was done.
  *  On a phone the shelf stays at the foot of the screen while the room scrolls (status, not navigation: nothing on it is a
- *  button); from 640px up it sits in the page under the room, and on a desktop it is the floor of Titi's room. */
+ *  button), with its small heading, "Titi's week, 3 of 7 days", shown there too (user, 2026-10-19); from 640px up it
+ *  sits in the page under the room, and on a desktop it is the floor of Titi's room. */
 function Shelf({ bowls, className = "" }: { bowls: BowlDay[]; className?: string }) {
   return (
     <div className={`fixed inset-x-0 bottom-0 z-20 border-t-2 border-reward-soft bg-page/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-sm sm:static sm:border-0 sm:bg-transparent sm:pb-0 sm:backdrop-blur-none ${className}`}>
       <div className="mx-auto max-w-xl px-3 pb-1 pt-1.5 sm:pb-2 sm:pt-2 lg:mx-0 lg:max-w-none lg:px-1">
-        <p className="mb-1 text-center text-xs font-extrabold text-muted max-sm:sr-only lg:mb-2 lg:text-left lg:text-sm">Titi&apos;s week, every goal counts!</p>
-        <ol aria-label="Titi's week, every goal counts" className="flex items-end gap-1 lg:gap-3 lg:[&_img]:max-w-16 lg:[&_li>span:first-of-type]:text-xs lg:[&_li>span:first-of-type]:leading-6 lg:[&_li>span:first-of-type]:min-w-6">
+        <p id="titi-week" className="mb-0.5 text-center text-[11px] font-extrabold leading-4 text-muted sm:mb-1 sm:text-xs lg:mb-2 lg:text-left lg:text-sm">{weekLabel(bowls)}</p>
+        <ol aria-labelledby="titi-week" className="flex items-end gap-1 lg:gap-3 lg:[&_img]:max-w-16 lg:[&_li>span:first-of-type]:text-xs lg:[&_li>span:first-of-type]:leading-6 lg:[&_li>span:first-of-type]:min-w-6">
           {bowls.map((b) => <ShelfBowl key={b.date} bowl={b} />)}
         </ol>
       </div>
@@ -92,9 +93,9 @@ export function Room({ bowls, cat, corner, children }: Props) {
           stitched */}
       <div className="contents lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1 lg:flex lg:flex-col lg:gap-6 lg:self-stretch">
         <Window time={time} corner={corner} className="lg:aspect-auto lg:min-h-48 lg:flex-1" />
-        <div className="relative mx-auto flex w-52 flex-col items-center lg:w-72">
-          <span aria-hidden="true" className="clay absolute bottom-1 left-1/2 h-10 w-48 -translate-x-1/2 rounded-full bg-sun [--lip:#e9cf7e] lg:bottom-3 lg:h-12 lg:w-60" />
-          <CatArt key={cat.key} mood={cat.mood} effect={cat.effect} sun={false} className="relative w-40 lg:w-56" />
+        <div className="relative mx-auto flex w-52 flex-col items-center short:w-32 lg:w-72">
+          <span aria-hidden="true" className="clay absolute bottom-1 left-1/2 h-10 w-48 -translate-x-1/2 rounded-full bg-sun [--lip:#e9cf7e] short:h-6 short:w-28 lg:bottom-3 lg:h-12 lg:w-60" />
+          <CatArt key={cat.key} mood={cat.mood} effect={cat.effect} sun={false} className="relative w-40 short:w-20 lg:w-56" />
         </div>
       </div>
       {/* The task: on a phone the goal, then the shelf fixed at the foot of the screen; on a desktop the left seven

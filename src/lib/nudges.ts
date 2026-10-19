@@ -1,7 +1,7 @@
 import { daysBetween, formatShortDate } from "./dates";
 import { formatCount } from "./format";
 import type { TodayPlan } from "./quota";
-import type { Goal } from "./types";
+import type { Goal, Settings } from "./types";
 
 export type NudgeLevel = "gentle" | "firmer" | "last-call";
 
@@ -66,4 +66,17 @@ export function nudgeLine(goal: Goal, plan: TodayPlan, today: string, hour: numb
 export function calendarLine(date: string, hour: number): string {
   const lines = NOT_STARTED[levelFor(hour)];
   return lines[(daysBetween("2026-01-01", date) + hour) % lines.length];
+}
+
+/** Whether to ask "Nudge you tomorrow?": once something has been logged (on Today too, not only after a finished day,
+ *  so someone who does 2 of 5 is asked), while reminders are not set up, and not again on a day "Not now" was tapped.
+ *  `pinned` keeps it open after an action so it can show what happened. */
+export function showNudgePrompt(
+  settings: Pick<Settings, "nudgesSetUp" | "nudgePromptSnoozedOn">,
+  today: string,
+  { logged, pinned }: { logged: boolean; pinned: boolean },
+): boolean {
+  if (pinned) return true;
+  if (!logged || settings.nudgesSetUp) return false;
+  return settings.nudgePromptSnoozedOn !== today;
 }
