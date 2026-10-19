@@ -7,6 +7,7 @@ Design, Build, Ship · Assignment 3 (Patterns & Flows).
 - **Live:** [dbs-a3.vercel.app](https://dbs-a3.vercel.app)
 - **Flows:** [flows.md](flows.md) (first visit, the main task, coming back, managing goals)
 - **Every state:** [docs/states.png](docs/states.png)
+- **Design system:** Fish Treat, on Claude (tokens, type, clay and focus rules, every component with a live preview, and Titi's poses): https://claude.ai/artifact/8ZLSKPpy6jRFPHJtqfZXCw
 - **Onboarding research:** [research.md](research.md) (Beeminder, Duolingo, Finch)
 - **Decision log (Chinese):** [log.md](log.md) · **Agent rules:** [AGENTS.md](AGENTS.md)
 
@@ -19,11 +20,11 @@ The three flows in one picture (each step is a route; every state and error is d
 ```mermaid
 flowchart LR
     subgraph first [First visit]
-        A([Nothing saved]) --> P["Titi: what have you been putting off?"] --> W["By when? · How many?\n(each a tap)"] --> PL["Here's our plan: today's number as fish treats"]
+        A([Nothing saved]) --> PL["One screen: Titi asks; what, by when, how many come picked;\ntoday's number and Start my first one"]
     end
     subgraph main [Main task]
-        T["Today: Titi's room, goal tabs,\none sentence, one button"] -->|Start| S["/session: tap a fish or I finished one,\nfish fly into Titi's bowl; Open LinkedIn ↗ is yours to tap"] -->|today's number reached| D["Done for today!\nfish · streak · road"]
-        S -->|Did more than N? not a number| E["Enter a whole number, like 30"] --> S
+        T["Today: Titi's room, goal tabs,\none sentence, one button"] -->|Start| S["/session: today's task as the heading;\nI sent one, or Did several at once?;\n2 of 5 done; Open LinkedIn ↗ is yours to tap"] -->|today's number reached| D["Done for today!\nfish · streak · road"]
+        S -->|Did several at once? not a number| E["Enter a whole number, like 30"] --> S
     end
     subgraph back [Coming back]
         C([Open it again]) --> K["Welcome back · streak · this week's bowls\n(or: it's been 6 days, and that's okay)"] --> T
@@ -36,8 +37,8 @@ flowchart LR
 
 | Flow | What happens | Where |
 |---|---|---|
-| First visit | Titi asks one thing per screen, every answer is a tap: what you've been putting off, by when, how many (each choice shown as fish treats a day), then today's plan and the first task right away. Nothing to read, no empty screen, no sign-up. | `/` with nothing saved; the same walk is "+ Add" later |
-| Main task | Today is Titi's room: the painted window changes with the hour, Titi waits on her mat, then which goal is up now, one sentence and the Start button; this week's bowls sit on a shelf that stays at the foot of a phone screen while the room scrolls. Tap Start to open the session (its own page); open LinkedIn from there if you want it, come back and tap the fish you just finished (or "I finished one"). Back returns to the room and keeps the session going. Each log sends a fish into Titi's bowl; reaching today's number ends in a results screen whose three numbers count up. | `/`, `/session` |
+| First visit | One screen: Titi asks, and three rows of one-tap answers (what, by when, how many) come already picked, so today's number and "Start my first one" are on the first screen; every tap updates the number, and "Something else" opens one field on the same page. Nothing to read, no empty screen, no sign-up. | `/` with nothing saved; the same screen is "+ Add a goal" later |
+| Main task | Today is Titi's room: the painted window changes with the hour, Titi waits on her mat, then which goal is up now, one sentence and the Start button; this week's bowls sit on a shelf that stays at the foot of a phone screen while the room scrolls. Tap Start to open the session (its own page); the heading is today's task ("Send 5 connection requests today"); open LinkedIn from there if you want it, come back and tap the one button that says what you did ("I sent one"), or "Did several at once?" for +2, All N, or a typed number. The row of fish only shows how far today has come, so nothing looks tappable that isn't. Back returns to the room and keeps the session going. Each log fills the next fish and Titi hops; reaching today's number ends in a results screen whose three numbers count up. | `/`, `/session` |
 | Coming back | It remembers: your goals, the streak (one for the whole app, with a forgiven rest day a week), what you did this week. A warm line says why today's number is what it is. Reminders come two ways: a calendar file that works when Nudge is closed, and browser notifications that stop once you've started. | `/`, `/reminders` |
 
 ![Every state of every page](docs/states.png)
@@ -92,5 +93,6 @@ Data is saved only in this browser (localStorage). No accounts, database or APIs
 ## Credits
 
 - Titi, her bowls, the window paintings and the hillside on Titi's road were generated with GPT from photos and prompts by the author, then cut out and assembled here (see [log.md](log.md) for every prompt and decision).
+- Titi's later poses were generated with GPT too: the wave was made on a green screen and keyed out, and walk and paw tap were cut from generated sprite sheets, so small details can shift between frames. The loaf and stretch are single stills that code moves.
 - Fonts: Fredoka and Nunito (Google Fonts).
 - Built by directing Claude Code; the decision log records what was asked, what was proposed and what was chosen, in Chinese.

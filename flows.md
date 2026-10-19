@@ -8,24 +8,18 @@ A tool you use every day has three flows: the first visit, the main task, and co
 
 ## 1. First visit: useful right away
 
-Nothing is saved. Titi asks one thing per screen, every answer is a tap, and the last screen starts the first task. The same walk (`GoalWizard`) is used for "+ Add" later, so a goal is always made the same way.
+Nothing is saved. One screen (after the teacher's "the page is the onboarding"): Titi asks, and three rows of one-tap answers come already picked (LinkedIn connections, in a month, steady), so today's number and "Start my first one" are on the first screen; on a phone they stay pinned to the foot of the screen. Every tap updates the number. The same screen (`GoalWizard`) is "+ Add a goal" later, so a goal is always made the same way. The page you work on is no longer asked here: a preset suggests one, and Edit goal changes it.
 
 ```mermaid
 flowchart TD
-    A([Open the app, nothing saved]) --> P["Hi, I'm Titi! What have you been putting off?"]
-    P -->|LinkedIn connections| D["When do you want to get there?\n2 weeks · a month · before Thanksgiving · pick a date"]
-    P -->|Applications · Coffee chats · Interview practice| N
-    P -->|Something else| W["Tell me what it is (one field)"]
-    W -->|empty| WE["Enter what you'll do, like 'Send cold emails'"] --> W
-    W --> O["Every day, or a total by a date?"]
-    O -->|a total| D
-    O -->|every day| N
-    D --> N["How many? Easy start · Steady · Go big\n(each shown as fish treats a day) · type my own"]
-    N -->|own goal| L["Is there a page I should open when you start? (skip)"]
-    L -->|not a link| LE["Paste a full link that starts with https://"] --> L
-    N --> PL
-    L --> PL["Here's our plan! Today's number as fish treats"]
-    PL -->|Start my first one| S["Session (flow 2)"]
+    A([Open the app, nothing saved]) --> P["One screen: Hi, I'm Titi! What have you been putting off?\nWhat · By when · How many, already picked\nToday: Send 5 connection requests today · Start my first one"]
+    P -->|tap another answer| P
+    P -->|Something else| W["What will you do? (one field) · How often?"]
+    W -->|Start with the field empty| WE["Enter what you'll do, like 'Send cold emails'\n(focus moves to the field)"] --> W
+    P -->|Pick a date, or My own number| F["One field on the same screen"]
+    F -->|not a date / not a number| FE["Pick a date after today · Enter a whole number, like 150"] --> F
+    P -->|Start my first one| S["Session (flow 2)"]
+    W -->|Start| S
     X[(localStorage unavailable)] -.-> XB["This browser can't save, so your goals will be gone when you close the tab"]
 ```
 
@@ -38,10 +32,10 @@ flowchart TD
     T([Today]) --> R["Titi's room: window by the hour · Titi · this week's bowls"]
     R --> G["Goal tabs: pick which goal is up now (remembered while open)"]
     G --> B["Bubble: 'Send 5 connection requests' + a nudge line\nStart on LinkedIn ↗"]
-    B -->|Start| S["/session: Titi cheering, her bowl, the fish tiles (tap one to log up to it)\nOpen LinkedIn ↗ (only here, only if you tap it) · I finished one · Did more than N?"]
-    S -->|tap a fish, I finished one| F["Fish flies into the bowl, +1, Titi hops\nToast: Added 2 · Undo"]
+    B -->|Start| S["/session: Send 5 connection requests today\nTiti cheering, a row of fish that fills (2 of 5 done)\nOpen LinkedIn ↗ (only here, only if you tap it) · I sent one · Did several at once?"]
+    S -->|I sent one, or +2 / All N / a typed number| F["The next fish fills, Titi hops\nToast: Added 2 · Undo"]
     F --> S
-    S -->|Did more than N? → not a number| SE["Enter a whole number, like 30"] --> S
+    S -->|Did several at once? → not a number| SE["Enter a whole number, like 30"] --> S
     S -->|← Today, or the browser's Back| T
     F -->|today's number reached| D["Done for today! Three cards count up:\nfish today · streak · road"]
     D -->|Next goal| S
