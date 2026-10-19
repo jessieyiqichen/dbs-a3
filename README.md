@@ -23,7 +23,7 @@ flowchart LR
         A([Nothing saved]) --> PL["One screen: Titi asks; what, by when, how many come picked;\ntoday's number and Start my first one"]
     end
     subgraph main [Main task]
-        T["Today: Titi's room, goal tabs,\none sentence, one button"] -->|Start| S["/session: today's task as the heading;\nI sent one, or Did several at once?;\n2 of 5 done; Open LinkedIn ↗ is yours to tap"] -->|today's number reached| D["Done for today!\nfish · streak · road"]
+        T["Today: Titi's room, goal tabs,\none sentence, one button"] -->|Start| S["/session: today's task as the heading;\nI sent one, or Did several at once?;\n2 of 5 done; Open LinkedIn ↗ is yours to tap"] -->|today's number reached| D["Done for today!\nstreak · so far · See my streak"]
         S -->|Did several at once? not a number| E["Enter a whole number, like 30"] --> S
     end
     subgraph back [Coming back]
@@ -38,7 +38,7 @@ flowchart LR
 | Flow | What happens | Where |
 |---|---|---|
 | First visit | One screen: Titi asks, and three rows of one-tap answers (what, by when, how many) come already picked, so today's number and "Start my first one" are on the first screen; every tap updates the number, and "Something else" opens one field on the same page. Nothing to read, no empty screen, no sign-up. | `/` with nothing saved; the same screen is "+ Add a goal" later |
-| Main task | Today is Titi's room: the painted window changes with the hour, Titi waits on her mat, then which goal is up now, one sentence and the Start button; this week's bowls sit on a shelf that stays at the foot of a phone screen while the room scrolls. Tap Start to open the session (its own page); the heading is today's task ("Send 5 connection requests today"); open LinkedIn from there if you want it, come back and tap the one button that says what you did ("I sent one"), or "Did several at once?" for +2, All N, or a typed number. The row of fish only shows how far today has come, so nothing looks tappable that isn't. Back returns to the room and keeps the session going. Each log fills the next fish and Titi hops; reaching today's number ends in a results screen whose three numbers count up. | `/`, `/session` |
+| Main task | Today is Titi's room: the painted window changes with the hour, Titi waits on her mat, then which goal is up now, one sentence and the Start button; this week's bowls sit on a shelf that stays at the foot of a phone screen while the room scrolls. Tap Start to open the session (its own page); the heading is today's task ("Send 5 connection requests today"); the green button is whatever comes next, "Open LinkedIn" until it has been opened or one is logged, then the one that says what you did ("I sent one"), or "Did several at once?" for +2, All N, or a typed number. The row of fish only shows how far today has come, so nothing looks tappable that isn't. Back returns to the room and keeps the session going. Each log fills the next fish and Titi hops; reaching today's number ends in a results screen: what you did in one line, then two honey badges that count up (the streak, and how far the whole goal has come, "56 of 150"), and "See my streak" before "Back to Today". | `/`, `/session` |
 | Coming back | It remembers: your goals, the streak (one for the whole app, with a forgiven rest day a week), what you did this week. A warm line says why today's number is what it is. Reminders come two ways: a calendar file that works when Nudge is closed, and browser notifications that stop once you've started. | `/`, `/reminders` |
 
 ![Every state of every page](docs/states.png)
@@ -55,6 +55,19 @@ flowchart LR
 - **Simplicity.** Navigation is Today and Goals. Reminders are reached from Goals and from the done screen. Adding a goal is the same walk as the first visit, so there is one way to make a goal.
 
 Research behind these choices: [research.md](research.md), and a study of Duolingo's structure (a path home, a persistent streak, lesson-complete metrics), visuals and voice.
+
+## Retention
+
+Built around James Clear's four laws as one loop, so each visit leads to the next (Week 3, slide 62).
+
+| Law | In Nudge |
+|---|---|
+| Make it obvious | A calendar file and browser nudges at your times. After your first log, Today asks "Nudge you tomorrow?" in one row under the button; "Not now" hides it until tomorrow |
+| Make it attractive | Your progress is the first thing you see: the streak on Titi's window, this week's bowls ("Titi's week, 3 of 7 days"), Titi's road. On the second day Titi points at the streak once |
+| Make it easy | One button on Today. Tapping a nudge opens Today as a nudge visit ("You came back! That's the hardest part") with Start one tap away; "Keep going" picks up where you left off |
+| Make it satisfying | Each one fills a fish and Titi hops; a finished day ends in a celebration and the streak's own moment; a weekly line counts last week's fish |
+
+**Habits that are good for you.** Nudge pushes, but it never shames: one rest day a week is forgiven automatically, a missed stretch is met with "It's been 6 days, and that's okay", browser nudges stop once you've started and are capped at four a day, and the shortfall is spread over the days left instead of piling onto today.
 
 ## Accessibility
 
