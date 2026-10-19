@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calendarLine, levelFor, nudgeLine, showNudgePrompt } from "./nudges";
+import { calendarLine, levelFor, nudgeLine, showNudgePrompt, sleepTalk } from "./nudges";
 import { planToday } from "./quota";
 import type { Entry, Goal } from "./types";
 
@@ -93,5 +93,16 @@ describe("showNudgePrompt: when to ask \"Nudge you tomorrow?\"", () => {
     const setUp = { ...fresh, nudgesSetUp: true };
     expect(showNudgePrompt(setUp, today, { logged: true, pinned: false })).toBe(false);
     expect(showNudgePrompt(setUp, today, { logged: true, pinned: true })).toBe(true);
+  });
+});
+
+describe("sleepTalk: what Titi mumbles while she naps before you start", () => {
+  it("is a dream about fish that gets more pointed as the day goes on", () => {
+    expect(sleepTalk("gentle")).toBe("Zzz… one fish would wake me up");
+    expect(sleepTalk("firmer")).toBe("Zzz… is it fish time yet?");
+    expect(sleepTalk("last-call")).toBe("Zzz… one fish before bed?");
+  });
+  it("keeps the house style: no full stop, no tilde", () => {
+    for (const level of ["gentle", "firmer", "last-call"] as const) expect(sleepTalk(level)).not.toMatch(/[.~]$/);
   });
 });

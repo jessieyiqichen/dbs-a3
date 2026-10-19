@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { ScreenHeading } from "@/components/ui/ScreenHeading";
-import { nudgeLine } from "@/lib/nudges";
+import { levelFor, nudgeLine, sleepTalk } from "@/lib/nudges";
 import { headline } from "@/lib/phrases";
 import type { TodayPlan } from "@/lib/quota";
 import type { BowlDay } from "@/lib/scene";
@@ -75,9 +75,15 @@ function catFor(
   if (status === "complete") return { mood: "celebrate", effect: "party" };
   if (status === "done" || status === "paused") return { mood: "loaf" };
   if (status === "deadline-passed") return { mood: "stretch" };
-  // Asleep only when she has nothing to say: back after days or from a reminder she stretches, and when she greets you
-  // ("Last week: ...", "Welcome back") she waves, so the picture matches her words (user, 2026-10-19)
-  if (status === "not-started") return back ? { mood: "stretch" } : greets ? { mood: "wave" } : { mood: "sleep", effect: "zzz" };
+  // Before you start: back after days or from a reminder she stretches, a greeting ("Last week: ...", "Welcome back")
+  // gets a wave, and otherwise she naps and talks in her sleep (user, 2026-10-19: every line on Today is hers, in her
+  // bubble, and she sleeps until you start)
+  if (status === "not-started")
+    return back
+      ? { mood: "stretch" }
+      : greets
+        ? { mood: "wave" }
+        : { mood: "sleep", effect: "zzz" };
   if (status === "started") return { mood: "paw-tap" };
   return { mood: "idle" };
 }
@@ -178,7 +184,17 @@ function shortName(goal: Goal): string {
 
 /** The sentence for today, with Titi's line under it; on a desktop it is a size larger and today's number shows as fish
  *  treats under it, all top-aligned (nothing stretched to match Titi's column). */
-function SentenceCard({ goal, plan, line, catchUp }: { goal: Goal; plan: TodayPlan; line: string | null; catchUp: string | null }) {
+function SentenceCard({
+  goal,
+  plan,
+  line,
+  catchUp,
+}: {
+  goal: Goal;
+  plan: TodayPlan;
+  line: string | null;
+  catchUp: string | null;
+}) {
   const active = plan.status === "not-started" || plan.status === "started";
   return (
     <div className="relative w-full px-1 pt-1">
@@ -188,14 +204,21 @@ function SentenceCard({ goal, plan, line, catchUp }: { goal: Goal; plan: TodayPl
       >
         {title(goal, plan)}
       </ScreenHeading>
-      {line && <p className="mt-1 font-bold text-muted lg:mt-4 lg:text-lg">{line}</p>}
+      {line && (
+        <p className="mt-1 font-bold text-muted lg:mt-4 lg:text-lg">{line}</p>
+      )}
       {catchUp && plan.status === "not-started" && (
         <p className="mt-1 text-sm font-bold text-muted">{catchUp}</p>
       )}
       {/* Desktop only: today's number as fish treats under the sentence, the same tiles the session uses */}
       {(active || plan.status === "done") && (
         <div className="mt-6 hidden lg:block">
-          <Coins total={plan.quota} done={Math.min(plan.doneToday, plan.quota)} label="Today" size="lg" />
+          <Coins
+            total={plan.quota}
+            done={Math.min(plan.doneToday, plan.quota)}
+            label="Today"
+            size="lg"
+          />
         </div>
       )}
     </div>
@@ -203,7 +226,21 @@ function SentenceCard({ goal, plan, line, catchUp }: { goal: Goal; plan: TodayPl
 }
 
 /** The one button for today's state, then the whole goal's road in one quiet line. */
-function MainAction({ goal, plan, next, onStart, onStartNext, prompt }: { goal: Goal; plan: TodayPlan; next: Goal | null; onStart: () => void; onStartNext: () => void; prompt?: React.ReactNode }) {
+function MainAction({
+  goal,
+  plan,
+  next,
+  onStart,
+  onStartNext,
+  prompt,
+}: {
+  goal: Goal;
+  plan: TodayPlan;
+  next: Goal | null;
+  onStart: () => void;
+  onStartNext: () => void;
+  prompt?: React.ReactNode;
+}) {
   const active = plan.status === "not-started" || plan.status === "started";
   return (
     <div className="flex w-full flex-col gap-3">
@@ -232,11 +269,7 @@ function MainAction({ goal, plan, next, onStart, onStartNext, prompt }: { goal: 
         </ButtonLink>
       )}
       {plan.status === "paused" && (
-        <ButtonLink
-          href="/goals"
-          variant="secondary"
-          className="self-start"
-        >
+        <ButtonLink href="/goals" variant="secondary" className="self-start">
           Manage goals
         </ButtonLink>
       )}
@@ -269,22 +302,35 @@ export function TodayHome({
   cheer = false,
   prompt,
 }: Props) {
-  const line =
+  // Everything Titi says is in her bubble beside her: the welcome on the day's first open, otherwise the day's nudge,
+  // and "so full" once today is done. The heading and the catch-up line stay under the tabs.
+  const said =
     plan.status === "done"
-      ? "Titi is so full! See you tomorrow~"
-      : welcome
-        ? null // said by Titi in her bubble
-        : nudgeLine(goal, plan, today, hour);
+      ? "Titi is so full! See you tomorrow"
+      : (welcome ??
+        (plan.status === "not-started" && !back
+          ? sleepTalk(levelFor(hour))
+          : nudgeLine(goal, plan, today, hour)));
   const cat = {
     ...catFor(plan.status, cheer, back, welcome !== null),
     key: cheer ? "cheer" : plan.status,
   };
   return (
-    <section aria-labelledby={`goal-${goal.id}`} className="flex flex-col lg:pt-2">
-      <Room bowls={bowls} cat={cat} corner={corner} say={plan.status === "done" ? null : welcome}>
+    <section
+      aria-labelledby={`goal-${goal.id}`}
+      className="flex flex-col lg:pt-2"
+    >
+      <Room bowls={bowls} cat={cat} corner={corner} say={said}>
         <GoalTabs goals={goals} current={goal.id} onPick={onPick} />
-        <SentenceCard goal={goal} plan={plan} line={line} catchUp={catchUp} />
-        <MainAction goal={goal} plan={plan} next={next} onStart={onStart} onStartNext={onStartNext} prompt={prompt} />
+        <SentenceCard goal={goal} plan={plan} line={null} catchUp={catchUp} />
+        <MainAction
+          goal={goal}
+          plan={plan}
+          next={next}
+          onStart={onStart}
+          onStartNext={onStartNext}
+          prompt={prompt}
+        />
         {notice && (
           <Link
             href="/reminders"

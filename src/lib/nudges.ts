@@ -80,3 +80,15 @@ export function showNudgePrompt(
   if (!logged || settings.nudgesSetUp) return false;
   return settings.nudgePromptSnoozedOn !== today;
 }
+
+const SLEEP_TALK: Record<NudgeLevel, string> = {
+  gentle: "Zzz… one fish would wake me up",
+  firmer: "Zzz… is it fish time yet?",
+  "last-call": "Zzz… one fish before bed?",
+};
+
+/** What Titi mumbles in her sleep before you start today: still a nudge, said as a dream about fish, a little more
+ *  pointed as the day goes on (user, 2026-10-19: she naps until you start, and talks in her sleep). */
+export function sleepTalk(level: NudgeLevel): string {
+  return SLEEP_TALK[level];
+}
