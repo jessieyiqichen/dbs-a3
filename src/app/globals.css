@@ -28,7 +28,7 @@
   --color-lip: #2a8f4e;         /* the solid edge under the primary button; also the pace ring and the streak card */
   --color-primary-soft: #e3f6ec; /* a chosen radio option */
   --color-reward: #f5a623;      /* fish treats, the streak, the road */
-  --color-reward-deep: #c97e0c;
+  --color-reward-deep: #9c5e06; /* honey as text (the streak number, badge numbers): 4.8:1 on the done screen, 5.2:1 on white (was #c97e0c, 2.95:1, user 2026-10-19) */
   --color-reward-soft: #fff1cf;
   --color-sky: #5aa9e6;         /* Titi's bowl */
   --color-sky-deep: #3a7fb8;
