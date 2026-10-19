@@ -243,7 +243,7 @@ export function Road({ goal, story }: { goal: Goal; story: RoadStory }) {
           {story.milestones.filter((m) => verge(m.at)[1] >= cy).map((m) => <Milestone key={m.at} at={m.at} reached={now >= m.at} count={Math.round(m.at * goal.target)} grow={grow} />)}
         </svg>
       </div>
-      <figcaption className="px-3 pt-3 text-center text-sm font-bold text-muted">
+      <figcaption className="px-3 pt-3 text-center text-sm font-bold text-muted lg:px-1 lg:text-left">
         {/* The marker is a dashed ring, not a flag, and it is only drawn when it is clear of Titi, so the caption says so too
             (first-run check, 2026-10-18: "pace flag" sent a tester looking for a second flag). Whether you are ahead or
             behind is said once, in the headline above (reviewer, 2026-10-18). */}

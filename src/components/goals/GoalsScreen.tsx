@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback } from "react";
 import { ProgressScreen } from "@/components/progress/ProgressScreen";
 import { ButtonLink } from "@/components/ui/Button";
@@ -94,20 +95,20 @@ export function GoalsScreen({ selected, fromToday = false }: Props) {
       </ButtonLink>
     </>
   );
-  // Settings, apart from the goals: when to nudge, and the backup. Under the list on a phone; on a desktop a row of its
-  // own under the list and the chosen goal, so the two columns above it stay level (user, 2026-10-19)
+  // Settings, apart from the goals and under them: when to nudge, and the backup, as two rows of one kind (user,
+  // 2026-10-19: a link beside a big card did not read as one set). On a desktop they close the list column.
   const settings = (
-    <div className="mt-10 flex flex-col gap-2 border-t-2 border-wash-strong pt-5 lg:col-span-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-8">
-      <ButtonLink
+    <div className="mt-10 flex flex-col gap-2 border-t-2 border-wash-strong pt-5">
+      <Link
         href="/reminders"
-        variant="ghost"
-        className="self-start lg:col-span-4 lg:justify-self-start"
+        className="flex items-center justify-between rounded-3xl bg-wash px-5 py-3 font-display text-lg font-semibold text-ink hover:bg-wash-strong focus-visible:outline-3 focus-visible:outline-focus"
       >
         Reminder times
-      </ButtonLink>
-      <div className="lg:col-span-8 lg:col-start-5">
-        <BackupSection data={data} />
-      </div>
+        <span aria-hidden="true" className="text-muted">
+          →
+        </span>
+      </Link>
+      <BackupSection data={data} />
     </div>
   );
   const toast = (
@@ -130,11 +131,13 @@ export function GoalsScreen({ selected, fromToday = false }: Props) {
     );
   return (
     <div className="grid grid-cols-12 items-start gap-x-8">
-      <div className="col-span-4 flex flex-col">{list}</div>
+      <div className="col-span-4 flex flex-col">
+        {list}
+        {settings}
+      </div>
       <div className="col-span-8 col-start-5 flex flex-col">
         <ProgressScreen id={chosen.id} fromToday={fromToday} embedded />
       </div>
-      {settings}
       {toast}
     </div>
   );

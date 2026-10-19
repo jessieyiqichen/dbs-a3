@@ -128,15 +128,64 @@ export function ProgressScreen({
   const lastRest = run.restDays[0];
   const byDate = goal.type === "by-date";
 
+  const days = run.days === 1 ? "1 day in a row" : `${run.days} days in a row`;
+  if (embedded) {
+    // Beside the goal list on a desktop: one column, all left-aligned, in reading order: the goal, one line of where it
+    // stands, the picture across all eight columns, then what you can do with it in one row (reviewer's layout, user
+    // 2026-10-19). No back link (Today is in the navigation). A daily goal has a small Titi by the line; a by-date goal
+    // already has her on the road, and one Titi per screen.
+    const where = byDate
+      ? `${plan.doneTotal} of ${goal.target} · ${paceLine(goal, plan, today)}`
+      : `${formatCount(goal.target, goal.unit)} a day`;
+    return (
+      <>
+        <PageHeader title={goal.title} back={null} level="h2" />
+        <p className="mt-3 flex items-center gap-3 font-bold text-muted">
+          {!byDate && (
+            <CatArt
+              mood={plan.status === "done" ? "loaf" : "idle"}
+              className="w-16 shrink-0"
+            />
+          )}
+          <span>
+            {where} · {days}
+            {lastRest && ` · ${formatShortDate(lastRest)} was a rest day`}
+          </span>
+        </p>
+        <div className="mt-6">
+          {byDate ? (
+            <Road goal={goal} story={roadStory(goal, data.entries, today)} />
+          ) : (
+            <Diary
+              weeks={diaryWeeks(goal, data.entries, today, 2)}
+              target={goal.target}
+              unit={goal.unit}
+            />
+          )}
+        </div>
+        <div className="mt-8">
+          <GoalActions goal={goal} today={today} inline />
+        </div>
+      </>
+    );
+  }
+
   const intro = byDate
     ? `Titi walks the road as you go: a sign every quarter, the flag on ${formatShortDate(goal.deadline ?? today)}`
     : "Your last two weeks, one bowl a day";
   return (
     <>
-      <Header title={goal.title} intro={intro} fromToday={fromToday} embedded={embedded} />
+      <Header
+        title={goal.title}
+        intro={intro}
+        fromToday={fromToday}
+        embedded={embedded}
+      />
       {/* Beside the goal list the picture and the side column share the eight columns (2:1), so the goal is not one long
           column next to a short list (user, 2026-10-19: the two sides were unbalanced) */}
-      <div className={`mt-6 flex flex-col gap-7 lg:grid lg:grid-rows-[auto_auto_1fr] lg:gap-y-5 ${embedded ? "lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-x-8" : "lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-x-12"}`}>
+      <div
+        className={`mt-6 flex flex-col gap-7 lg:grid lg:grid-rows-[auto_auto_1fr] lg:gap-y-5 ${embedded ? "lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-x-8" : "lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-x-12"}`}
+      >
         <Headline goal={goal} plan={plan} today={today} />
 
         <div className="lg:col-start-1 lg:row-span-3 lg:row-start-1">
