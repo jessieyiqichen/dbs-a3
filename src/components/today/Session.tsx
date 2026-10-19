@@ -150,7 +150,7 @@ function LogPanel({
   return (
     <div className="flex flex-col lg:col-span-7 lg:col-start-1 lg:row-start-2 lg:max-w-xl lg:self-start">
       <div className="mt-6 lg:mt-0">
-        <Coins total={total} done={done} label="Today" />
+        <Coins total={total} done={done} label="Today" size="lg" />
       </div>
       {site && (
         <Button

@@ -181,7 +181,7 @@ function Onward({
     <>
       {/* The question comes before the way out, so it is seen before you leave (reviewer, user 2026-10-19) */}
       {prompt && <div className="mt-8 w-full text-left">{prompt}</div>}
-      <div className="mt-8 flex w-full flex-col items-center gap-3">
+      <div className="mt-8 flex w-full flex-col items-center gap-3 lg:items-start">
         {next ? (
           <>
             <Button size="lg" onClick={onStartNext} className="w-full">
@@ -215,40 +215,44 @@ function StreakMoment({
   return (
     <section
       aria-labelledby="streak-title"
-      className="relative flex flex-col items-center pt-10 text-center"
+      className="relative flex flex-col items-center pt-10 text-center lg:my-auto lg:grid lg:grid-cols-12 lg:items-center lg:gap-x-8 lg:pb-16 lg:pt-0 lg:text-left"
     >
       <div aria-hidden="true" className="fixed inset-0 -z-20 bg-celebrate" />
-      <div className="relative flex size-44 items-center justify-center">
+      {/* On a desktop the same 7/5 grid as every page: the words and the week on the left, the fish in its rays on the
+          right (user, 2026-10-19: a narrow centred column left most of the screen empty). On a phone nothing changes */}
+      <div className="relative flex size-44 items-center justify-center lg:col-span-5 lg:col-start-8 lg:row-start-1 lg:size-80 lg:justify-self-center">
         <Rays />
         {/* eslint-disable-next-line @next/next/no-img-element -- the fish treat, the streak's mark */}
         <img
           src="/cat/fish.png"
           alt=""
           aria-hidden="true"
-          className="pop-in w-28"
+          className="pop-in w-28 lg:w-48"
         />
       </div>
-      <p
-        aria-hidden="true"
-        className="mt-4 font-display text-7xl font-bold tabular-nums text-reward-deep"
-      >
-        {shown}
-      </p>
-      <ScreenHeading
-        id="streak-title"
-        className="font-display text-3xl font-bold text-ink"
-      >
-        {days}-day streak!
-      </ScreenHeading>
-      <p className="mt-1 font-display text-lg font-semibold text-muted">
-        Come back tomorrow to keep it going
-      </p>
-      <ol aria-label="This week" className="mt-8 flex w-full items-end gap-1">
-        {bowls.map((b) => (
-          <ShelfBowl key={b.date} bowl={b} pop={b.today} />
-        ))}
-      </ol>
-      {children}
+      <div className="contents lg:col-span-7 lg:col-start-1 lg:row-start-1 lg:flex lg:flex-col lg:items-start">
+        <p
+          aria-hidden="true"
+          className="mt-4 font-display text-7xl font-bold tabular-nums text-reward-deep lg:mt-0 lg:text-8xl"
+        >
+          {shown}
+        </p>
+        <ScreenHeading
+          id="streak-title"
+          className="font-display text-3xl font-bold text-ink lg:text-5xl"
+        >
+          {days}-day streak!
+        </ScreenHeading>
+        <p className="mt-1 font-display text-lg font-semibold text-muted lg:mt-2 lg:text-xl">
+          Come back tomorrow to keep it going
+        </p>
+        <ol aria-label="This week" className="mt-8 flex w-full items-end gap-1">
+          {bowls.map((b) => (
+            <ShelfBowl key={b.date} bowl={b} pop={b.today} />
+          ))}
+        </ol>
+        {children}
+      </div>
     </section>
   );
 }
@@ -289,54 +293,58 @@ export function DoneToday({
   return (
     <section
       aria-labelledby="done-title"
-      className="relative flex flex-col items-center pt-2 text-center"
+      className="relative flex flex-col items-center pt-2 text-center lg:my-auto lg:grid lg:grid-cols-12 lg:items-center lg:gap-x-8 lg:pb-16 lg:pt-0 lg:text-left"
     >
       <div aria-hidden="true" className="fixed inset-0 -z-20 bg-celebrate" />
       <Confetti />
-      <div className="relative mt-4 w-52">
+      {/* On a desktop: Titi jumping in her rays on the right five columns, what you did and the way on on the left
+          seven (user, 2026-10-19). On a phone nothing changes */}
+      <div className="relative mt-4 w-52 lg:col-span-5 lg:col-start-8 lg:row-start-1 lg:mt-0 lg:w-80 lg:justify-self-center">
         <Rays />
         <CatArt
           mood="celebrate"
           effect="party"
           sun={false}
-          className="pop-in w-52"
+          className="pop-in w-52 lg:w-80"
         />
       </div>
-      <ScreenHeading
-        id="done-title"
-        className="mt-4 font-display text-4xl font-bold text-ink"
-      >
-        Done for today!
-      </ScreenHeading>
-      <p className="mt-1 font-display text-xl font-semibold text-ink">
-        {countOf(doneToday, goal.unit)} done, Titi is so proud!
-      </p>
-      <ul aria-label="Today's results" className="mt-6 flex w-full gap-3">
-        {stats.map((stat, i) => (
-          <Badge key={stat.label} stat={stat} index={i} />
-        ))}
-      </ul>
-      {milestone && (
-        <p
-          className="badge-in mt-5 font-display text-xl font-semibold text-ink"
-          style={{ ["--delay" as string]: "1.1s" }}
+      <div className="contents lg:col-span-7 lg:col-start-1 lg:row-start-1 lg:flex lg:flex-col lg:items-start">
+        <ScreenHeading
+          id="done-title"
+          className="mt-4 font-display text-4xl font-bold text-ink lg:mt-0 lg:text-6xl"
         >
-          {milestone}
+          Done for today!
+        </ScreenHeading>
+        <p className="mt-1 font-display text-xl font-semibold text-ink lg:mt-3 lg:text-2xl">
+          {countOf(doneToday, goal.unit)} done, Titi is so proud!
         </p>
-      )}
-      {streakMoment && streakDays > 0 ? (
-        <div className="mt-8 w-full">
-          <Button
-            size="lg"
-            onClick={() => setStage("streak")}
-            className="w-full"
+        <ul aria-label="Today's results" className="mt-6 flex w-full gap-3">
+          {stats.map((stat, i) => (
+            <Badge key={stat.label} stat={stat} index={i} />
+          ))}
+        </ul>
+        {milestone && (
+          <p
+            className="badge-in mt-5 font-display text-xl font-semibold text-ink"
+            style={{ ["--delay" as string]: "1.1s" }}
           >
-            See my streak
-          </Button>
-        </div>
-      ) : (
-        onward
-      )}
+            {milestone}
+          </p>
+        )}
+        {streakMoment && streakDays > 0 ? (
+          <div className="mt-8 w-full">
+            <Button
+              size="lg"
+              onClick={() => setStage("streak")}
+              className="w-full"
+            >
+              See my streak
+            </Button>
+          </div>
+        ) : (
+          onward
+        )}
+      </div>
     </section>
   );
 }
