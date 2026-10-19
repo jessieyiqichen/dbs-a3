@@ -20,9 +20,9 @@ function useHour(): number {
 }
 
 /** The window (art generated with GPT) as a short banner: the sky says what time it is, nothing is drawn over it. */
-function Window({ time, corner }: { time: TimeOfDay; corner?: ReactNode }) {
+function Window({ time, corner, className = "" }: { time: TimeOfDay; corner?: ReactNode; className?: string }) {
   return (
-    <div className="relative aspect-[1040/457] w-full overflow-hidden rounded-3xl bg-wash">
+    <div className={`relative aspect-[1040/457] w-full overflow-hidden rounded-3xl bg-wash ${className}`}>
       {TIMES.map((t) => (
         // eslint-disable-next-line @next/next/no-img-element -- three paintings cross-fade; next/image would reload on each swap
         <img key={t} src={`/cat/window-${t}.webp`} alt="" aria-hidden="true" className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 motion-reduce:transition-none ${t === time ? "opacity-100" : "opacity-0"}`} />
@@ -57,9 +57,9 @@ export function ShelfBowl({ bowl, label = "letter", pop = false }: { bowl: BowlD
 function Shelf({ bowls, className = "" }: { bowls: BowlDay[]; className?: string }) {
   return (
     <div className={`fixed inset-x-0 bottom-0 z-20 border-t-2 border-reward-soft bg-page/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-sm sm:static sm:border-0 sm:bg-transparent sm:pb-0 sm:backdrop-blur-none ${className}`}>
-      <div className="mx-auto max-w-xl px-3 pb-1 pt-1.5 sm:pb-2 sm:pt-2">
-        <p className="mb-1 text-center text-xs font-extrabold text-muted max-sm:sr-only">Titi&apos;s week, every goal counts!</p>
-        <ol aria-label="Titi's week, every goal counts" className="flex items-end gap-1">
+      <div className="mx-auto max-w-xl px-3 pb-1 pt-1.5 sm:pb-2 sm:pt-2 lg:mx-0 lg:max-w-none lg:px-1">
+        <p className="mb-1 text-center text-xs font-extrabold text-muted max-sm:sr-only lg:mb-2 lg:text-left lg:text-sm">Titi&apos;s week, every goal counts!</p>
+        <ol aria-label="Titi's week, every goal counts" className="flex items-end gap-1 lg:gap-3 lg:[&_img]:max-w-16 lg:[&_li>span:first-of-type]:text-xs lg:[&_li>span:first-of-type]:leading-6 lg:[&_li>span:first-of-type]:min-w-6">
           {bowls.map((b) => <ShelfBowl key={b.date} bowl={b} />)}
         </ol>
       </div>
@@ -79,27 +79,30 @@ interface Props {
  *  and its button, and the week's bowls on a shelf. Each piece is whole art or plain interface, so nothing is stitched.
  *  On a phone the shelf is fixed at the foot of the screen, so Titi stays big and the button still lands on the first
  *  screen (user, 2026-10-18: Titi is the design, she must be seen).
- *  From 1024px it is laid out as a room: on the left the window (the wall), Titi on her mat (the floor) and the week's
- *  bowls (the shelf); on the right the goal column runs the same height, the tabs level with the top of the window, the
- *  button and the road level with the shelf, the sentence between them beside Titi. No boxes are added (read-only things
- *  have none); the two columns and their shared edges arrange the space. Below 1024px every class here is unchanged. */
+ *  From 1024px it is task first (reviewer's plan A, chosen by the user on 2026-10-19): a 12-column grid, the goal, its
+ *  button and the week's bowls on the left seven columns, Titi's scene on the right five, every column top-aligned so
+ *  nothing is stretched to match a neighbour. Below 1024px the page looks as before. */
 export function Room({ bowls, cat, corner, children }: Props) {
   const time = timeOfDay(useHour());
   return (
-    <div className="flex flex-col gap-4 max-sm:pb-24 lg:grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:grid-rows-[auto_1fr_auto] lg:gap-x-12 lg:gap-y-2">
-      <div className="lg:col-start-1 lg:row-start-1"><Window time={time} corner={corner} /></div>
-      <div className="relative mx-auto flex w-52 flex-col items-center lg:col-start-1 lg:row-start-2 lg:w-80 lg:self-center lg:py-4">
-        <span aria-hidden="true" className="clay absolute bottom-1 left-1/2 h-10 w-48 -translate-x-1/2 rounded-full bg-sun [--lip:#e9cf7e] lg:bottom-5 lg:h-14 lg:w-64" />
-        <CatArt key={cat.key} mood={cat.mood} effect={cat.effect} sun={false} className="relative w-40 lg:w-60" />
-      </div>
-      {/* Below 1024px this is the same column as before: the goal, then the shelf (fixed at the foot of a phone). On a
-          desktop the column dissolves (contents) so the goal sits on the right and the shelf becomes the room's floor */}
-      <div className="flex flex-col gap-4 lg:contents">
-        <div className="contents lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:flex lg:flex-col lg:gap-5">
-          {children}
+    <div className="flex flex-col gap-4 max-sm:pb-24 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-8 lg:gap-y-6">
+      {/* Titi's scene: on a phone the window and Titi head the page as before. On a desktop it is the right five columns,
+          exactly as tall as the task column (user, 2026-10-19: the two sides must line up): the window starts level with
+          the goal tabs and takes the spare height, Titi's mat ends level with the week's bowls. Two whole paintings, never
+          stitched */}
+      <div className="contents lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1 lg:flex lg:flex-col lg:gap-6 lg:self-stretch">
+        <Window time={time} corner={corner} className="lg:aspect-auto lg:min-h-48 lg:flex-1" />
+        <div className="relative mx-auto flex w-52 flex-col items-center lg:w-72">
+          <span aria-hidden="true" className="clay absolute bottom-1 left-1/2 h-10 w-48 -translate-x-1/2 rounded-full bg-sun [--lip:#e9cf7e] lg:bottom-3 lg:h-12 lg:w-60" />
+          <CatArt key={cat.key} mood={cat.mood} effect={cat.effect} sun={false} className="relative w-40 lg:w-56" />
         </div>
-        <Shelf bowls={bowls} className="lg:col-start-1 lg:row-start-3" />
       </div>
+      {/* The task: on a phone the goal, then the shelf fixed at the foot of the screen; on a desktop the left seven
+          columns, top-aligned, with the week's bowls as a row under the button (not pinned) */}
+      <div className="flex flex-col gap-4 lg:col-span-7 lg:col-start-1 lg:row-start-1 lg:gap-6">
+        {children}
+      </div>
+      <Shelf bowls={bowls} className="lg:col-span-7 lg:col-start-1 lg:row-start-2" />
     </div>
   );
 }

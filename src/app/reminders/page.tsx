@@ -5,15 +5,12 @@ import { PageHeader } from "@/components/ui/PageHeader";
 
 export const metadata: Metadata = { title: "Reminders · Nudge" };
 
+const INTRO = "Two ways to find you: the calendar works when Nudge is closed, notifications know whether you've started";
+
 export default function RemindersPage() {
   return (
     <AppShell>
-      <PageHeader
-        title="Reminders"
-        back="/goals"
-        backLabel="← Back to goals"
-        intro="Two ways to find you: the calendar works when Nudge is closed, notifications know whether you've started"
-      />
+      <PageHeader title="Reminders" back="/goals" backLabel="← Back to goals" intro={INTRO} />
       <RemindersScreen />
     </AppShell>
   );

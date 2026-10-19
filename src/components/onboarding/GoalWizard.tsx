@@ -55,14 +55,16 @@ const OFTEN = [
   { value: "by-date", label: "A total by a date" },
 ];
 
-/** Titi's question. The first visit does not move focus, so it starts at the skip link as usual. */
+/** Titi's question. The first visit does not move focus, so it starts at the skip link as usual. On a desktop Titi stands
+ *  in the right column above today's number (user, 2026-10-19: the right side was too short), so here the question is
+ *  the page's plain heading. */
 function Hello({ firstVisit }: { firstVisit: boolean }) {
-  const heading = "font-display text-xl font-semibold leading-snug text-ink";
+  const heading = "font-display text-xl font-semibold leading-snug text-ink lg:text-4xl lg:font-bold lg:leading-tight";
   const question = firstVisit ? "Hi, I'm Titi! What have you been putting off?" : "What else have you been putting off?";
   return (
     <div className="flex items-end gap-2">
-      <CatArt mood={firstVisit ? "wave" : "idle"} className="w-24 shrink-0" />
-      <div className="flat mb-6 rounded-2xl rounded-bl-sm bg-surface px-4 py-3">
+      <div className="shrink-0 lg:hidden"><CatArt mood={firstVisit ? "wave" : "idle"} className="w-24" /></div>
+      <div className="flat bubble-phone-only mb-6 rounded-2xl rounded-bl-sm bg-surface px-4 py-3 lg:mb-0 lg:bg-transparent lg:p-0">
         {firstVisit ? (
           <h1 id="setup-title" className={heading}>{question}</h1>
         ) : (
@@ -92,9 +94,10 @@ function Result({ r, firstVisit, onStart }: { r: Resolved; firstVisit: boolean; 
   const line = r.goal && r.perDay ? `${headline(r.verb, r.perDay, r.unit)} today` : "Tell Titi a little more to see today's number";
   const whole = r.goal ? `${countOf(r.goal.target, r.goal.unit)} ${r.goal.deadline ? `by ${formatShortDate(r.goal.deadline)}` : "every day"}` : null;
   return (
-    <div ref={bar} className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-hairline bg-page/95 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-sm lg:sticky lg:top-6 lg:inset-auto lg:z-auto lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+    <div ref={bar} className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-hairline bg-page/95 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-sm lg:sticky lg:top-6 lg:col-span-5 lg:col-start-8 lg:inset-auto lg:z-auto lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
       <div className="mx-auto flex max-w-xl flex-col gap-2 lg:gap-3">
-        <p aria-live="polite" className="font-display text-2xl font-bold leading-tight text-ink [text-wrap:balance] lg:text-3xl">{line}</p>
+        <div className="hidden lg:mb-2 lg:flex lg:justify-center"><CatArt mood={firstVisit ? "wave" : "idle"} className="w-56" /></div>
+        <p aria-live="polite" className="font-display text-2xl font-bold leading-tight text-ink [text-wrap:balance] lg:text-4xl">{line}</p>
         {whole && <p className="hidden text-sm font-bold text-muted lg:block">{whole}, you can change it anytime in Goals</p>}
         <Button size="lg" className="w-full lg:mt-2" onClick={onStart}>{firstVisit ? "Start my first one" : "Start the first one"}</Button>
         <p className="hidden text-sm text-muted lg:block">Saved on this device, no sign-up needed</p>
@@ -170,27 +173,33 @@ function HowMany({ picks, r, set, error }: { picks: Picks; r: Resolved; set: Set
 export function GoalWizard({ firstVisit = false, onCancel, onStarted }: Props) {
   const today = toISODate(new Date());
   const [picks, setPicks] = useState<Picks>(FIRST_PICKS);
-  const [tried, setTried] = useState(false);
+  // Each failed Start counts up, so the effect below runs after that render, once the error is on the page: the whole
+  // field and its error are scrolled above the pinned bar, not just the input (reviewer, 2026-10-19: the error was
+  // half under the bar when the input was already in view and only it was considered)
+  const [tries, setTries] = useState(0);
   const r = resolveSetup(picks, today);
-  const errors = tried ? r.errors : {};
+  const errors = tries > 0 ? r.errors : {};
   const set: Set = (p) => setPicks((prev) => ({ ...prev, ...p }));
+  const firstError = r.errors.what ? "setup-what" : r.errors.date ? "setup-date" : r.errors.amount ? "setup-amount" : null;
+  useEffect(() => {
+    if (tries === 0 || !firstError) return;
+    const field = document.getElementById(firstError);
+    field?.focus({ preventScroll: true });
+    scrollToField(field?.closest("[data-field]") ?? field);
+    // Only a new attempt moves focus; typing a fix must not pull it around
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tries]);
   const start = () => {
     if (!r.goal) {
-      setTried(true);
-      const first = r.errors.what ? "setup-what" : r.errors.date ? "setup-date" : "setup-amount";
-      requestAnimationFrame(() => {
-        const field = document.getElementById(first);
-        field?.focus({ preventScroll: true });
-        scrollToField(field?.closest("[data-field]") ?? field);
-      });
+      setTries((n) => n + 1);
       return;
     }
     startGoal(addGoal(r.goal, today));
     onStarted?.();
   };
   return (
-    <section aria-labelledby="setup-title" className="flex flex-col pb-[calc(var(--setup-bar,10rem)+1.5rem)] pt-1 lg:grid lg:pb-0 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start lg:gap-x-16">
-      <div className="flex flex-col gap-6">
+    <section aria-labelledby="setup-title" className="flex flex-col pb-[calc(var(--setup-bar,10rem)+1.5rem)] pt-1 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-8 lg:pb-0">
+      <div className="flex flex-col gap-6 lg:col-span-7">
         {onCancel && (
           <button type="button" onClick={onCancel} className="-ml-1 min-h-11 self-start px-1 text-sm font-semibold text-muted underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus">
             ← Goals

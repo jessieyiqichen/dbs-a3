@@ -69,17 +69,22 @@ function Header({
   title,
   intro,
   fromToday,
+  embedded = false,
 }: {
   title: string;
   intro?: string;
   fromToday: boolean;
+  embedded?: boolean;
 }) {
+  // Beside the list on a desktop the list is the way back, so only a visit from Today keeps a back link
+  const back = fromToday ? "/" : embedded ? null : "/goals";
   return (
     <PageHeader
       title={title}
       intro={intro}
-      back={fromToday ? "/" : "/goals"}
+      back={back}
       backLabel={fromToday ? "← Today" : "← Goals"}
+      level={embedded ? "h2" : "h1"}
     />
   );
 }
@@ -87,9 +92,12 @@ function Header({
 export function ProgressScreen({
   id,
   fromToday = false,
+  embedded = false,
 }: {
   id: string;
   fromToday?: boolean;
+  /** Shown beside the goal list on a desktop: an h2, and one column, as the list takes the left side. */
+  embedded?: boolean;
 }) {
   const state = useStore();
   if (state === null)
@@ -125,8 +133,10 @@ export function ProgressScreen({
     : "Your last two weeks, one bowl a day";
   return (
     <>
-      <Header title={goal.title} intro={intro} fromToday={fromToday} />
-      <div className="mt-6 flex flex-col gap-7 lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:grid-rows-[auto_auto_1fr] lg:gap-x-12 lg:gap-y-5">
+      <Header title={goal.title} intro={intro} fromToday={fromToday} embedded={embedded} />
+      {/* Beside the goal list the picture and the side column share the eight columns (2:1), so the goal is not one long
+          column next to a short list (user, 2026-10-19: the two sides were unbalanced) */}
+      <div className={`mt-6 flex flex-col gap-7 lg:grid lg:grid-rows-[auto_auto_1fr] lg:gap-y-5 ${embedded ? "lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-x-8" : "lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-x-12"}`}>
         <Headline goal={goal} plan={plan} today={today} />
 
         <div className="lg:col-start-1 lg:row-span-3 lg:row-start-1">

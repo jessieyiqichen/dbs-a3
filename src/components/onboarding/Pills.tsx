@@ -24,14 +24,14 @@ interface Props {
 export function Pills({ name, legend, hideLegend = false, options, value, onChange }: Props) {
   return (
     <fieldset>
-      <legend className={hideLegend ? "sr-only" : "mb-2 font-display text-lg font-semibold text-ink"}>{legend}</legend>
+      <legend className={hideLegend ? "sr-only" : "mb-2 font-display text-lg font-semibold text-ink lg:mb-3 lg:text-xl"}>{legend}</legend>
       <div className="flex flex-wrap gap-2">
         {options.map((o) => {
           const on = o.value === value;
           return (
             <label
               key={o.value}
-              className={`clay clay-press inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full px-4 py-1.5 font-display font-semibold text-ink ${
+              className={`clay clay-press inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full px-4 py-1.5 font-display font-semibold text-ink lg:min-h-12 lg:px-5 lg:text-lg ${
                 on ? "bg-primary-soft [--lip:var(--color-lip)]" : "bg-surface hover:bg-wash"
               }`}
             >

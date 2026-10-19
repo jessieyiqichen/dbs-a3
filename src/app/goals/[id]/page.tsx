@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { ProgressScreen } from "@/components/progress/ProgressScreen";
+import { GoalView } from "@/components/goals/GoalView";
 import { AppShell } from "@/components/ui/AppShell";
 
 export const metadata: Metadata = { title: "Progress · Nudge" };
@@ -11,7 +11,7 @@ type Props = PageProps<"/goals/[id]">;
 async function Progress({ params, searchParams }: Pick<Props, "params" | "searchParams">) {
   const { id } = await params;
   const { from } = await searchParams;
-  return <ProgressScreen id={id} fromToday={from === "today"} />;
+  return <GoalView id={id} fromToday={from === "today"} />;
 }
 
 export default function ProgressPage({ params, searchParams }: Props) {

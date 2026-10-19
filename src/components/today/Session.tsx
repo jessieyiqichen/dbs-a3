@@ -67,7 +67,7 @@ function SessionBar() {
   return (
     <Link
       href="/"
-      className="inline-flex min-h-11 self-start items-center text-sm font-semibold text-muted underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus"
+      className="inline-flex min-h-11 self-start items-center lg:col-span-7 lg:col-start-1 lg:row-start-1 text-sm font-semibold text-muted underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus"
     >
       ← Today
     </Link>
@@ -143,7 +143,7 @@ function LogPanel({
   const [several, setSeveral] = useState(false);
   const site = siteName(goal.link);
   return (
-    <div className="flex flex-col lg:mx-auto lg:w-full lg:max-w-md">
+    <div className="flex flex-col lg:col-span-7 lg:col-start-1 lg:row-start-3 lg:max-w-xl">
       <div className="mt-6 lg:mt-0">
         <Coins total={total} done={done} label="Today" />
       </div>
@@ -205,28 +205,28 @@ export function Session({
   return (
     <section
       aria-labelledby={`${id}-title`}
-      className="flex flex-col pt-1 lg:flex-1"
+      className="flex flex-col pt-1 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-8"
     >
       <SessionBar />
       <ScreenHeading
         id={`${id}-title`}
-        className="mt-2 font-display text-3xl font-bold leading-tight text-ink [text-wrap:balance]"
+        className="mt-2 font-display text-3xl font-bold leading-tight text-ink [text-wrap:balance] lg:col-span-7 lg:col-start-1 lg:row-start-2 lg:mb-6 lg:text-5xl"
       >
         {headline(goal.verb, total, goal.unit)} today
       </ScreenHeading>
 
-      {/* On a desktop: Titi, her bubble and the bowl on the left to look at; the fish and the buttons to tap on the right,
-          the two halves centred on each other and in the space under the back link, so neither side leaves an empty corner */}
-      <div className="lg:my-auto lg:grid lg:grid-cols-2 lg:items-center lg:gap-x-12 lg:pb-16">
-        <div className="flex flex-col lg:pb-6">
-          <div className="mt-4 flex items-end gap-2">
+      {/* On a desktop the same grid as Today (task first): the task, the fish and the buttons on the left seven columns,
+          Titi and her bubble on the right five, level with the heading */}
+      <div className="contents">
+        <div className="flex flex-col lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-2">
+          <div className="mt-4 flex items-end gap-2 lg:mt-0 lg:flex-col-reverse lg:items-center lg:gap-4">
             <CatArt
               key={flight?.key ?? 0}
               mood="idle"
               effect={flight ? "hop" : undefined}
-              className="w-36 shrink-0 lg:w-52"
+              className="w-36 shrink-0 lg:w-64"
             />
-            <div className="flat mb-8 rounded-2xl rounded-bl-sm bg-surface px-4 py-3">
+            <div className="flat mb-8 rounded-2xl rounded-bl-sm bg-surface px-4 py-3 lg:mb-0 lg:self-stretch lg:rounded-bl-2xl lg:text-center">
               <p
                 aria-live="polite"
                 className="font-display text-xl font-semibold leading-snug text-ink lg:text-2xl"

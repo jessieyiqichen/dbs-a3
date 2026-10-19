@@ -2,11 +2,11 @@ import Link from "next/link";
 import { Suspense, type ReactNode } from "react";
 import { Nav, NavLinks } from "./Nav";
 
-/** One centred column. Forms and lists stay at 36rem. From 1024px Today, the session and Progress share one wide desktop
- *  frame (72rem), so the header sits in the same place on all three and the pages are laid out for a desktop instead of
- *  a stretched phone (user, 2026-10-18). `medium` is kept as a name for Progress and matches `wide`. */
-const DESKTOP = "max-w-xl lg:max-w-6xl lg:px-8";
-const WIDTHS = { narrow: "max-w-xl", medium: DESKTOP, wide: DESKTOP };
+/** One centred column on a phone (36rem). From 1024px every page shares one desktop frame (72rem) laid out on a 12-column
+ *  grid, so the logo and the navigation never move between pages (reviewer's plan A, user 2026-10-19; before, Goals and
+ *  Reminders were 544px wide and the header jumped 272px). The width names are kept for the pages that pass them. */
+const FRAME = "max-w-xl lg:max-w-6xl lg:px-8";
+const WIDTHS = { narrow: FRAME, medium: FRAME, wide: FRAME };
 
 export function AppShell({ children, width = "narrow" }: { children: ReactNode; width?: keyof typeof WIDTHS }) {
   return (
@@ -22,7 +22,7 @@ export function AppShell({ children, width = "narrow" }: { children: ReactNode; 
           <Nav />
         </Suspense>
       </header>
-      <main id="main" className="flex flex-1 flex-col">
+      <main id="main" className="flex flex-1 flex-col lg:text-lg">
         {children}
       </main>
     </div>

@@ -170,25 +170,25 @@ function shortName(goal: Goal): string {
   return unit.charAt(0).toUpperCase() + unit.slice(1);
 }
 
-/** The sentence for today, with Titi's line under it. On a desktop the card takes the goal column's spare height, so the
- *  goal side is as tall as Titi's room, and today's number shows as fish treats under the sentence. */
+/** The sentence for today, with Titi's line under it; on a desktop it is a size larger and today's number shows as fish
+ *  treats under it, all top-aligned (nothing stretched to match Titi's column). */
 function SentenceCard({ goal, plan, line, catchUp }: { goal: Goal; plan: TodayPlan; line: string; catchUp: string | null }) {
   const active = plan.status === "not-started" || plan.status === "started";
   return (
-    <div className="relative w-full px-1 pt-1 lg:flex lg:flex-1 lg:flex-col lg:justify-center">
+    <div className="relative w-full px-1 pt-1">
       <ScreenHeading
         id={`goal-${goal.id}`}
-        className="font-display text-2xl font-bold leading-tight text-ink [text-wrap:balance] lg:text-4xl"
+        className="font-display text-2xl font-bold leading-tight text-ink [text-wrap:balance] lg:text-5xl"
       >
         {title(goal, plan)}
       </ScreenHeading>
-      <p className="mt-1 font-bold text-muted lg:mt-3 lg:text-lg">{line}</p>
+      <p className="mt-1 font-bold text-muted lg:mt-4 lg:text-lg">{line}</p>
       {catchUp && plan.status === "not-started" && (
         <p className="mt-1 text-sm font-bold text-muted">{catchUp}</p>
       )}
       {/* Desktop only: today's number as fish treats under the sentence, the same tiles the session uses */}
       {(active || plan.status === "done") && (
-        <div className="mt-8 hidden lg:block">
+        <div className="mt-6 hidden lg:block">
           <Coins total={plan.quota} done={Math.min(plan.doneToday, plan.quota)} label="Today" size="lg" />
         </div>
       )}
@@ -268,7 +268,7 @@ export function TodayHome({
     key: cheer ? "cheer" : plan.status,
   };
   return (
-    <section aria-labelledby={`goal-${goal.id}`} className="flex flex-col lg:my-auto">
+    <section aria-labelledby={`goal-${goal.id}`} className="flex flex-col lg:pt-2">
       <Room bowls={bowls} cat={cat} corner={corner}>
         <GoalTabs goals={goals} current={goal.id} onPick={onPick} />
         <SentenceCard goal={goal} plan={plan} line={line} catchUp={catchUp} />

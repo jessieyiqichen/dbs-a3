@@ -62,6 +62,12 @@ body {
 .flat {
   box-shadow: 0 1px 2px rgba(120, 80, 20, 0.06), 0 8px 20px rgba(120, 80, 20, 0.08);
 }
+/* A bubble that is only a bubble on a phone: on a desktop Titi stands elsewhere, so it is plain text there. */
+@media (min-width: 64rem) {
+  .flat.bubble-phone-only {
+    box-shadow: none;
+  }
+}
 /* Pressed: it sinks onto its lip. */
 .clay-press {
   position: relative;

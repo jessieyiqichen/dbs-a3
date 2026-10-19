@@ -11,10 +11,9 @@ export default async function EditGoalPage({ params }: PageProps<"/goals/[id]/ed
   const { id } = await params;
   return (
     <AppShell>
-      {/* Back goes to the goal's progress page, where Edit was tapped (first-run check, 2026-10-18) */}
-      <PageHeader title="Edit goal" back={`/goals/${id}`} backLabel="← Back to progress" />
       <Suspense fallback={<p className="pt-6 text-muted">Loading your goal…</p>}>
-        <EditGoalScreen id={id} />
+        {/* Back goes to the goal's progress page, where Edit was tapped (first-run check, 2026-10-18) */}
+        <EditGoalScreen id={id} header={<PageHeader title="Edit goal" back={`/goals/${id}`} backLabel="← Back to progress" />} />
       </Suspense>
     </AppShell>
   );
