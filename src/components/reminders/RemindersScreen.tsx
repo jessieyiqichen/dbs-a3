@@ -30,7 +30,7 @@ export function RemindersScreen() {
             id="times-title"
             className="font-display text-xl font-semibold text-ink"
           >
-            When should I nudge you?
+            When should Titi nudge you?
           </h2>
           <TimesForm
             saved={settings.reminderTimes}

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { updateSettings } from "@/lib/actions";
-import { planNotifications } from "@/lib/notify";
+import { LAST_CALL, planNotifications } from "@/lib/notify";
 
 type Permission = NotificationPermission | "unsupported";
 
@@ -38,8 +38,8 @@ export function NotificationsCard({ on, times }: { on: boolean; times: string[] 
 
   return (
     <section aria-labelledby="notify-title" className="flex flex-col gap-3 border-t-2 border-wash-strong pt-6 lg:col-span-7 lg:col-start-6 lg:row-start-2">
-      <h2 id="notify-title" className="font-display text-xl font-semibold text-ink">Notifications while Nudge is open</h2>
-      <p className="font-bold text-muted">With a Nudge tab open, I nudge you only until you start, with one last call at 22:30</p>
+      <h2 id="notify-title" className="font-display text-xl font-semibold text-ink">Notifications</h2>
+      <p className="font-bold text-muted">Only while a Nudge tab is open, and Titi stops once you&apos;ve started, with one last call at {LAST_CALL}</p>
 
       {permission === "unsupported" && <p className="text-sm font-bold text-muted">This browser doesn&apos;t do notifications, the calendar file still works</p>}
 
@@ -48,11 +48,11 @@ export function NotificationsCard({ on, times }: { on: boolean; times: string[] 
       )}
 
       {permission === "default" && (
-        <Button onClick={turnOn} className="self-start">Turn on notifications</Button>
+        <Button variant="secondary" onClick={turnOn} className="self-start">Turn on notifications</Button>
       )}
 
       {permission === "granted" && !on && (
-        <Button onClick={() => updateSettings({ notificationsOn: true, nudgesSetUp: true })} className="self-start">
+        <Button variant="secondary" onClick={() => updateSettings({ notificationsOn: true, nudgesSetUp: true })} className="self-start">
           Turn on notifications
         </Button>
       )}
