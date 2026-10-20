@@ -14,7 +14,7 @@ export function AppShell({ children, width = "narrow" }: { children: ReactNode; 
       <a href="#main" className="sr-only focus:not-sr-only focus:mt-2 focus:self-start focus:rounded-lg focus:bg-surface focus:p-2">
         Skip to content
       </a>
-      <header className="flex items-center justify-between gap-3 py-4 lg:py-6">
+      <header className="flex items-center justify-between gap-3 py-4 lg:pb-2 lg:pt-6">
         <Link href="/" className="inline-flex min-h-11 items-center font-display text-2xl font-bold text-ink focus-visible:outline-3 focus-visible:outline-focus lg:min-h-12 lg:text-4xl">
           Nudge
         </Link>
@@ -22,10 +22,10 @@ export function AppShell({ children, width = "narrow" }: { children: ReactNode; 
           <Nav />
         </Suspense>
       </header>
-      {/* On a desktop every task page starts 32px under the navigation, so the back link and the heading are in the same
-          place on every page (user, 2026-10-19: centring made the gap change with the screen and the page); the done
-          and streak screens centre themselves */}
-      <main id="main" className="flex flex-1 flex-col lg:pt-8 lg:text-lg">
+      {/* On a desktop every task page starts just under the navigation, 24px below the logo, so the back link and the
+          heading are in the same place on every page (user, 2026-10-19: centring made the gap change with the screen,
+          then 56px under the logo looked like a hole); the done and streak screens centre themselves */}
+      <main id="main" className="flex flex-1 flex-col lg:pt-4 lg:text-lg">
         {children}
       </main>
     </div>
