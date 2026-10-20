@@ -98,7 +98,7 @@ export function Room({ bowls, cat, corner, say = null, children }: Props) {
         <Window time={time} corner={corner} className="lg:aspect-[1040/620]" />
         {/* Coming back, Titi says hello in a bubble beside her, so the greeting is hers and not one more grey line
             (user, 2026-10-19: the welcome was too quiet) */}
-        <div className={`flex items-end justify-center lg:mt-auto ${say ? "gap-1" : ""}`}>
+        <div className={`flex items-end justify-center lg:-mb-3 lg:mt-auto ${say ? "gap-1" : ""}`}>
           <div className={`relative flex flex-col items-center ${say ? "w-44 shrink-0 short:w-28 lg:w-64" : "mx-auto w-52 short:w-32 lg:w-72"}`}>
             <span aria-hidden="true" className={`clay absolute bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-sun [--lip:#e9cf7e] ${say ? "h-10 w-40 short:h-6 short:w-24 lg:bottom-3 lg:h-11 lg:w-52" : "h-10 w-48 short:h-6 short:w-28 lg:bottom-3 lg:h-12 lg:w-60"}`} />
             <CatArt key={cat.key} mood={cat.mood} effect={cat.effect} sun={false} className={`relative ${say ? "w-40 short:w-20 lg:w-60" : "w-40 short:w-20 lg:w-56"}`} />

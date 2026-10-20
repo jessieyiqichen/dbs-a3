@@ -73,7 +73,7 @@ function SessionBar() {
   return (
     <Link
       href="/"
-      className="inline-flex min-h-11 self-start items-center text-sm font-semibold text-muted underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus"
+      className="inline-flex min-h-11 self-start items-center text-sm font-semibold text-muted underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus lg:text-lg"
     >
       ← Today
     </Link>
@@ -231,8 +231,8 @@ export function Session({
     >
       <SessionBar />
       {/* On a desktop the same grid as Today (task first): the task, the fish and the buttons on the left seven columns,
-          Titi and her bubble on the right five. The session has little on it, so the two columns sit together in the
-          middle of the space under the back link instead of leaving its lower half empty (user, 2026-10-19) */}
+          Titi and her bubble on the right five. The right column is as tall as the left, her bubble level with the
+          heading and her feet level with the last button (user, 2026-10-19: the two sides must line up) */}
       <div className="contents lg:mt-2 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-8">
         <ScreenHeading
           id={`${id}-title`}
@@ -240,13 +240,13 @@ export function Session({
         >
           {headline(goal.verb, total, goal.unit)} today
         </ScreenHeading>
-        <div className="flex flex-col lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1">
-          <div className="mt-4 flex items-end gap-2 lg:mt-0 lg:flex-col-reverse lg:items-center lg:gap-4">
+        <div className="flex flex-col lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1 lg:self-stretch">
+          <div className="mt-4 flex items-end gap-2 lg:mt-0 lg:h-full lg:flex-col-reverse lg:items-center lg:justify-between lg:gap-4">
             <CatArt
               key={flight?.key ?? 0}
               mood="idle"
               effect={flight ? "hop" : undefined}
-              className="w-36 shrink-0 lg:w-72"
+              className="w-36 shrink-0 lg:w-80"
             />
             <div className="flat mb-8 rounded-2xl rounded-bl-sm bg-surface px-4 py-3 lg:mb-0 lg:self-stretch lg:rounded-bl-2xl lg:text-center">
               <p

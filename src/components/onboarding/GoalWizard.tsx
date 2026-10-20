@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { CatArt } from "@/components/today/CatArt";
+import { CatArt, type CatMood } from "@/components/today/CatArt";
 import { Button } from "@/components/ui/Button";
 import { Field, TextInput } from "@/components/ui/Field";
 import { ScreenHeading } from "@/components/ui/ScreenHeading";
@@ -61,6 +61,12 @@ function Reveal({ children }: { children: ReactNode }) {
 }
 /** How many of today's fish the first screen draws before it says "+N". */
 const FISH_PREVIEW = 8;
+const TIER_POSE: Record<string, CatMood> = {
+  "0": "loaf",
+  "1": "walk",
+  "2": "celebrate",
+  own: "paw-tap",
+};
 const OFTEN = [
   { value: "daily", label: "Every day" },
   { value: "by-date", label: "A total by a date" },
@@ -69,7 +75,7 @@ const OFTEN = [
 /** Titi's question. The first visit does not move focus, so it starts at the skip link as usual. On a desktop Titi stands
  *  in the right column above today's number (user, 2026-10-19: the right side was too short), so here the question is
  *  the page's plain heading. */
-function Hello({ firstVisit }: { firstVisit: boolean }) {
+function Hello({ firstVisit, pose }: { firstVisit: boolean; pose: CatMood }) {
   const heading =
     "font-display text-xl font-semibold leading-snug text-ink lg:text-5xl lg:font-bold lg:leading-tight lg:[text-wrap:balance]";
   const question = firstVisit
@@ -79,7 +85,8 @@ function Hello({ firstVisit }: { firstVisit: boolean }) {
     <div className="flex items-end gap-2">
       <div className="shrink-0 lg:hidden">
         <CatArt
-          mood={firstVisit ? "wave" : "idle"}
+          key={pose}
+          mood={pose}
           className={firstVisit ? "w-36" : "w-24"}
         />
       </div>
@@ -105,10 +112,12 @@ function Result({
   r,
   firstVisit,
   onStart,
+  pose,
 }: {
   r: Resolved;
   firstVisit: boolean;
   onStart: () => void;
+  pose: CatMood;
 }) {
   const bar = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -138,7 +147,7 @@ function Result({
     >
       <div className="mx-auto flex max-w-xl flex-col gap-2 lg:gap-3">
         <div className="hidden lg:mb-2 lg:flex lg:justify-center">
-          <CatArt mood={firstVisit ? "wave" : "idle"} className="w-56" />
+          <CatArt key={pose} mood={pose} className="w-56" />
         </div>
         <p
           aria-live="polite"
@@ -371,7 +380,19 @@ export function GoalWizard({ firstVisit = false, onCancel, onStarted }: Props) {
   const [tries, setTries] = useState(0);
   const r = resolveSetup(picks, today);
   const errors = tries > 0 ? r.errors : {};
-  const set: Set = (p) => setPicks((prev) => ({ ...prev, ...p }));
+  // Titi waves until you answer, then takes a pose for how much you picked: a loaf for an easy start, walking for
+  // steady, jumping for going big, a tap of the paw for a number of your own (user, 2026-10-19: keep Titi on the first
+  // screen, in different poses)
+  const [touched, setTouched] = useState(false);
+  const set: Set = (p) => {
+    setTouched(true);
+    setPicks((prev) => ({ ...prev, ...p }));
+  };
+  const pose: CatMood = !touched
+    ? firstVisit
+      ? "wave"
+      : "idle"
+    : (TIER_POSE[String(picks.tier)] ?? "idle");
   const firstError = r.errors.what
     ? "setup-what"
     : r.errors.date
@@ -405,12 +426,12 @@ export function GoalWizard({ firstVisit = false, onCancel, onStarted }: Props) {
           <button
             type="button"
             onClick={onCancel}
-            className="-ml-1 min-h-11 self-start px-1 text-sm font-semibold text-muted underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus lg:-mb-4"
+            className="-ml-1 min-h-11 self-start px-1 text-sm font-semibold text-muted underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus lg:-mb-4 lg:text-lg"
           >
             ← Goals
           </button>
         )}
-        <Hello firstVisit={firstVisit} />
+        <Hello firstVisit={firstVisit} pose={pose} />
         {/* What Nudge does, said once on the first screen (first-run check: "nothing on the first screen says what Nudge
             does") */}
         {firstVisit && (
@@ -442,7 +463,7 @@ export function GoalWizard({ firstVisit = false, onCancel, onStarted }: Props) {
         )}
         <HowMany picks={picks} r={r} set={set} error={errors.amount} />
       </div>
-      <Result r={r} firstVisit={firstVisit} onStart={start} />
+      <Result r={r} firstVisit={firstVisit} onStart={start} pose={pose} />
     </section>
   );
 }

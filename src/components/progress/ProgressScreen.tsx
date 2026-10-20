@@ -164,7 +164,7 @@ export function ProgressScreen({
             />
           )}
         </div>
-        <div className="mt-8">
+        <div className="mt-8 lg:mt-auto lg:pt-8">
           <GoalActions goal={goal} today={today} inline />
         </div>
       </>

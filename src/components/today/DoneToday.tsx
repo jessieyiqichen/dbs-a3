@@ -102,13 +102,13 @@ function Badge({ stat, index }: { stat: DoneStat; index: number }) {
 }
 
 /** Slow light rays behind Titi, in the sun colour, like the burst behind a finished lesson. */
-function Rays() {
+function Rays({ className = "size-[150%]" }: { className?: string }) {
   const wedges = Array.from({ length: 12 }, (_, i) => i * 30);
   return (
     // The turning square is clipped to a circle, so its corners never widen the page on a phone
     <div
       aria-hidden="true"
-      className="absolute left-1/2 top-1/2 -z-10 size-[150%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full"
+      className={`absolute left-1/2 top-1/2 -z-10 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full ${className}`}
     >
       <svg viewBox="-100 -100 200 200" className="rays size-full">
         {wedges.map((a) => (
@@ -215,44 +215,42 @@ function StreakMoment({
   return (
     <section
       aria-labelledby="streak-title"
-      className="relative flex flex-col items-center pt-10 text-center lg:my-auto lg:grid lg:grid-cols-12 lg:items-center lg:gap-x-8 lg:pb-16 lg:pt-0 lg:text-left"
+      className="relative flex flex-col items-center pt-10 text-center lg:mx-auto lg:w-full lg:max-w-xl"
     >
       <div aria-hidden="true" className="fixed inset-0 -z-20 bg-celebrate" />
-      {/* On a desktop the same 7/5 grid as every page: the words and the week on the left, the fish in its rays on the
-          right (user, 2026-10-19: a narrow centred column left most of the screen empty). On a phone nothing changes */}
-      <div className="relative flex size-44 items-center justify-center lg:col-span-5 lg:col-start-8 lg:row-start-1 lg:size-80 lg:justify-self-center">
+      {/* One centred column on every screen: the fish in its rays, then the number under it (user, 2026-10-19: the
+          number alone on the left of a two-column page read oddly; the space under the column is fine) */}
+      <div className="relative flex size-44 items-center justify-center">
         <Rays />
         {/* eslint-disable-next-line @next/next/no-img-element -- the fish treat, the streak's mark */}
         <img
           src="/cat/fish.png"
           alt=""
           aria-hidden="true"
-          className="pop-in w-28 lg:w-48"
+          className="pop-in w-28"
         />
       </div>
-      <div className="contents lg:col-span-7 lg:col-start-1 lg:row-start-1 lg:flex lg:flex-col lg:items-start">
-        <p
-          aria-hidden="true"
-          className="mt-4 font-display text-7xl font-bold tabular-nums text-reward-deep lg:mt-0 lg:text-8xl"
-        >
-          {shown}
-        </p>
-        <ScreenHeading
-          id="streak-title"
-          className="font-display text-3xl font-bold text-ink lg:text-5xl"
-        >
-          {days}-day streak!
-        </ScreenHeading>
-        <p className="mt-1 font-display text-lg font-semibold text-muted lg:mt-2 lg:text-xl">
-          Come back tomorrow to keep it going
-        </p>
-        <ol aria-label="This week" className="mt-8 flex w-full items-end gap-1">
-          {bowls.map((b) => (
-            <ShelfBowl key={b.date} bowl={b} pop={b.today} />
-          ))}
-        </ol>
-        {children}
-      </div>
+      <p
+        aria-hidden="true"
+        className="mt-4 font-display text-7xl font-bold tabular-nums text-reward-deep"
+      >
+        {shown}
+      </p>
+      <ScreenHeading
+        id="streak-title"
+        className="font-display text-3xl font-bold text-ink"
+      >
+        {days}-day streak!
+      </ScreenHeading>
+      <p className="mt-1 font-display text-lg font-semibold text-muted">
+        Come back tomorrow to keep it going
+      </p>
+      <ol aria-label="This week" className="mt-8 flex w-full items-end gap-1">
+        {bowls.map((b) => (
+          <ShelfBowl key={b.date} bowl={b} pop={b.today} />
+        ))}
+      </ol>
+      {children}
     </section>
   );
 }
@@ -293,14 +291,15 @@ export function DoneToday({
   return (
     <section
       aria-labelledby="done-title"
-      className="relative flex flex-col items-center pt-2 text-center lg:my-auto lg:grid lg:grid-cols-12 lg:items-center lg:gap-x-8 lg:pb-16 lg:pt-0 lg:text-left"
+      className="relative flex flex-col items-center pt-2 text-center lg:grid lg:grid-cols-12 lg:items-center lg:gap-x-8 lg:pb-16 lg:pt-0 lg:text-left"
     >
       <div aria-hidden="true" className="fixed inset-0 -z-20 bg-celebrate" />
       <Confetti />
       {/* On a desktop: Titi jumping in her rays on the right five columns, what you did and the way on on the left
-          seven (user, 2026-10-19). On a phone nothing changes */}
-      <div className="relative mt-4 w-52 lg:col-span-5 lg:col-start-8 lg:row-start-1 lg:mt-0 lg:w-80 lg:justify-self-center">
-        <Rays />
+          seven (user, 2026-10-19), both starting right under the navigation like every page; the rays stay inside a
+          square as wide as their column, so they never reach the navigation. On a phone nothing changes */}
+      <div className="relative mt-4 w-52 lg:col-span-5 lg:col-start-8 lg:row-start-1 lg:mt-0 lg:flex lg:aspect-square lg:w-full lg:items-center lg:justify-center lg:self-start">
+        <Rays className="size-[150%] lg:size-[92%]" />
         <CatArt
           mood="celebrate"
           effect="party"
@@ -308,7 +307,7 @@ export function DoneToday({
           className="pop-in w-52 lg:w-80"
         />
       </div>
-      <div className="contents lg:col-span-7 lg:col-start-1 lg:row-start-1 lg:flex lg:flex-col lg:items-start">
+      <div className="contents lg:col-span-7 lg:col-start-1 lg:row-start-1 lg:flex lg:flex-col lg:items-start lg:self-start">
         <ScreenHeading
           id="done-title"
           className="mt-4 font-display text-4xl font-bold text-ink lg:mt-0 lg:text-6xl"

@@ -99,9 +99,10 @@ export function GoalsScreen({ selected, fromToday = false }: Props) {
     </>
   );
   // Settings, apart from the goals and under them: when to nudge, and the backup, as two rows of one kind (user,
-  // 2026-10-19: a link beside a big card did not read as one set). On a desktop they close the list column.
+  // 2026-10-19: a link beside a big card did not read as one set). On a desktop they sit at the foot of the list column, level
+  // with the goal's own actions at the foot of the right one (user, 2026-10-19: the two sides must line up).
   const settings = (
-    <div className="mt-10 flex flex-col gap-2 border-t-2 border-wash-strong pt-5">
+    <div className="mt-10 flex flex-col gap-2 border-t-2 border-wash-strong pt-5 lg:mt-auto">
       <Link
         href="/reminders"
         className="flex items-center justify-between rounded-3xl bg-wash px-5 py-3 font-display text-lg font-semibold text-ink hover:bg-wash-strong focus-visible:outline-3 focus-visible:outline-focus"
@@ -134,11 +135,11 @@ export function GoalsScreen({ selected, fromToday = false }: Props) {
     );
   return (
     <div className="grid grid-cols-12 items-start gap-x-8">
-      <div className="col-span-4 flex flex-col">
+      <div className="col-span-4 flex flex-col self-stretch [&>a:last-of-type]:mb-10">
         {list}
         {settings}
       </div>
-      <div className="col-span-8 col-start-5 flex flex-col">
+      <div className="col-span-8 col-start-5 flex flex-col self-stretch">
         <ProgressScreen id={chosen.id} fromToday={fromToday} embedded />
       </div>
       {toast}
