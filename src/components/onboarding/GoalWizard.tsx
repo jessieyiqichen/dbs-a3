@@ -71,7 +71,7 @@ const OFTEN = [
  *  the page's plain heading. */
 function Hello({ firstVisit }: { firstVisit: boolean }) {
   const heading =
-    "font-display text-xl font-semibold leading-snug text-ink lg:text-4xl lg:font-bold lg:leading-tight";
+    "font-display text-xl font-semibold leading-snug text-ink lg:text-5xl lg:font-bold lg:leading-tight lg:[text-wrap:balance]";
   const question = firstVisit
     ? "Hi, I'm Titi! What have you been putting off?"
     : "What else have you been putting off?";
