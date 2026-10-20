@@ -18,19 +18,23 @@ Design, Build, Ship · Assignment 3 (Patterns & Flows).
 The three flows in one picture (each step is a route; every state and error is drawn in [flows.md](flows.md)):
 
 ```mermaid
-flowchart LR
-    subgraph first [First visit]
-        A([Nothing saved]) --> PL["One screen: Titi asks; what, by when, how many come picked;\ntoday's number and Start my first one"]
-    end
-    subgraph main [Main task]
-        T["Today: Titi's room, goal tabs,\none sentence, one button"] -->|Start| S["/session: today's task as the heading;\nI sent one, or Did several at once?;\n2 of 5 done; Open LinkedIn ↗ is yours to tap"] -->|today's number reached| D["Done for today!\nstreak · so far · See my streak"]
-        S -->|Did several at once? not a number| E["Enter a whole number, like 30"] --> S
-    end
-    subgraph back [Coming back]
-        C([Open it again]) --> K["Welcome back · streak · this week's bowls\n(or: it's been 6 days, and that's okay)"] --> T
-        D -->|Nudge you tomorrow?| N["Calendar file · notifications"]
-    end
-    PL -->|Start my first one| S
+flowchart TD
+    A([First visit, nothing saved]) --> P[Titi asks: What have you been putting off?]
+    P --> PK[Pick what, by when, how many<br>today's number shows as you tap]
+    PK --> ST[Start my first one]
+    ST --> V{Everything filled in?}
+    V -->|No| E[The error sits beside the field<br>and says what to type] --> PK
+    V -->|Yes| SV[(Goal saved in the browser)]
+    SV --> S[Session: Send 5 connection requests today]
+    S --> I[I sent one]
+    I --> R{Today's number reached?}
+    R -->|No| S
+    R -->|Yes| D[Done for today!<br>streak and how far the goal has come]
+    D --> N[Nudge you tomorrow?<br>calendar file or notifications]
+    N --> CB([Come back tomorrow])
+    CB --> W[Titi: Welcome back, 2 days in a row!]
+    W --> T[Today: today's new number]
+    T --> S
 ```
 
 ## The three flows
