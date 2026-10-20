@@ -34,6 +34,11 @@ flowchart TD
     CB --> W[Titi: Welcome back, 2 days in a row!]
     W --> T[Today: today's new number]
     T --> S
+    P -.->|closes the tab| X1([Leaves: nothing was saved<br>the same first screen greets them next time])
+    S -.->|leaves with none done| X2([Leaves: the session is kept<br>Today says Keep going, Titi nudges at their times])
+    CB -.->|no reminder set| X3([May not come back<br>so Nudge asks Nudge you tomorrow? after the first log])
+    classDef drop fill:#fdecea,stroke:#c0392b,stroke-dasharray:5 3,color:#6b1d14
+    class X1,X2,X3 drop
 ```
 
 ## The three flows
@@ -77,6 +82,8 @@ Built around James Clear's four laws as one loop, so each visit leads to the nex
 - Keyboard only: the first visit, a session from Start to done, and Undo all work with Tab and Enter; focus moves to each new screen's heading.
 - Every text and control pair meets WCAG AA contrast, checked pair by pair (ink 13.4:1 on the page, ink on the green button 6.4:1, control edges 3.6:1).
 - Every field has a visible label, every action is a real button or link, and animations stop under `prefers-reduced-motion`.
+- Screen reader, without looking: the first visit was filled in using only the keyboard and what Chrome's accessibility tree hands a screen reader. It reads one heading, three labelled groups of choices whose names carry their detail ("Steady, 150, 5 a day") and Start, in six Tab stops; an empty field moves focus to "What will you do?", marked invalid, with the hint and the error as its description; in the session each log is announced ("First one down!", "Added 1 cold email").
+- Enough time: the Undo message waits while the pointer or keyboard focus is on it, so Undo can always be reached; it leaves 8 seconds after that.
 
 ## First-run check
 
@@ -97,7 +104,7 @@ Kept on purpose: reminders live under Goals, and Remove goal acts at once with U
 - **Plan first, one stage at a time.** The main-task sentence and the three flows were planned in plan mode before any code ([plan.md](plan.md)); onboarding research ran as three subagents.
 - **Show before building.** Visual changes were built in a separate copy and shown as phone and desktop screenshots; only approved versions reached the real code, and nothing was pushed without an explicit "push".
 - **A second session as reviewer.** A read-only Claude session checked the app against the course slides and the brief; the user decided what to change.
-- **Checks on every change.** 164 unit tests, a scripted walk of all three flows with mouse and keyboard at 390px and 1440px, axe on every page, and a clean build of the exact commit before each push.
+- **Checks on every change.** 170 unit tests, a scripted walk of all three flows with mouse and keyboard at 390px and 1440px, axe on every page, and a clean build of the exact commit before each push.
 - **Easy:** turning a decision into tested code fast, and measuring what a person eyeballs (alignment, where an error lands, contrast).
 - **Hard:** visual judgement. Balance and "does this look tappable" took several rounds of the user looking and saying what felt off.
 
@@ -106,7 +113,7 @@ Kept on purpose: reminders live under Goals, and Remove goal acts at once with U
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # vitest, 164 tests (quota, streak, nudges, goal history, copy rules, onboarding, storage, undo)
+npm test           # vitest, 170 tests (quota, streak, nudges, goal history, copy rules, onboarding, storage, message timing, undo)
 npm run build
 ```
 

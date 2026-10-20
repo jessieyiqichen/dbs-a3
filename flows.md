@@ -8,7 +8,7 @@ A tool you use every day has three flows: the first visit, the main task, and co
 
 ## The whole loop
 
-The three flows as one path, like the teacher's "I add an item → it's on my list → I come back on Sunday": every diamond is a check, every error loops back to where you fix it, and the cylinder is the moment it is saved in the browser.
+The three flows as one path, like the teacher's "I add an item → it's on my list → I come back on Sunday": every diamond is a check, every error loops back to where you fix it, the cylinder is the moment it is saved in the browser, and the red dashed ends are where people may give up, with what Nudge does about each.
 
 ```mermaid
 flowchart TD
@@ -28,6 +28,11 @@ flowchart TD
     CB --> W[Titi: Welcome back, 2 days in a row!]
     W --> T[Today: today's new number]
     T --> S
+    P -.->|closes the tab| X1([Leaves: nothing was saved<br>the same first screen greets them next time])
+    S -.->|leaves with none done| X2([Leaves: the session is kept<br>Today says Keep going, Titi nudges at their times])
+    CB -.->|no reminder set| X3([May not come back<br>so Nudge asks Nudge you tomorrow? after the first log])
+    classDef drop fill:#fdecea,stroke:#c0392b,stroke-dasharray:5 3,color:#6b1d14
+    class X1,X2,X3 drop
 ```
 
 ## 1. First visit: useful right away
@@ -54,6 +59,10 @@ flowchart TD
     V -->|Number is 0 or not whole| E3[Enter a whole number, like 150]
     E1 & E2 & E3 --> FX[The error sits beside its field<br>focus moves there, the rest stays as picked]
     FX -->|fix it| ST
+    P -.->|closes the tab before Start| X1([Leaves: nothing was saved<br>the same first screen greets them next time])
+    FX -.->|gives up after an error| X2([Leaves: nothing was saved<br>what they picked was never stored])
+    classDef drop fill:#fdecea,stroke:#c0392b,stroke-dasharray:5 3,color:#6b1d14
+    class X1,X2 drop
     V -->|Yes| SV[(Goal saved in the browser)]
     SV --> S([Session, flow 2])
 ```
@@ -94,6 +103,10 @@ flowchart TD
     NP -->|No| ASK[Nudge you tomorrow?<br>Get calendar file · Turn on notifications · Not now] --> BT
     NP -->|Yes| BT[Back to Today]
     BT --> TD([Today, done: Titi is so full! See you tomorrow])
+    S -.->|leaves before logging any| XA([Leaves: the session is kept<br>Today says Keep going, Titi nudges at their times])
+    ASK -.->|Not now| XB([No reminder yet: asked again tomorrow]) --> BT
+    classDef drop fill:#fdecea,stroke:#c0392b,stroke-dasharray:5 3,color:#6b1d14
+    class XA,XB drop
 ```
 
 The session is its own page: Start never opens a website; "Open LinkedIn ↗" in the session does, only when tapped. Leaving keeps the session, so Today says "Keep going". On Today, everything Titi says is in her bubble: a greeting on the day's first open, otherwise the day's nudge (gentle, then firmer, then one last call), and she naps and talks in her sleep until you start ("Zzz… one fish would wake me up").
@@ -102,6 +115,9 @@ The session is its own page: Start never opens a website; "Open LinkedIn ↗" in
 
 ```mermaid
 flowchart TD
+    DAY([A day later]) --> RS{Reminders set up?}
+    RS -->|Yes| RING[Calendar alert or notification at their times] -->|tap it| C
+    RS -->|No| XC([May not come back: nothing calls them<br>Today keeps asking Nudge you tomorrow? after a log]) -.->|they remember| C
     C([Open Nudge again]) --> RD{Saved goals readable?}
     RD -->|No| CR[Your saved goals couldn't be read<br>Download a copy · Start fresh]
     RD -->|Yes| K{What happened since the last visit?}
@@ -117,6 +133,8 @@ flowchart TD
     CK -->|deadline passed| DP[10 of 100, nice work!<br>pick a new date and keep going]
     CK -->|calendar file running out| CAL[Your calendar nudges end Oct 20<br>grab a new file]
     CK -->|nothing| S([Start, flow 2])
+    classDef drop fill:#fdecea,stroke:#c0392b,stroke-dasharray:5 3,color:#6b1d14
+    class XC drop
 ```
 
 One streak for the whole app, like Duolingo's: a day counts when any goal got at least one, with one forgiven rest day a week. A reminder visit always opens with "You came back!", even on a Monday; last week's summary then waits for the next normal visit, and is said once a week.
