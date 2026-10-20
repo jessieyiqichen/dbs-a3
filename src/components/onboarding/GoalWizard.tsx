@@ -398,14 +398,14 @@ export function GoalWizard({ firstVisit = false, onCancel, onStarted }: Props) {
   return (
     <section
       aria-labelledby="setup-title"
-      className="flex flex-col pb-[calc(var(--setup-bar,10rem)+1.5rem)] pt-1 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-8 lg:pb-0"
+      className="flex flex-col pb-[calc(var(--setup-bar,10rem)+1.5rem)] pt-1 lg:pt-0 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-8 lg:pb-0"
     >
       <div className="flex flex-col gap-6 lg:col-span-7">
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
-            className="-ml-1 min-h-11 self-start px-1 text-sm font-semibold text-muted underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus"
+            className="-ml-1 min-h-11 self-start px-1 text-sm font-semibold text-muted underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus lg:-mb-4"
           >
             ← Goals
           </button>

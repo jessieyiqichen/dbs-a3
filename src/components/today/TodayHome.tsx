@@ -150,7 +150,7 @@ function GoalTabs({
   return (
     <nav
       aria-label="Up now"
-      className="flex w-full gap-2 overflow-x-auto px-1 pb-2 pt-1 [scrollbar-width:none] lg:flex-wrap lg:overflow-visible"
+      className="flex w-full gap-2 overflow-x-auto px-1 pb-2 pt-1 [scrollbar-width:none] lg:flex-wrap lg:overflow-visible lg:pt-0"
     >
       {goals.map(({ goal, done }) => {
         const on = goal.id === current;
@@ -337,7 +337,7 @@ export function TodayHome({
   return (
     <section
       aria-labelledby={`goal-${goal.id}`}
-      className="flex flex-col lg:pt-2"
+      className="flex flex-col"
     >
       <Room bowls={bowls} cat={cat} corner={corner} say={said}>
         <GoalTabs goals={goals} current={goal.id} onPick={onPick} />

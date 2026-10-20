@@ -15,8 +15,8 @@ interface PageHeaderProps {
 export function PageHeader({ title, intro, back = "/", backLabel = "← Back to Today", level = "h1", introOnDesktop = true }: PageHeaderProps) {
   const Heading = level;
   return (
-    <div className="flex flex-col gap-3 pt-4">
-      {back && <Link href={back} className="self-start text-sm font-semibold text-muted underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus">
+    <div className="flex flex-col gap-3 pt-4 lg:gap-2 lg:pt-0">
+      {back && <Link href={back} className="self-start text-sm font-semibold text-muted underline-offset-4 hover:underline focus-visible:outline-3 focus-visible:outline-focus lg:inline-flex lg:min-h-11 lg:items-center">
         {backLabel}
       </Link>}
       <Heading className="font-display text-3xl font-bold text-ink lg:text-4xl">{title}</Heading>

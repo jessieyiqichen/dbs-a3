@@ -227,16 +227,16 @@ export function Session({
   return (
     <section
       aria-labelledby={`${id}-title`}
-      className="flex flex-col pt-1 lg:flex-1"
+      className="flex flex-col pt-1 lg:pt-0"
     >
       <SessionBar />
       {/* On a desktop the same grid as Today (task first): the task, the fish and the buttons on the left seven columns,
           Titi and her bubble on the right five. The session has little on it, so the two columns sit together in the
           middle of the space under the back link instead of leaving its lower half empty (user, 2026-10-19) */}
-      <div className="contents lg:grid lg:flex-1 lg:grid-cols-12 lg:content-center lg:items-center lg:gap-x-8 lg:pb-16">
+      <div className="contents lg:mt-2 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-8">
         <ScreenHeading
           id={`${id}-title`}
-          className="mt-2 font-display text-3xl font-bold leading-tight text-ink [text-wrap:balance] lg:col-span-7 lg:col-start-1 lg:row-start-1 lg:mb-8 lg:mt-0 lg:self-end lg:text-5xl"
+          className="mt-2 font-display text-3xl font-bold leading-tight text-ink [text-wrap:balance] lg:col-span-7 lg:col-start-1 lg:row-start-1 lg:mb-8 lg:mt-0 lg:text-5xl"
         >
           {headline(goal.verb, total, goal.unit)} today
         </ScreenHeading>

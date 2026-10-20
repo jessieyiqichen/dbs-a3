@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Page not found · Nudge" };
 export default function NotFound() {
   return (
     <AppShell>
-      <section aria-labelledby="not-found-title" className="flex flex-col items-center gap-4 py-10 text-center">
+      <section aria-labelledby="not-found-title" className="flex flex-col items-center gap-4 py-10 text-center lg:pt-0">
         <CatArt mood="idle" className="w-40 lg:w-56" />
         <h1 id="not-found-title" className="font-display text-3xl font-bold text-ink lg:text-4xl">
           Titi can&apos;t find this page

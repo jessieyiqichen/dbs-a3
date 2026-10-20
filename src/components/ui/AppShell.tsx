@@ -15,16 +15,17 @@ export function AppShell({ children, width = "narrow" }: { children: ReactNode; 
         Skip to content
       </a>
       <header className="flex items-center justify-between gap-3 py-4 lg:py-6">
-        <Link href="/" className="inline-flex min-h-11 items-center font-display text-2xl font-bold text-ink focus-visible:outline-3 focus-visible:outline-focus lg:text-4xl">
+        <Link href="/" className="inline-flex min-h-11 items-center font-display text-2xl font-bold text-ink focus-visible:outline-3 focus-visible:outline-focus lg:min-h-12 lg:text-4xl">
           Nudge
         </Link>
         <Suspense fallback={<NavLinks pathname={null} />}>
           <Nav />
         </Suspense>
       </header>
-      {/* On a desktop a page shorter than the screen sits in the middle of the space under the header, instead of at the
-          top with the lower half empty (user, 2026-10-19); a longer page starts at the top as usual */}
-      <main id="main" className="flex flex-1 flex-col lg:justify-center lg:text-lg">
+      {/* On a desktop every task page starts 32px under the navigation, so the back link and the heading are in the same
+          place on every page (user, 2026-10-19: centring made the gap change with the screen and the page); the done
+          and streak screens centre themselves */}
+      <main id="main" className="flex flex-1 flex-col lg:pt-8 lg:text-lg">
         {children}
       </main>
     </div>
